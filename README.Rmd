@@ -50,8 +50,9 @@ session information and the call used to fit the model.
 str(model$.user, max.level = 1)
 ```
 
-gamlss does not store the data with the model with the data, and we need the
-dataset because centile prediction often fails without the dataset:
+gamlss does not store the data as part of the model object, and we need the
+dataset because prediction and centile prediction often fails without the
+dataset:
 
 ```{r, error = TRUE}
 newdata <- distinct(data, age)

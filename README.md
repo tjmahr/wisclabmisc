@@ -49,8 +49,9 @@ str(model$.user, max.level = 1)
 #>  $ call        : language mem_gamlss(distance ~ age, data = data)
 ```
 
-gamlss does not store the data with the model with the data, and we need
-the dataset because centile prediction often fails without the dataset:
+gamlss does not store the data as part of the model object, and we need
+the dataset because prediction and centile prediction often fails
+without the dataset:
 
 ``` r
 newdata <- distinct(data, age)
