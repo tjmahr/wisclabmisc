@@ -10,11 +10,11 @@ mem_gamlss(...)
 \item{...}{arguments passed to gamlss::gamlss()}
 }
 \value{
-the fitted \code{model} object but updated to include user information in
-\code{model$.user}. Includes the dataset used to fit the model
-\code{model$.user$data}, the session info \code{model$.user$session_info} and the
-call used to fit the model \code{model$.user$call}. \code{model$call} is updated to
-match
+the fitted `model` object but updated to include user information in
+  `model$.user`. Includes the dataset used to fit the model
+  `model$.user$data`, the session info `model$.user$session_info` and the
+  call used to fit the model `model$.user$call`. `model$call` is updated to
+  match
 }
 \description{
 Think of it as a gamlss model with memories (mem. gamlss).

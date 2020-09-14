@@ -14,16 +14,17 @@ pivot_centiles_longer(data)
 
 \item{model}{a gamlss model}
 
-\item{centiles}{centiles to use for prediction. Defaults to \code{c(5, 10, 50, 90, 95)}.}
+\item{centiles}{centiles to use for prediction. Defaults to `c(5, 10, 50, 90,
+95)`.}
 
-\item{...}{arguments passed to \code{gamlss::centiles.pred()}}
+\item{...}{arguments passed to `gamlss::centiles.pred()`}
 
-\item{data}{centile predictions to reshape for \code{pivot_centiles_longer()}}
+\item{data}{centile predictions to reshape for `pivot_centiles_longer()`}
 }
 \value{
-a tibble with fitted centiles for \code{predict_centiles()} and a
-long-format tibble with one centile value per row in
-\code{pivot_centiles_longer()}
+a tibble with fitted centiles for `predict_centiles()` and a
+  long-format tibble with one centile value per row in
+  `pivot_centiles_longer()`
 }
 \description{
 gamlss has trouble doing predictions without the original training data.

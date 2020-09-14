@@ -21,13 +21,14 @@ mem_gamlss <- function(...) {
 
   # spoof the gamlss call so that summary() looks right
   new_call <- model$.user$call
+  old_call <- model$call
   new_call[[1]] <- model$call[[1]]
+  names(new_call) <- names(old_call)
   model$call <- new_call
 
   class(model) <- c("mem_gamlss", class(model))
   model
 }
-
 
 #' Predict and tidy centiles from a GAMLSS model
 #'
@@ -105,6 +106,32 @@ pivot_centiles_longer <- function(data) {
       )
     )
 }
+
+check_sample_centiles <- function(data, model, var_x, var_y, centiles = c(5, 10, 25, 50, 75, 90, 95)) {
+    quo_x <- enquo(var_x)
+    quo_y <- enquo(var_y)
+
+    d_quantiles <- data %>%
+      dplyr::select(!! quo_x) %>%
+      predict_centiles(
+        model = model,
+        centiles = centiles
+      ) %>%
+      distinct()
+
+    data %>%
+      left_join(d_quantiles, by = rlang::as_name(quo_x)) %>%
+      pivot_centiles_longer() %>%
+      mutate(
+        .quantile = as.numeric(.quantile)
+      ) %>%
+      group_by(.quantile) %>%
+      summarise(
+        percent_under_quantile = (mean( (!! quo_y)  <= .value) * 100),
+        .groups = "drop"
+      ) %>%
+      arrange(.quantile)
+  }
 
 
 
