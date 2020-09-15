@@ -10,9 +10,9 @@ predict_centiles(newdata, model, centiles = c(5, 10, 50, 90, 95), ...)
 pivot_centiles_longer(data)
 }
 \arguments{
-\item{newdata}{a one-column dataframe for predictuions}
+\item{newdata}{a one-column dataframe for predictions}
 
-\item{model}{a gamlss model}
+\item{model}{a gamlss model prepared by `mem_gamlss()`}
 
 \item{centiles}{centiles to use for prediction. Defaults to `c(5, 10, 50, 90,
 95)`.}
@@ -28,7 +28,4 @@ a tibble with fitted centiles for `predict_centiles()` and a
 }
 \description{
 gamlss has trouble doing predictions without the original training data.
-}
-\examples{
-
 }

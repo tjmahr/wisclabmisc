@@ -21,6 +21,8 @@ devtools::install_github("tjmahr/wisclabmisc")
 
 ## gamlss helpers
 
+### A `gamlss()` that remembers the data
+
 `mem_gamlss()` (memory gamlss) provides a drop-in replacement for the
 `gamlss()` function.
 
@@ -83,6 +85,14 @@ centiles.pred(
 #> 4 14 24.30834 26.00370 27.69907
 ```
 
+(“Centile prediction” means predicting the percentiles of the data along
+a single variable. That’s why the above function just needs a single
+`xname`: A single predictor variable is used. We use centile prediction
+compute growth curves so that we can look at smooth changes in the
+percentiles over age.)
+
+### Centile prediction and tidying
+
 This package provides `predict_centiles()` as a streamlined version of
 the above code, but:
 
@@ -101,7 +111,7 @@ centiles <- predict_centiles(
 )
 centiles
 #> # A tibble: 4 x 4
-#>     age   q25   q50   q75
+#>     age   c25   c50   c75
 #>   <dbl> <dbl> <dbl> <dbl>
 #> 1     8  20.3  22.0  23.7
 #> 2    10  21.7  23.4  25.1
@@ -116,18 +126,107 @@ column that helps mark commonly paired quantiles 25:75, 10:90, and 5:95.
 ``` r
 pivot_centiles_longer(centiles)
 #> # A tibble: 12 x 4
-#>      age .quantile .value .pair           
-#>    <dbl> <chr>      <dbl> <chr>           
-#>  1     8 25          20.3 quantiles 25, 75
-#>  2     8 50          22.0 median          
-#>  3     8 75          23.7 quantiles 25, 75
-#>  4    10 25          21.7 quantiles 25, 75
-#>  5    10 50          23.4 median          
-#>  6    10 75          25.1 quantiles 25, 75
-#>  7    12 25          23.0 quantiles 25, 75
-#>  8    12 50          24.7 median          
-#>  9    12 75          26.4 quantiles 25, 75
-#> 10    14 25          24.3 quantiles 25, 75
-#> 11    14 50          26.0 median          
-#> 12    14 75          27.7 quantiles 25, 75
+#>      age .centile .value .centile_pair  
+#>    <dbl>    <dbl>  <dbl> <chr>          
+#>  1     8       25   20.3 centiles 25, 75
+#>  2     8       50   22.0 median         
+#>  3     8       75   23.7 centiles 25, 75
+#>  4    10       25   21.7 centiles 25, 75
+#>  5    10       50   23.4 median         
+#>  6    10       75   25.1 centiles 25, 75
+#>  7    12       25   23.0 centiles 25, 75
+#>  8    12       50   24.7 median         
+#>  9    12       75   26.4 centiles 25, 75
+#> 10    14       25   24.3 centiles 25, 75
+#> 11    14       50   26.0 median         
+#> 12    14       75   27.7 centiles 25, 75
+```
+
+### Sample centiles checks
+
+Half of the data should be above the 50% centile line and half should be
+below the 50% centile line. The same holds for the other centile lines.
+This `check_sample_centiles()` performs this check by computing the
+percentages of observations less than or equal to each centile line.
+
+``` r
+check_sample_centiles(data, model, age, distance)
+#> # A tibble: 7 x 4
+#>   .centile     n n_under_centile percent_under_centile
+#>      <dbl> <int>           <int>                 <dbl>
+#> 1        5   108               6                  5.56
+#> 2       10   108               9                  8.33
+#> 3       25   108              25                 23.1 
+#> 4       50   108              61                 56.5 
+#> 5       75   108              85                 78.7 
+#> 6       90   108              95                 88.0 
+#> 7       95   108             100                 92.6
+```
+
+Which matches the gamlss package’s output:
+
+``` r
+centiles(
+  model, 
+  model$.user$data$age, 
+  data = model$.user$data, 
+  cent = c(5, 10,25, 50, 75, 90, 95), 
+  plot = FALSE
+)
+#> % of cases below  5 centile is  5.555556 
+#> % of cases below  10 centile is  8.333333 
+#> % of cases below  25 centile is  23.14815 
+#> % of cases below  50 centile is  56.48148 
+#> % of cases below  75 centile is  78.7037 
+#> % of cases below  90 centile is  87.96296 
+#> % of cases below  95 centile is  92.59259
+```
+
+This function also supports grouped data to check centile performance
+for different subsets of data.
+
+``` r
+data %>% 
+  mutate(age_bin = ntile(age, 2)) %>% 
+  group_by(age_bin) %>% 
+  check_sample_centiles(model, age, distance)
+#> # A tibble: 14 x 5
+#>    age_bin .centile     n n_under_centile percent_under_centile
+#>      <int>    <dbl> <int>           <int>                 <dbl>
+#>  1       1        5    54               3                  5.56
+#>  2       1       10    54               4                  7.41
+#>  3       1       25    54              13                 24.1 
+#>  4       1       50    54              29                 53.7 
+#>  5       1       75    54              44                 81.5 
+#>  6       1       90    54              49                 90.7 
+#>  7       1       95    54              51                 94.4 
+#>  8       2        5    54               3                  5.56
+#>  9       2       10    54               5                  9.26
+#> 10       2       25    54              12                 22.2 
+#> 11       2       50    54              32                 59.3 
+#> 12       2       75    54              41                 75.9 
+#> 13       2       90    54              46                 85.2 
+#> 14       2       95    54              49                 90.7
+```
+
+This output also matches the output provide by gamlss’s
+`centile.split()` function:
+
+``` r
+centiles.split(
+  model, 
+  model$.user$data$age, 
+  data = model$.user$data, 
+  n.inter = 2,
+  cent = c(5, 10,25, 50, 75, 90, 95), 
+  plot = FALSE
+)
+#>      7 to 11  11 to 15
+#> 5   5.555556  5.555556
+#> 10  7.407407  9.259259
+#> 25 24.074074 22.222222
+#> 50 53.703704 59.259259
+#> 75 81.481481 75.925926
+#> 90 90.740741 85.185185
+#> 95 94.444444 90.740741
 ```
