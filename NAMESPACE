@@ -2,6 +2,8 @@
 
 export("%>%")
 export(check_sample_centiles)
+export(compute_smooth_density_roc)
+export(join_to_split)
 export(mem_gamlss)
 export(pivot_centiles_longer)
 export(predict_centiles)

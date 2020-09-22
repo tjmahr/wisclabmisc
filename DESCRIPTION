@@ -29,5 +29,6 @@ Imports:
     stringr,
     tidyr,
     sessioninfo,
-    usethis
+    usethis,
+    rsample
 RoxygenNote: 7.1.1
