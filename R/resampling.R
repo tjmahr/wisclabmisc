@@ -68,3 +68,50 @@ validate_join_to_split <- function(old_x, new_x, by) {
   # same as the number of times the id was reampled.
   all(check1 == check2)
 }
+
+
+# Work in progress
+group_bootstraps <- function(data, times = 25, apparent = FALSE, ...) {
+  data <- tibble::as_tibble(Orange)
+  data <- tibble::as_tibble(Orange) %>%
+    slice_sample(n = nrow(data), replace = TRUE) %>%
+    group_by(Tree)
+  times = 25
+  apparent = FALSE
+
+  raw_data <- data
+  if (! dplyr::is_grouped_df(data)) {
+    data <- dplyr::rowwise(data)
+  }
+  ids <- unique(dplyr::group_indices(data))
+  rows <- seq_len(nrow(data))
+
+  # This fails when the assessment group is empty
+  # Filing an issue https://github.com/tidymodels/rsample/issues/188
+  splits <- seq_len(times) %>%
+    lapply(function(x) sample(ids, replace = TRUE)) %>%
+    lapply(
+      function(x) {
+        analysis <- unlist(dplyr::group_rows(data)[x])
+        assessment <- setdiff(rows, analysis)
+        list(analysis = analysis, assessment = assessment)
+      }
+    ) %>%
+    lapply(rsample::make_splits, raw_data, "group_boot_split")
+
+  row_ids <- paste0(
+    "GroupBootstrap",
+    formatC(seq_len(times), width = nchar(times), flag = 0)
+  )
+
+  if (apparent) {
+    row_ids <- c(row_ids, "Apparent")
+    splits[[times + 1]] <- rsample::make_splits(
+      list(analysis = rows, assessment = NA),
+      data
+    )
+  }
+
+  rsample::manual_rset(splits, row_ids)
+
+ }
