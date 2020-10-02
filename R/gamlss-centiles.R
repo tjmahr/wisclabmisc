@@ -130,21 +130,24 @@ check_sample_centiles <- function(
   d_quantiles <- data %>%
     ungroup() %>%
     distinct(!! quo_x) %>%
-    predict_centiles(model = model, centiles = centiles)
+    predict_centiles(
+      model = model,
+      centiles = centiles
+    )
 
   data %>%
     left_join(d_quantiles, by = rlang::as_name(quo_x)) %>%
     pivot_centiles_longer() %>%
-    mutate(.centile = as.numeric(.centile)) %>%
+    mutate(.centile = as.numeric(.data$.centile)) %>%
     group_by(.centile, .add = TRUE) %>%
     summarise(
       n = n(),
-      n_under_centile = sum(!! quo_y <= .value),
-      percent_under_centile = (mean( (!! quo_y) <= .value) * 100),
+      n_under_centile = sum(!! quo_y <= .data$.value),
+      percent_under_centile = (mean((!! quo_y) <= .data$.value) * 100),
       .groups = "drop_last"
     ) %>%
     ungroup() %>%
-    arrange(!!! groups(data), .centile) %>%
+    arrange(!!! groups(data), .data$.centile) %>%
     tibble::as_tibble()
 }
 

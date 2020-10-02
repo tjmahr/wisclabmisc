@@ -20,7 +20,8 @@ LazyData: true
 URL: https://github.com/tjmahr/wisclabmisc
 BugReports: https://github.com/tjmahr/wisclabmisc/issues
 Suggests: 
-    roxygen2
+    roxygen2,
+    testthat
 Imports: 
     rlang (>= 0.1.2),
     gamlss (>= 5.2.0),
@@ -30,5 +31,7 @@ Imports:
     tidyr,
     sessioninfo,
     usethis,
-    rsample
+    rsample,
+    magrittr,
+    purrr
 RoxygenNote: 7.1.1
