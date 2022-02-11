@@ -1,0 +1,154 @@
+---
+title: "Tools for GAMLSS models"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tools for GAMLSS models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+wisclabmisc includes for that making with GAMLSS models easier.
+Normally, when `gamlss()` fit a model, it does not store the data
+alongside the model. We provide a function that fixes that. We also
+provide some functions extracting centiles (percentile curves) from
+models easiers.
+
+## A `gamlss()` that remembers the data
+
+`mem_gamlss()` (memory gamlss) provides a drop-in replacement for the `gamlss()`
+function.
+
+```{r example, message = FALSE}
+library(wisclabmisc)
+library(gamlss)
+library(tidyverse)
+
+data <- as.data.frame(nlme::Orthodont)
+model <- mem_gamlss(distance ~ age, data = data)
+```
+
+The only difference between `mem_gamlss()` and `gamlss()` is that the
+modified version includes a bundle of data in `.user` that records the
+original dataset, session information and the call used to fit the
+model.
+
+```{r}
+str(model$.user, max.level = 1)
+```
+
+gamlss does not store the data as part of the model object, and we need the
+dataset because prediction and centile prediction often fails without the
+dataset:
+
+```{r, error = TRUE}
+newdata <- distinct(data, age)
+centiles.pred(
+  model, 
+  cent = c(25, 50, 75),
+  xname = "age", 
+  xvalues = newdata$age, 
+  plot = FALSE
+)
+```
+
+But including the original dataset works:
+
+```{r, error = TRUE}
+centiles.pred(
+  model, 
+  cent = c(25, 50, 75),
+  xname = "age", 
+  xvalues = newdata$age, 
+  plot = FALSE,
+  data = model$.user$data
+)
+```
+
+("Centile prediction" means predicting the percentiles of the data along a
+single variable. That's why the above function just needs a single `xname`: A
+single predictor variable is used. We use centile prediction compute growth
+curves so that we can look at smooth changes in the percentiles over age.)
+
+
+## Centile prediction and tidying
+
+This package provides `predict_centiles()` as a streamlined version of the
+above code, but:
+
+- assumes the model was fitted with `mem_gamlss()`
+- returns a tibble
+- keeps the predictor name (here, `age` instead of `x`)
+- prefixes the centiles with `q` (for quantile)
+
+```{r}
+centiles <- predict_centiles(
+  newdata,
+  model, 
+  cent = c(25, 50, 75)
+)
+centiles
+```
+
+Those predicted centiles are in wide format. We can tidy them into a long format
+with `pivot_centiles_longer()`. This also includes `.pair` column that helps
+mark commonly paired quantiles 25:75, 10:90, and 5:95. 
+
+```{r}
+pivot_centiles_longer(centiles)
+```
+
+### Sample centiles checks
+
+Half of the data should be above the 50% centile line and half should be below
+the 50% centile line. The same holds for the other centile lines. This
+`check_sample_centiles()` performs this check by computing the percentages of
+observations less than or equal to each centile line.
+
+```{r}
+check_sample_centiles(data, model, age, distance)
+```
+
+Which matches the gamlss package's output:
+
+```{r}
+centiles(
+  model, 
+  model$.user$data$age, 
+  data = model$.user$data, 
+  cent = c(5, 10,25, 50, 75, 90, 95), 
+  plot = FALSE
+)
+```
+
+
+
+This function also supports grouped data to check centile performance for
+different subsets of data.
+
+```{r}
+data %>% 
+  mutate(age_bin = ntile(age, 2)) %>% 
+  group_by(age_bin) %>% 
+  check_sample_centiles(model, age, distance)
+```
+
+This output also matches the output provide by gamlss's `centile.split()`
+function:
+
+```{r}
+centiles.split(
+  model, 
+  model$.user$data$age, 
+  data = model$.user$data, 
+  n.inter = 2,
+  cent = c(5, 10,25, 50, 75, 90, 95), 
+  plot = FALSE
+)
+```

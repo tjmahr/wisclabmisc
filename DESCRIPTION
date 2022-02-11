@@ -1,0 +1,48 @@
+Package: wisclabmisc
+Type: Package
+Title: Tools to Support the 'WiscLab'
+Version: 0.1.0
+Authors@R: c(
+    person(
+      given = "Tristan",
+      family = "Mahr",
+      role = c("aut", "cre"),
+      email = "tristan.mahr@wisc.edu",
+      comment = c(ORCID = "0000-0002-8890-5116")
+    )
+  )
+Description: A collection of 'R' functions for use (and re-use) across 
+    'WiscLab' projects. These are analysis or presentation oriented 
+    functions--that is, they are not for data reading or data cleaning.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/tjmahr/wisclabmisc,
+    https://www.tjmahr.com/wisclabmisc/
+BugReports: https://github.com/tjmahr/wisclabmisc/issues
+Depends:
+    R (>= 4.1)
+Suggests: 
+    rstanarm,
+    roxygen2,
+    testthat,
+    knitr,
+    rmarkdown,
+    tidyverse
+Imports: 
+    rlang (>= 0.1.2),
+    gamlss (>= 5.2.0),
+    dplyr,
+    tibble,
+    stringr,
+    tidyr,
+    sessioninfo,
+    usethis,
+    rsample,
+    magrittr,
+    purrr,
+    pROC
+RoxygenNote: 7.1.2
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)

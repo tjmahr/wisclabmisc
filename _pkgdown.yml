@@ -1,0 +1,29 @@
+url: https://www.tjmahr.com/wisclabmisc/
+
+template:
+  bootstrap: 5
+  bootswatch: sandstone
+  bslib:
+    link-color: "#325d88"
+
+figures:
+  dev: ragg::agg_png
+  dpi: 150
+
+
+reference:
+  - title: GAMLSS helpers
+    contents:
+    - mem_gamlss
+    - has_concept("gamlss")
+  - title: ROC statistics
+    contents:
+    - compute_smooth_density_roc
+    - compute_empirical_roc
+    - has_concept("roc")
+  - title: Other functions
+    contents:
+    - has_concept("etc")
+  - title: Datasets
+    contents:
+    - has_concept("datasets")
