@@ -3,6 +3,7 @@
 \name{tidyeval}
 \alias{tidyeval}
 \alias{expr}
+\alias{enexpr}
 \alias{enquo}
 \alias{enquos}
 \alias{sym}

@@ -43,6 +43,6 @@
 #' @md
 #' @name tidyeval
 #' @keywords internal
-#' @importFrom rlang expr enquo enquos sym syms .data := as_name as_label .env
-#' @aliases expr enquo enquos sym syms .data := as_name as_label .env
+#' @importFrom rlang expr enexpr enquo enquos sym syms .data := as_name as_label .env
+#' @aliases expr enexpr enquo enquos sym syms .data := as_name as_label .env
 NULL

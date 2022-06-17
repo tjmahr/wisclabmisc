@@ -28,9 +28,12 @@ Suggests:
     testthat,
     knitr,
     rmarkdown,
-    tidyverse
+    tidyverse,
+    gamlss.dist,
+    ggplot2,
+    nlme
 Imports: 
-    rlang (>= 0.1.2),
+    rlang (>= 0.4.11),
     gamlss (>= 5.2.0),
     dplyr,
     tibble,
@@ -42,7 +45,7 @@ Imports:
     magrittr,
     purrr,
     pROC
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
