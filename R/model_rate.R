@@ -73,7 +73,8 @@ fit_gen_gamma_gamlss <- function(
     # what we need
     GG = gamlss.dist::GG,
     gamlss.control = gamlss::gamlss.control,
-    ns = splines::ns
+    ns = splines::ns,
+    mem_gamlss = mem_gamlss
   )
 
   # Stash the symbols the user provided
