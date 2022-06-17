@@ -78,7 +78,7 @@ fit_gen_gamma_gamlss <- function(
   )
 
   # Stash the symbols the user provided
-  data <- enexpr(data)
+  data <- enquo(data)
   var_y <- enexpr(var_y)
   var_x <- enexpr(var_x)
 
