@@ -3,33 +3,58 @@ utils::globalVariables(c("ns", "GG", "gamlss.control"))
 
 #' Fit a generalized gamma regression model (for speaking rate)
 #'
-#' The function fits the same type of model as used in Mahr 2021: A generalized
-#' gamma regression model with natural cubic splines on the mean (mu), scale
-#' (sigma), and shape (nu). This model is fitted using [mem_gamlss()].
+#' The function fits the same type of model as used in [Mahr
+#' 2021](https://doi.org/10.1044/2021_JSLHR-21-00206): A generalized gamma
+#' regression model with natural cubic splines on the mean (mu), scale (sigma),
+#' and shape (nu). This model is fitted using [mem_gamlss()].
 #'
 #' @rdname gen-gamma-rate
 #' @param data a data frame
-#' @param var_x,var_y (unquoted) variable names giving of the predictor variable
+#' @param var_x,var_y (unquoted) variable names giving the predictor variable
 #'   (e.g., `age`) and outcome variable (.e.g, `rate`).
+#' @param name_x,name_y quoted variable names giving the predictor variable
+#'   (e.g., `"age"`) and outcome variable (.e.g, `"rate"`). These arguments
+#'   apply to `fit_gen_gamma_gamlss_se()`.
 #' @param df_mu,df_sigma,df_nu degrees of freedom
-#' @return for `fit_gen_gamma_gamlss()`, a [mem_gamlss()]-fitted model. The
-#'   `.user` data in the model includes degrees of freedom for each parameter
-#'   and the [splines::ns()] basis for each parameter. For
-#'   `predict_gen_gamma_gamlss()`, a dataframe containing the model predictions
-#'   for mu, sigma, and nu, plus columns for each centile in `centiles`.
+#' @return for `fit_gen_gamma_gamlss()` and `fit_gen_gamma_gamlss_se()`, a
+#'   [mem_gamlss()]-fitted model. The `.user` data in the model includes degrees
+#'   of freedom for each parameter and the [splines::ns()] basis for each
+#'   parameter. For `predict_gen_gamma_gamlss()`, a dataframe containing the
+#'   model predictions for mu, sigma, and nu, plus columns for each centile in
+#'   `centiles`.
 #' @export
 #' @details
 #'
+#' There are versions two of this function. The main version is
+#' `fit_gen_gamma_gamlss()` and it works with unquoted column names. The
+#' alternative version is `fit_gen_gamma_gamlss_se()`, where the final "se"
+#' stands for "Standard Evaluation". This designation means that the variable
+#' names must be given as strings (so, the quoted `"age"` instead of bare name
+#' `age`). This alternative version is necessary when we fit several models
+#' using parallel computing with [furrr::future_map()] (as when using bootstrap
+#' resampling).
+#'
 #' [predict_centiles()] will work with this function, but it will likely throw a
-#' warning message. Therefore, [predict_gen_gamma_gamlss()] provides an
+#' warning message. Therefore, `predict_gen_gamma_gamlss()` provides an
 #' alternative way to compute centiles from the model. It manually computes the
 #' centiles instead of relying on [gamlss::centiles()].
+#'
 #' @concept models
+#' @source Associated article: <https://doi.org/10.1044/2021_JSLHR-21-00206>
 #' @examples
 #' data_fake_rates
 #'
 #' m <- fit_gen_gamma_gamlss(data_fake_rates, age_months, speaking_sps)
 #' summary(m)
+#'
+#' # Alternative interface
+#' d <- data_fake_rates
+#' m2 <- fit_gen_gamma_gamlss_se(
+#'   data = d,
+#'   name_x = "age_months",
+#'   name_y = "speaking_sps"
+#' )
+#' coef(m2) == coef(m)
 #'
 #' # Create growth curves for a sub age-range
 #' new_ages <- data.frame(age_months = 48:71)
@@ -117,7 +142,23 @@ fit_gen_gamma_gamlss <- function(
   model
 }
 
-
+#' @rdname gen-gamma-rate
+#' @export
+fit_gen_gamma_gamlss_se <- function(
+  data,
+  name_x,
+  name_y,
+  df_mu = 3,
+  df_sigma = 2,
+  df_nu = 1
+) {
+  # Convert the strings to symbols but tunnel `data` straight through
+  var_x <- ensym(name_x)
+  var_y <- ensym(name_y)
+  fit_gen_gamma_gamlss(
+    {{ data }} ,  !! var_x, !! var_y, df_mu, df_sigma, df_nu
+  )
+}
 
 #' @rdname gen-gamma-rate
 #' @param model a model fitted by [fit_gen_gamma_gamlss()]
