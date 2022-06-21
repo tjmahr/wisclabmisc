@@ -16,6 +16,9 @@ utils::globalVariables(c("ns", "GG", "gamlss.control"))
 #'   (e.g., `"age"`) and outcome variable (.e.g, `"rate"`). These arguments
 #'   apply to `fit_gen_gamma_gamlss_se()`.
 #' @param df_mu,df_sigma,df_nu degrees of freedom
+#' @param control a [gamlss::gamlss.control()] controller. Defaults to `NULL`
+#'   which uses default settings, except for setting trace to `FALSE` to silence
+#'   the output from gamlss.
 #' @return for `fit_gen_gamma_gamlss()` and `fit_gen_gamma_gamlss_se()`, a
 #'   [mem_gamlss()]-fitted model. The `.user` data in the model includes degrees
 #'   of freedom for each parameter and the [splines::ns()] basis for each
@@ -56,6 +59,14 @@ utils::globalVariables(c("ns", "GG", "gamlss.control"))
 #' )
 #' coef(m2) == coef(m)
 #'
+#' # how to use control to change gamlss() behavior
+#' m_traced <- fit_gen_gamma_gamlss(
+#'   data_fake_rates,
+#'   age_months,
+#'   speaking_sps,
+#'   control = gamlss::gamlss.control(n.cyc = 15, trace = TRUE)
+#' )
+#'
 #' # Create growth curves for a sub age-range
 #' new_ages <- data.frame(age_months = 48:71)
 #' centiles <- predict_gen_gamma_gamlss(new_ages, m)
@@ -81,7 +92,8 @@ fit_gen_gamma_gamlss <- function(
   var_y,
   df_mu = 3,
   df_sigma = 2,
-  df_nu = 1
+  df_nu = 1,
+  control = NULL
 ) {
   # See link for a guide on the nonstandard evaluation used here
   # https://adv-r.hadley.nz/evaluation.html#wrapping-modelling-functions
@@ -102,8 +114,11 @@ fit_gen_gamma_gamlss <- function(
     mem_gamlss = mem_gamlss
   )
 
+  if (is.null(control)) {
+    control <- gamlss::gamlss.control(trace = FALSE)
+  }
+
   # Stash the symbols the user provided
-  data <- enquo(data)
   var_y <- enexpr(var_y)
   var_x <- enexpr(var_x)
 
@@ -124,8 +139,8 @@ fit_gen_gamma_gamlss <- function(
       sigma.formula = !! f_sigma,
       nu.formula = !! f_nu,
       family = GG(),
-      data = !! data,
-      control = gamlss.control(trace = FALSE)
+      data = {{ data }},
+      control = !! control
     )
   )
   model <- rlang::eval_tidy(model_call, env = model_env)
@@ -150,13 +165,17 @@ fit_gen_gamma_gamlss_se <- function(
   name_y,
   df_mu = 3,
   df_sigma = 2,
-  df_nu = 1
+  df_nu = 1,
+  control = NULL
 ) {
+  # Standard evaluation version for future-based parallelism, see
+  # https://furrr.futureverse.org/articles/gotchas.html
+
   # Convert the strings to symbols but tunnel `data` straight through
   var_x <- ensym(name_x)
   var_y <- ensym(name_y)
   fit_gen_gamma_gamlss(
-    {{ data }} ,  !! var_x, !! var_y, df_mu, df_sigma, df_nu
+    {{ data }}, !! var_x, !! var_y, df_mu, df_sigma, df_nu, control
   )
 }
 

@@ -9,7 +9,15 @@
 Associated article: \url{https://doi.org/10.1044/2021_JSLHR-21-00206}
 }
 \usage{
-fit_gen_gamma_gamlss(data, var_x, var_y, df_mu = 3, df_sigma = 2, df_nu = 1)
+fit_gen_gamma_gamlss(
+  data,
+  var_x,
+  var_y,
+  df_mu = 3,
+  df_sigma = 2,
+  df_nu = 1,
+  control = NULL
+)
 
 fit_gen_gamma_gamlss_se(
   data,
@@ -17,7 +25,8 @@ fit_gen_gamma_gamlss_se(
   name_y,
   df_mu = 3,
   df_sigma = 2,
-  df_nu = 1
+  df_nu = 1,
+  control = NULL
 )
 
 predict_gen_gamma_gamlss(newdata, model, centiles = c(5, 10, 50, 90, 95))
@@ -29,6 +38,10 @@ predict_gen_gamma_gamlss(newdata, model, centiles = c(5, 10, 50, 90, 95))
 (e.g., \code{age}) and outcome variable (.e.g, \code{rate}).}
 
 \item{df_mu, df_sigma, df_nu}{degrees of freedom}
+
+\item{control}{a \code{\link[gamlss:gamlss.control]{gamlss::gamlss.control()}} controller. Defaults to \code{NULL}
+which uses default settings, except for setting trace to \code{FALSE} to silence
+the output from gamlss.}
 
 \item{name_x, name_y}{quoted variable names giving the predictor variable
 (e.g., \code{"age"}) and outcome variable (.e.g, \code{"rate"}). These arguments
@@ -82,6 +95,14 @@ m2 <- fit_gen_gamma_gamlss_se(
   name_y = "speaking_sps"
 )
 coef(m2) == coef(m)
+
+# how to use control to change gamlss() behavior
+m_traced <- fit_gen_gamma_gamlss(
+  data_fake_rates,
+  age_months,
+  speaking_sps,
+  control = gamlss::gamlss.control(n.cyc = 15, trace = TRUE)
+)
 
 # Create growth curves for a sub age-range
 new_ages <- data.frame(age_months = 48:71)
