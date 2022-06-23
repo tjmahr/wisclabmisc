@@ -69,16 +69,25 @@
     <dl><dt>data</dt>
 <dd><p>a dataset used to fit a model. If the dataframe is grouped with
 <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">dplyr::group_by()</a></code>, sample centiles are computed for each group.</p></dd>
+
+
 <dt>model</dt>
 <dd><p>a gamlss model prepared by <code><a href="mem_gamlss.html">mem_gamlss()</a></code></p></dd>
+
+
 <dt>var_x, var_y</dt>
 <dd><p>bare column names of the predictor and outcome variables</p></dd>
+
+
 <dt>centiles</dt>
 <dd><p>centiles to use for prediction. Defaults to <code>c(5, 10, 25, 50, 75, 90, 95)</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>a tibble the number of points and the percentage of points less than
+    
+
+<p>a tibble the number of points and the percentage of points less than
 or equal to each quantile value.</p>
     </div>
 
@@ -91,7 +100,7 @@ or equal to each quantile value.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>
