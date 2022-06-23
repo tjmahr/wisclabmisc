@@ -62,14 +62,14 @@ model predictions for mu, sigma, and nu, plus columns for each centile in
 \code{centiles}.
 }
 \description{
-The function fits the same type of model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00206}{Mahr 2021}: A generalized gamma
+The function fits the same type of GAMLSS model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00206}{Mahr 2021} 🔓: A generalized gamma
 regression model (via \code{\link[gamlss.dist:GG]{gamlss.dist::GG()}}) with
 natural cubic splines on the mean (mu), scale (sigma),
 and shape (nu) of the distribution. This model is fitted using this
 package's \code{\link[=mem_gamlss]{mem_gamlss()}} wrapper function.
 }
 \details{
-There are versions two of this function. The main version is
+There are two versions of this function. The main version is
 \code{fit_gen_gamma_gamlss()}, and it works with unquoted column names (e.g.,
 \code{age}). The alternative version is \code{fit_gen_gamma_gamlss_se()}; the final
 "se" stands for "Standard Evaluation". This designation means that the
@@ -87,7 +87,9 @@ centiles instead of relying on \code{\link[gamlss:centiles]{gamlss::centiles()}}
 data_fake_rates
 
 m <- fit_gen_gamma_gamlss(data_fake_rates, age_months, speaking_sps)
-summary(m)
+
+# using "qr" in summary() just to suppress a warning message
+summary(m, type = "qr")
 
 # Alternative interface
 d <- data_fake_rates
@@ -107,7 +109,7 @@ m_traced <- fit_gen_gamma_gamlss(
 )
 
 # The `.user` space includes the spline bases, so that we can make accurate
-predictions of new xs.
+# predictions of new xs.
 names(m$.user)
 
 # predict log(mean) at 55 months:
@@ -138,6 +140,5 @@ if(requireNamespace("ggplot2", quietly = TRUE)) {
       )
     )
 }
-
 }
 \concept{models}

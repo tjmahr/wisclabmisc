@@ -50,7 +50,9 @@ utils::globalVariables(c("ns", "GG", "gamlss.control"))
 #' data_fake_rates
 #'
 #' m <- fit_gen_gamma_gamlss(data_fake_rates, age_months, speaking_sps)
-#' summary(m)
+#'
+#' # using "qr" in summary() just to suppress a warning message
+#' summary(m, type = "qr")
 #'
 #' # Alternative interface
 #' d <- data_fake_rates
