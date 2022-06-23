@@ -62,11 +62,11 @@ model predictions for mu, sigma, and nu, plus columns for each centile in
 \code{centiles}.
 }
 \description{
-The function fits the same type of GAMLSS model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00206}{Mahr 2021} 🔓: A generalized gamma
-regression model (via \code{\link[gamlss.dist:GG]{gamlss.dist::GG()}}) with
-natural cubic splines on the mean (mu), scale (sigma),
-and shape (nu) of the distribution. This model is fitted using this
-package's \code{\link[=mem_gamlss]{mem_gamlss()}} wrapper function.
+The function fits the same type of GAMLSS model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00206}{Mahr and colleagues (2021)} 🔓: A
+generalized gamma regression model (via \code{\link[gamlss.dist:GG]{gamlss.dist::GG()}}) with natural
+cubic splines on the mean (mu), scale (sigma), and shape (nu) of the
+distribution. This model is fitted using this package's \code{\link[=mem_gamlss]{mem_gamlss()}}
+wrapper function.
 }
 \details{
 There are two versions of this function. The main version is
@@ -125,7 +125,7 @@ centiles
 
 # Confirm that the manual prediction matches the automatic one
 centiles[centiles$age_months == 55, "mu"]
-exp(log_mean_45)
+exp(log_mean_55)
 
 if(requireNamespace("ggplot2", quietly = TRUE)) {
   library(ggplot2)

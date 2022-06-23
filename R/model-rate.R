@@ -3,12 +3,12 @@ utils::globalVariables(c("ns", "GG", "gamlss.control"))
 
 #' Fit a generalized gamma regression model (for speaking rate)
 #'
-#' The function fits the same type of GAMLSS model as used in [Mahr
-#' 2021](https://doi.org/10.1044/2021_JSLHR-21-00206) 🔓: A generalized gamma
-#' regression model (via [gamlss.dist::GG()]) with
-#' natural cubic splines on the mean (mu), scale (sigma),
-#' and shape (nu) of the distribution. This model is fitted using this
-#' package's [mem_gamlss()] wrapper function.
+#' The function fits the same type of GAMLSS model as used in [Mahr and
+#' colleagues (2021)](https://doi.org/10.1044/2021_JSLHR-21-00206) 🔓: A
+#' generalized gamma regression model (via [gamlss.dist::GG()]) with natural
+#' cubic splines on the mean (mu), scale (sigma), and shape (nu) of the
+#' distribution. This model is fitted using this package's [mem_gamlss()]
+#' wrapper function.
 #'
 #' @rdname gen-gamma-rate
 #' @param data a data frame
@@ -88,7 +88,7 @@ utils::globalVariables(c("ns", "GG", "gamlss.control"))
 #'
 #' # Confirm that the manual prediction matches the automatic one
 #' centiles[centiles$age_months == 55, "mu"]
-#' exp(log_mean_45)
+#' exp(log_mean_55)
 #'
 #' if(requireNamespace("ggplot2", quietly = TRUE)) {
 #'   library(ggplot2)
