@@ -52,18 +52,18 @@ utils::globalVariables(c("BE"))
 #' The canonical parameterization of the beta distribution uses shape parameters
 #' \eqn{\alpha} and \eqn{\beta} and the probability density function:
 #'
-#' \deqn{f(y;\alpha,\beta) = \frac{1}{\Beta(\alpha,\beta)} y^{\alpha-1}(1-y)^{\beta-1}}
+#' \deqn{f(y;\alpha,\beta) = \frac{1}{B(\alpha,\beta)} y^{\alpha-1}(1-y)^{\beta-1}}
 #'
-#' where \eqn{\Beta} is the [beta
+#' where \eqn{B} is the [beta
 #' function](https://en.wikipedia.org/wiki/Beta_function).
 #'
 #' For beta regression, the distribution is reparameterized so that there is a
 #' mean probability \eqn{\mu} and some other parameter that represents the
-#' spread around that mean. In GAMLSS (`gamlss.dist::BE()`), they use a scale
+#' spread around that mean. In GAMLSS ([gamlss.dist::BE()]), they use a scale
 #' parameter \eqn{\sigma} (larger values mean more spread around mean).
 #' Everywhere else---[betareg::betareg()] and [rstanarm::stan_betareg()] in
 #' `vignette("betareg", "betareg")`, [brms::Beta()] in
-#' `vignette("brms_families", "brms")``, [mgcv::betar()]---it's a precision
+#' `vignette("brms_families", "brms")`, [mgcv::betar()]---it's a precision
 #' parameter \eqn{\phi} (larger values mean more precision, less spread around
 #' mean). Here is a comparison:
 #'
@@ -123,29 +123,29 @@ utils::globalVariables(c("BE"))
 #' logit_mean_55
 #' stats::plogis(logit_mean_55)
 #'
-# # But predict_gen_gamma_gamlss() does this work for us and also provides
-# # centiles
-# new_ages <- data.frame(age_months = 48:71)
-# centiles <- predict_gen_gamma_gamlss(new_ages, m)
-# centiles
-#
-# # Confirm that the manual prediction matches the automatic one
-# centiles[centiles$age_months == 55, "mu"]
-# exp(log_mean_55)
-#
-# if(requireNamespace("ggplot2", quietly = TRUE)) {
-#   library(ggplot2)
-#   ggplot(pivot_centiles_longer(centiles)) +
-#     aes(x = age_months, y = .value) +
-#     geom_line(aes(group = .centile, color = .centile_pair)) +
-#     geom_point(
-#       aes(y = speaking_sps),
-#       data = subset(
-#         data_fake_rates,
-#         48 <= age_months & age_months <= 71
-#       )
-#     )
-# }
+#' # But predict_gen_gamma_gamlss() does this work for us and also provides
+#' # centiles
+#' new_ages <- data.frame(age_months = 48:71)
+#' centiles <- predict_beta_gamlss(new_ages, m)
+#' centiles
+#'
+#' # Confirm that the manual prediction matches the automatic one
+#' centiles[centiles$age_months == 55, "mu"]
+#' stats::plogis(logit_mean_55)
+#'
+#' if(requireNamespace("ggplot2", quietly = TRUE)) {
+#'   library(ggplot2)
+#'   ggplot(pivot_centiles_longer(centiles)) +
+#'     aes(x = age_months, y = .value) +
+#'     geom_line(aes(group = .centile, color = .centile_pair)) +
+#'     geom_point(
+#'       aes(y = intelligibility),
+#'       data = subset(
+#'         data_fake_intelligibility,
+#'         48 <= age_months & age_months <= 71
+#'       )
+#'     )
+#' }
 fit_beta_gamlss <- function(
     data,
     var_x,
@@ -211,7 +211,6 @@ fit_beta_gamlss <- function(
 }
 
 
-
 #' @rdname beta-intelligibility
 #' @export
 fit_beta_gamlss_se <- function(
@@ -231,4 +230,46 @@ fit_beta_gamlss_se <- function(
   fit_beta_gamlss(
     {{ data }}, !! var_x, !! var_y, df_mu, df_sigma, control
   )
+}
+
+
+
+#' @rdname beta-intelligibility
+#' @param model a model fitted by [fit_beta_gamlss()]
+#' @inheritParams predict_centiles
+#' @export
+predict_beta_gamlss <- function(
+    newdata,
+    model,
+    centiles = c(5, 10, 50, 90, 95)
+) {
+  stopifnot(ncol(newdata) == 1)
+  newx <- newdata[[1]]
+  params <- c("mu", "sigma")
+  g <- gamlss.dist::BE()
+  list_results <- list()
+
+  for (param in params) {
+    basis <- model$.user[[paste0("basis_", param)]]
+    basis_w_intercept <- cbind(1, stats::predict(basis, newx = newx))
+    f <- g[[paste0(param, ".linkinv")]]
+
+    result <- basis_w_intercept %*% stats::coef(model, what = param)
+    list_results[[param]] <- f(result[, 1])
+  }
+
+  list_centiles <- centiles |>
+    lapply(
+      function(x) {
+        gamlss.dist::qBE(
+          x / 100,
+          list_results$mu,
+          list_results$sigma,
+        )
+      }
+    ) |>
+    stats::setNames(paste0("c", centiles))
+
+  dplyr::bind_cols(newdata, list_results, list_centiles) |>
+    tibble::as_tibble()
 }

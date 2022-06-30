@@ -3,6 +3,7 @@
 \name{fit_beta_gamlss}
 \alias{fit_beta_gamlss}
 \alias{fit_beta_gamlss_se}
+\alias{predict_beta_gamlss}
 \title{Fit a beta regression model (for intelligibility)}
 \source{
 Associated article: \url{https://doi.org/10.1044/2021_JSLHR-21-00142}
@@ -18,6 +19,8 @@ fit_beta_gamlss_se(
   df_sigma = 2,
   control = NULL
 )
+
+predict_beta_gamlss(newdata, model, centiles = c(5, 10, 50, 90, 95))
 }
 \arguments{
 \item{data}{a data frame}
@@ -34,6 +37,12 @@ the output from gamlss.}
 \item{name_x, name_y}{quoted variable names giving the predictor variable
 (e.g., \code{"age"}) and outcome variable (.e.g, \code{"intelligibility"}). These arguments
 apply to \code{fit_beta_gamlss_se()}.}
+
+\item{newdata}{a one-column dataframe for predictions}
+
+\item{model}{a model fitted by \code{\link[=fit_beta_gamlss]{fit_beta_gamlss()}}}
+
+\item{centiles}{centiles to use for prediction. Defaults to \code{c(5, 10, 50, 90, 95)}.}
 }
 \value{
 for \code{fit_beta_gamlss()} and \code{fit_beta_gamlss_se()}, a
@@ -71,17 +80,17 @@ beta distribution for its beta family than other packages.
 The canonical parameterization of the beta distribution uses shape parameters
 \eqn{\alpha} and \eqn{\beta} and the probability density function:
 
-\deqn{f(y;\alpha,\beta) = \frac{1}{\Beta(\alpha,\beta)} y^{\alpha-1}(1-y)^{\beta-1}}
+\deqn{f(y;\alpha,\beta) = \frac{1}{B(\alpha,\beta)} y^{\alpha-1}(1-y)^{\beta-1}}
 
-where \eqn{\Beta} is the \href{https://en.wikipedia.org/wiki/Beta_function}{beta function}.
+where \eqn{B} is the \href{https://en.wikipedia.org/wiki/Beta_function}{beta function}.
 
 For beta regression, the distribution is reparameterized so that there is a
 mean probability \eqn{\mu} and some other parameter that represents the
-spread around that mean. In GAMLSS (\code{gamlss.dist::BE()}), they use a scale
+spread around that mean. In GAMLSS (\code{\link[gamlss.dist:BE]{gamlss.dist::BE()}}), they use a scale
 parameter \eqn{\sigma} (larger values mean more spread around mean).
 Everywhere else---\code{\link[betareg:betareg]{betareg::betareg()}} and \code{\link[rstanarm:stan_betareg]{rstanarm::stan_betareg()}} in
 \code{vignette("betareg", "betareg")}, \code{\link[brms:brmsfamily]{brms::Beta()}} in
-`vignette("brms_families", "brms")``, \code{\link[mgcv:Beta]{mgcv::betar()}}---it's a precision
+\code{vignette("brms_families", "brms")}, \code{\link[mgcv:Beta]{mgcv::betar()}}---it's a precision
 parameter \eqn{\phi} (larger values mean more precision, less spread around
 mean). Here is a comparison:
 
@@ -140,5 +149,28 @@ logit_mean_55 <- cbind(1, predict(m$.user$basis_mu, 55)) \%*\% coef(m)
 logit_mean_55
 stats::plogis(logit_mean_55)
 
+# But predict_gen_gamma_gamlss() does this work for us and also provides
+# centiles
+new_ages <- data.frame(age_months = 48:71)
+centiles <- predict_beta_gamlss(new_ages, m)
+centiles
+
+# Confirm that the manual prediction matches the automatic one
+centiles[centiles$age_months == 55, "mu"]
+stats::plogis(logit_mean_55)
+
+if(requireNamespace("ggplot2", quietly = TRUE)) {
+  library(ggplot2)
+  ggplot(pivot_centiles_longer(centiles)) +
+    aes(x = age_months, y = .value) +
+    geom_line(aes(group = .centile, color = .centile_pair)) +
+    geom_point(
+      aes(y = intelligibility),
+      data = subset(
+        data_fake_intelligibility,
+        48 <= age_months & age_months <= 71
+      )
+    )
+}
 }
 \concept{models}
