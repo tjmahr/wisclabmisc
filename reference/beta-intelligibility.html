@@ -73,7 +73,9 @@ on the mean (mu) and scale (sigma). This model is fitted using this package's
   df_mu <span class="op">=</span> <span class="fl">3</span>,
   df_sigma <span class="op">=</span> <span class="fl">2</span>,
   control <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+<span class="op">)</span>
+
+<span class="fu">predict_beta_gamlss</span><span class="op">(</span><span class="va">newdata</span>, <span class="va">model</span>, centiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">50</span>, <span class="fl">90</span>, <span class="fl">95</span><span class="op">)</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -105,6 +107,18 @@ the output from gamlss.</p></dd>
 <dd><p>quoted variable names giving the predictor variable
 (e.g., <code>"age"</code>) and outcome variable (.e.g, <code>"intelligibility"</code>). These arguments
 apply to <code>fit_beta_gamlss_se()</code>.</p></dd>
+
+
+<dt>newdata</dt>
+<dd><p>a one-column dataframe for predictions</p></dd>
+
+
+<dt>model</dt>
+<dd><p>a model fitted by <code>fit_beta_gamlss()</code></p></dd>
+
+
+<dt>centiles</dt>
+<dd><p>centiles to use for prediction. Defaults to <code>c(5, 10, 50, 90, 95)</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -139,15 +153,15 @@ centiles instead of relying on <code><a href="https://rdrr.io/pkg/gamlss/man/cen
 beta distribution for its beta family than other packages.</p>
 <p>The canonical parameterization of the beta distribution uses shape parameters
 \(\alpha\) and \(\beta\) and the probability density function:</p>
-<p>$$f(y;\alpha,\beta) = \frac{1}{\Beta(\alpha,\beta)} y^{\alpha-1}(1-y)^{\beta-1}$$</p>
-<p>where \(\Beta\) is the <a href="https://en.wikipedia.org/wiki/Beta_function" class="external-link">beta function</a>.</p>
+<p>$$f(y;\alpha,\beta) = \frac{1}{B(\alpha,\beta)} y^{\alpha-1}(1-y)^{\beta-1}$$</p>
+<p>where \(B\) is the <a href="https://en.wikipedia.org/wiki/Beta_function" class="external-link">beta function</a>.</p>
 <p>For beta regression, the distribution is reparameterized so that there is a
 mean probability \(\mu\) and some other parameter that represents the
 spread around that mean. In GAMLSS (<code><a href="https://rdrr.io/pkg/gamlss.dist/man/BE.html" class="external-link">gamlss.dist::BE()</a></code>), they use a scale
 parameter \(\sigma\) (larger values mean more spread around mean).
 Everywhere else---<code>betareg::betareg()</code> and <code><a href="https://mc-stan.org/rstanarm/reference/stan_betareg.html" class="external-link">rstanarm::stan_betareg()</a></code> in
 <code>vignette("betareg", "betareg")</code>, <code>brms::Beta()</code> in
-`vignette("brms_families", "brms")``, <code><a href="https://rdrr.io/pkg/mgcv/man/Beta.html" class="external-link">mgcv::betar()</a></code>---it's a precision
+<code>vignette("brms_families", "brms")</code>, <code><a href="https://rdrr.io/pkg/mgcv/man/Beta.html" class="external-link">mgcv::betar()</a></code>---it's a precision
 parameter \(\phi\) (larger values mean more precision, less spread around
 mean). Here is a comparison:</p>
 <p>$$
@@ -281,6 +295,50 @@ $$</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.8358153</span>
 <span class="r-in"></span>
+<span class="r-in"><span class="co"># But predict_gen_gamma_gamlss() does this work for us and also provides</span></span>
+<span class="r-in"><span class="co"># centiles</span></span>
+<span class="r-in"><span class="va">new_ages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>age_months <span class="op">=</span> <span class="fl">48</span><span class="op">:</span><span class="fl">71</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">centiles</span> <span class="op">&lt;-</span> <span class="fu">predict_beta_gamlss</span><span class="op">(</span><span class="va">new_ages</span>, <span class="va">m</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">centiles</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    age_months    mu sigma    c5   c10   c50   c90   c95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>         48 0.761 0.296 0.527 0.586 0.778 0.912 0.936</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>         49 0.773 0.291 0.547 0.605 0.791 0.918 0.941</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>         50 0.785 0.286 0.566 0.623 0.803 0.924 0.946</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>         51 0.796 0.281 0.584 0.640 0.814 0.929 0.950</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>         52 0.807 0.276 0.602 0.656 0.824 0.934 0.953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>         53 0.817 0.271 0.619 0.672 0.834 0.938 0.957</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>         54 0.827 0.266 0.636 0.687 0.844 0.943 0.960</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>         55 0.836 0.261 0.652 0.702 0.852 0.946 0.963</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>         56 0.844 0.256 0.668 0.716 0.861 0.950 0.965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>         57 0.852 0.251 0.683 0.730 0.868 0.953 0.968</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 14 more rows</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># Confirm that the manual prediction matches the automatic one</span></span>
+<span class="r-in"><span class="va">centiles</span><span class="op">[</span><span class="va">centiles</span><span class="op">$</span><span class="va">age_months</span> <span class="op">==</span> <span class="fl">55</span>, <span class="st">"mu"</span><span class="op">]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      mu</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 0.836</span>
+<span class="r-in"><span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="va">logit_mean_55</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.8358153</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="r-in">  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span class="r-in">  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="predict_centiles.html">pivot_centiles_longer</a></span><span class="op">(</span><span class="va">centiles</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span class="r-in">    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age_months</span>, y <span class="op">=</span> <span class="va">.value</span><span class="op">)</span> <span class="op">+</span></span>
+<span class="r-in">    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="va">.centile</span>, color <span class="op">=</span> <span class="va">.centile_pair</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span class="r-in">    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span></span>
+<span class="r-in">      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">intelligibility</span><span class="op">)</span>,</span>
+<span class="r-in">      data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span>
+<span class="r-in">        <span class="va">data_fake_intelligibility</span>,</span>
+<span class="r-in">        <span class="fl">48</span> <span class="op">&lt;=</span> <span class="va">age_months</span> <span class="op">&amp;</span> <span class="va">age_months</span> <span class="op">&lt;=</span> <span class="fl">71</span></span>
+<span class="r-in">      <span class="op">)</span></span>
+<span class="r-in">    <span class="op">)</span></span>
+<span class="r-in"><span class="op">}</span></span>
+<span class="r-plt img"><img src="beta-intelligibility-1.png" alt="" width="1094" height="676"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
