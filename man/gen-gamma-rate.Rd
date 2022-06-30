@@ -62,19 +62,21 @@ model predictions for mu, sigma, and nu, plus columns for each centile in
 \code{centiles}.
 }
 \description{
-The function fits the same type of model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00206}{Mahr 2021}: A generalized gamma
-regression model with natural cubic splines on the mean (mu), scale (sigma),
-and shape (nu). This model is fitted using \code{\link[=mem_gamlss]{mem_gamlss()}}.
+The function fits the same type of GAMLSS model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00206}{Mahr and colleagues (2021)} 🔓: A
+generalized gamma regression model (via \code{\link[gamlss.dist:GG]{gamlss.dist::GG()}}) with natural
+cubic splines on the mean (mu), scale (sigma), and shape (nu) of the
+distribution. This model is fitted using this package's \code{\link[=mem_gamlss]{mem_gamlss()}}
+wrapper function.
 }
 \details{
-There are versions two of this function. The main version is
-\code{fit_gen_gamma_gamlss()} and it works with unquoted column names. The
-alternative version is \code{fit_gen_gamma_gamlss_se()}, where the final "se"
-stands for "Standard Evaluation". This designation means that the variable
-names must be given as strings (so, the quoted \code{"age"} instead of bare name
-\code{age}). This alternative version is necessary when we fit several models
-using parallel computing with \code{\link[furrr:future_map]{furrr::future_map()}} (as when using bootstrap
-resampling).
+There are two versions of this function. The main version is
+\code{fit_gen_gamma_gamlss()}, and it works with unquoted column names (e.g.,
+\code{age}). The alternative version is \code{fit_gen_gamma_gamlss_se()}; the final
+"se" stands for "Standard Evaluation". This designation means that the
+variable names must be given as strings (so, the quoted \code{"age"} instead of
+bare name \code{age}). This alternative version is necessary when we fit several
+models using parallel computing with \code{\link[furrr:future_map]{furrr::future_map()}} (as when using
+bootstrap resampling).
 
 \code{\link[=predict_centiles]{predict_centiles()}} will work with this function, but it will likely throw a
 warning message. Therefore, \code{predict_gen_gamma_gamlss()} provides an
@@ -85,7 +87,9 @@ centiles instead of relying on \code{\link[gamlss:centiles]{gamlss::centiles()}}
 data_fake_rates
 
 m <- fit_gen_gamma_gamlss(data_fake_rates, age_months, speaking_sps)
-summary(m)
+
+# using "qr" in summary() just to suppress a warning message
+summary(m, type = "qr")
 
 # Alternative interface
 d <- data_fake_rates
@@ -104,10 +108,24 @@ m_traced <- fit_gen_gamma_gamlss(
   control = gamlss::gamlss.control(n.cyc = 15, trace = TRUE)
 )
 
-# Create growth curves for a sub age-range
+# The `.user` space includes the spline bases, so that we can make accurate
+# predictions of new xs.
+names(m$.user)
+
+# predict log(mean) at 55 months:
+log_mean_55 <- cbind(1, predict(m$.user$basis_mu, 55)) \%*\% coef(m)
+log_mean_55
+exp(log_mean_55)
+
+# But predict_gen_gamma_gamlss() does this work for us and also provides
+# centiles
 new_ages <- data.frame(age_months = 48:71)
 centiles <- predict_gen_gamma_gamlss(new_ages, m)
 centiles
+
+# Confirm that the manual prediction matches the automatic one
+centiles[centiles$age_months == 55, "mu"]
+exp(log_mean_55)
 
 if(requireNamespace("ggplot2", quietly = TRUE)) {
   library(ggplot2)
@@ -122,6 +140,5 @@ if(requireNamespace("ggplot2", quietly = TRUE)) {
       )
     )
 }
-
 }
 \concept{models}
