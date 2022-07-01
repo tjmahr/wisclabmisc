@@ -379,23 +379,28 @@ $$</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Age of steepest growth for each centile</span></span>
 <span class="r-in"><span class="fu">optimize_beta_gamlss_slope</span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">model</span>,</span>
+<span class="r-in">  <span class="va">m</span>,</span>
 <span class="r-in">  centiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">50</span>, <span class="fl">90</span><span class="op">)</span>,</span>
 <span class="r-in">  interval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">data_fake_intelligibility</span><span class="op">$</span><span class="va">age_months</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in stats::coef(model, "mu"):</span> object 'model' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   maximum objective quantile</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>    40.0    0.022<span style="text-decoration: underline;">2</span>     0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>    37.7    0.022<span style="text-decoration: underline;">5</span>     0.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>    29.8    0.021<span style="text-decoration: underline;">7</span>     0.5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>    28.0    0.015<span style="text-decoration: underline;">3</span>     0.9 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Manual approach: Make fine grid of predictions and find largest jump</span></span>
 <span class="r-in"><span class="va">centiles</span> <span class="op">&lt;-</span> <span class="fu">predict_beta_gamlss</span><span class="op">(</span></span>
 <span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>age_months <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">28</span>, <span class="fl">95</span>, length.out <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">  <span class="va">model</span></span>
+<span class="r-in">  <span class="va">m</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in predict_beta_gamlss(data.frame(age_months = seq(28, 95, length.out = 1000)),     model):</span> object 'model' not found</span>
 <span class="r-in"><span class="va">centiles</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="va">centiles</span><span class="op">$</span><span class="va">c5</span><span class="op">)</span><span class="op">)</span>, <span class="st">"age_months"</span><span class="op">]</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   age_months</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>         48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>       39.9</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
