@@ -306,9 +306,9 @@ predict_beta_gamlss <- function(
 
 #' @rdname beta-intelligibility
 #' @inheritParams predict_beta_gamlss
-#' @param interval for `optimize_beta_gamlss_slope()`, the range of x values to
-#'   optimize over.
-#' @param maximum for `optimize_beta_gamlss_slope()`, whethre to find the
+#' @param interval for `optimize_beta_gamlss_slope()`, the range of `x` values
+#'   to optimize over.
+#' @param maximum for `optimize_beta_gamlss_slope()`, whether to find the
 #'   maximum slope (`TRUE`) or minimum slope (`FALSE`).
 #' @export
 optimize_beta_gamlss_slope <- function(

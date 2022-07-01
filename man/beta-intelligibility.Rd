@@ -53,10 +53,10 @@ arguments apply to \code{fit_beta_gamlss_se()}.}
 
 \item{centiles}{centiles to use for prediction. Defaults to \code{c(5, 10, 50, 90, 95)}.}
 
-\item{interval}{for \code{optimize_beta_gamlss_slope()}, the range of x values to
-optimize over.}
+\item{interval}{for \code{optimize_beta_gamlss_slope()}, the range of \code{x} values
+to optimize over.}
 
-\item{maximum}{for \code{optimize_beta_gamlss_slope()}, whethre to find the
+\item{maximum}{for \code{optimize_beta_gamlss_slope()}, whether to find the
 maximum slope (\code{TRUE}) or minimum slope (\code{FALSE}).}
 
 \item{...}{arguments passed to \code{gamlss::centiles.pred()}}
