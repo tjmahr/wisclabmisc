@@ -164,7 +164,7 @@ utils::globalVariables(c("BE"))
 #'
 #' # Age of steepest growth for each centile
 #' optimize_beta_gamlss_slope(
-#'   model,
+#'   m,
 #'   centiles = c(5, 10, 50, 90),
 #'   interval = range(data_fake_intelligibility$age_months)
 #' )
@@ -172,7 +172,7 @@ utils::globalVariables(c("BE"))
 #' # Manual approach: Make fine grid of predictions and find largest jump
 #' centiles <- predict_beta_gamlss(
 #'   data.frame(age_months = seq(28, 95, length.out = 1000)),
-#'   model
+#'   m
 #' )
 #' centiles[which.max(diff(centiles$c5)), "age_months"]
 fit_beta_gamlss <- function(

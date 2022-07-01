@@ -208,7 +208,7 @@ if(requireNamespace("ggplot2", quietly = TRUE)) {
 
 # Age of steepest growth for each centile
 optimize_beta_gamlss_slope(
-  model,
+  m,
   centiles = c(5, 10, 50, 90),
   interval = range(data_fake_intelligibility$age_months)
 )
@@ -216,7 +216,7 @@ optimize_beta_gamlss_slope(
 # Manual approach: Make fine grid of predictions and find largest jump
 centiles <- predict_beta_gamlss(
   data.frame(age_months = seq(28, 95, length.out = 1000)),
-  model
+  m
 )
 centiles[which.max(diff(centiles$c5)), "age_months"]
 }
