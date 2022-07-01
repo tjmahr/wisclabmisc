@@ -41,8 +41,10 @@ utils::globalVariables(c("ns", "GG", "gamlss.control"))
 #'
 #' [predict_centiles()] will work with this function, but it will likely throw a
 #' warning message. Therefore, `predict_gen_gamma_gamlss()` provides an
-#' alternative way to compute centiles from the model. It manually computes the
-#' centiles instead of relying on [gamlss::centiles()].
+#' alternative way to compute centiles from the model. This function manually
+#' computes the centiles instead of relying on [gamlss::centiles()]. The main
+#' difference is that new *x* values go through [splines::predict.ns()] and then
+#' these are multiplied by model coefficients.
 #'
 #' @concept models
 #' @source Associated article: <https://doi.org/10.1044/2021_JSLHR-21-00206>

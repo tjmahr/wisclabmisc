@@ -80,8 +80,10 @@ bootstrap resampling).
 
 \code{\link[=predict_centiles]{predict_centiles()}} will work with this function, but it will likely throw a
 warning message. Therefore, \code{predict_gen_gamma_gamlss()} provides an
-alternative way to compute centiles from the model. It manually computes the
-centiles instead of relying on \code{\link[gamlss:centiles]{gamlss::centiles()}}.
+alternative way to compute centiles from the model. This function manually
+computes the centiles instead of relying on \code{\link[gamlss:centiles]{gamlss::centiles()}}. The main
+difference is that new \emph{x} values go through \code{\link[splines:predict.bs]{splines::predict.ns()}} and then
+these are multiplied by model coefficients.
 }
 \examples{
 data_fake_rates

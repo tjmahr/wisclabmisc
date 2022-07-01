@@ -15,8 +15,8 @@ utils::globalVariables(c("BE"))
 #' @param var_x,var_y (unquoted) variable names giving the predictor variable
 #'   (e.g., `age`) and outcome variable (.e.g, `intelligibility`).
 #' @param name_x,name_y quoted variable names giving the predictor variable
-#'   (e.g., `"age"`) and outcome variable (.e.g, `"intelligibility"`). These arguments
-#'   apply to `fit_beta_gamlss_se()`.
+#'   (e.g., `"age"`) and outcome variable (.e.g, `"intelligibility"`). These
+#'   arguments apply to `fit_beta_gamlss_se()`.
 #' @param df_mu,df_sigma degrees of freedom
 #' @param control a [gamlss::gamlss.control()] controller. Defaults to `NULL`
 #'   which uses default settings, except for setting trace to `FALSE` to silence
@@ -26,7 +26,9 @@ utils::globalVariables(c("BE"))
 #'   of freedom for each parameter and the [splines::ns()] basis for each
 #'   parameter. For `predict_beta_gamlss()`, a dataframe containing the
 #'   model predictions for mu and sigma, plus columns for each centile in
-#'   `centiles`.
+#'   `centiles`. For `optimize_beta_gamlss_slope()`, a dataframe with the
+#'   optimized `x` values (`maximum` or `minimum`), the gradient at that `x`
+#'   value (`objective`), and the quantile (`quantile`).
 #' @export
 #' @details
 #'
@@ -40,9 +42,22 @@ utils::globalVariables(c("BE"))
 #' bootstrap resampling).
 #'
 #' [predict_centiles()] will work with this function, but it will likely throw a
-#' warning message. Therefore, `predict_beta_gamlss()` provides an
-#' alternative way to compute centiles from the model. It manually computes the
-#' centiles instead of relying on [gamlss::centiles()].
+#' warning message. Therefore, `predict_beta_gamlss()` provides an alternative
+#' way to compute centiles from the model. This function manually computes the
+#' centiles instead of relying on [gamlss::centiles()]. The main difference is
+#' that new *x* values go through [splines::predict.ns()] and then these are
+#' multiplied by model coefficients.
+#'
+#' `optimize_beta_gamlss_slope()` computes the point (i.e., age) and rate of
+#' steepest growth for different quantiles. This function wraps over the
+#' following process:
+#'
+#' - an internal prediction function computes a quantile at some `x` from model
+#'   coefficients and spline bases.
+#' - another internal function uses `numDeriv::grad()` to get the gradient
+#'   of this prediction function for `x`.
+#' - `optimize_beta_gamlss_slope()` uses `stats::optimize()` on the gradient
+#'   function to find the `x` with the maximum or minimum slope.
 #'
 #' ## GAMLSS does beta regression differently
 #'
@@ -146,13 +161,27 @@ utils::globalVariables(c("BE"))
 #'       )
 #'     )
 #' }
+#'
+#' # Age of steepest growth for each centile
+#' optimize_beta_gamlss_slope(
+#'   model,
+#'   centiles = c(5, 10, 50, 90),
+#'   interval = range(data_fake_intelligibility$age_months)
+#' )
+#'
+#' # Manual approach: Make fine grid of predictions and find largest jump
+#' centiles <- predict_beta_gamlss(
+#'   data.frame(age_months = seq(28, 95, length.out = 1000)),
+#'   model
+#' )
+#' centiles[which.max(diff(centiles$c5)), "age_months"]
 fit_beta_gamlss <- function(
-    data,
-    var_x,
-    var_y,
-    df_mu = 3,
-    df_sigma = 2,
-    control = NULL
+  data,
+  var_x,
+  var_y,
+  df_mu = 3,
+  df_sigma = 2,
+  control = NULL
 ) {
   # See link for a guide on the nonstandard evaluation used here
   # https://adv-r.hadley.nz/evaluation.html#wrapping-modelling-functions
@@ -214,12 +243,12 @@ fit_beta_gamlss <- function(
 #' @rdname beta-intelligibility
 #' @export
 fit_beta_gamlss_se <- function(
-    data,
-    name_x,
-    name_y,
-    df_mu = 3,
-    df_sigma = 2,
-    control = NULL
+  data,
+  name_x,
+  name_y,
+  df_mu = 3,
+  df_sigma = 2,
+  control = NULL
 ) {
   # Standard evaluation version for future-based parallelism, see
   # https://furrr.futureverse.org/articles/gotchas.html
@@ -239,9 +268,9 @@ fit_beta_gamlss_se <- function(
 #' @inheritParams predict_centiles
 #' @export
 predict_beta_gamlss <- function(
-    newdata,
-    model,
-    centiles = c(5, 10, 50, 90, 95)
+  newdata,
+  model,
+  centiles = c(5, 10, 50, 90, 95)
 ) {
   stopifnot(ncol(newdata) == 1)
   newx <- newdata[[1]]
@@ -272,4 +301,92 @@ predict_beta_gamlss <- function(
 
   dplyr::bind_cols(newdata, list_results, list_centiles) |>
     tibble::as_tibble()
+}
+
+
+#' @rdname beta-intelligibility
+#' @inheritParams predict_beta_gamlss
+#' @param interval for `optimize_beta_gamlss_slope()`, the range of x values to
+#'   optimize over.
+#' @param maximum for `optimize_beta_gamlss_slope()`, whethre to find the
+#'   maximum slope (`TRUE`) or minimum slope (`FALSE`).
+#' @export
+optimize_beta_gamlss_slope <- function(
+  model,
+  centiles = 50,
+  interval = c(30, 119),
+  maximum = TRUE,
+  ...
+) {
+  quantiles <- centiles / 100
+
+  coef_mu <- stats::coef(model, "mu")
+  basis_mu <- model$.user$basis_mu
+
+  coef_sigma <- stats::coef(model, "sigma")
+  basis_sigma <- model$.user$basis_sigma
+
+  results <- as.list(quantiles) |>
+    lapply(
+      function(q) {
+        o <- stats::optimize(
+          gradient_beta_gamlss,
+          interval = interval,
+          maximum = maximum,
+          quantile = q,
+          coef_mu = coef_mu,
+          coef_sigma = coef_sigma,
+          basis_mu = basis_mu,
+          basis_sigma = basis_sigma
+        )
+        o$quantile <- q
+        tibble::as_tibble(o)
+      }
+  )
+  dplyr::bind_rows(results)
+}
+
+gradient_beta_gamlss <- function(
+  xs,
+  quantile,
+  coef_mu,
+  coef_sigma,
+  basis_mu,
+  basis_sigma
+) {
+  numDeriv::grad(
+    .predict_beta_gamlss_quantile,
+    # gradient computed with respect to x
+    x = xs,
+    quantile = quantile,
+    coef_mu = coef_mu,
+    coef_sigma = coef_sigma,
+    basis_mu = basis_mu,
+    basis_sigma = basis_sigma
+  )
+}
+
+
+# Predict quantiles from model coefficients
+.predict_beta_gamlss_quantile <- function(
+  xs,
+  quantile,
+  coef_mu,
+  coef_sigma,
+  basis_mu,
+  basis_sigma,
+  target = 0
+) {
+  inv_logit <- stats::plogis
+
+  mat_mu <- cbind(1, predict(basis_mu, xs))
+  mat_sigma <- cbind(1, predict(basis_sigma, xs))
+
+  mu <- inv_logit(mat_mu %*% coef_mu)
+  sigma2 <- inv_logit(mat_sigma %*% coef_sigma) ^ 2
+
+  alpha <- (mu - mu * sigma2) / sigma2
+  beta <- ((mu - 1) * (sigma2 - 1)) / sigma2
+
+  stats::qbeta(quantile, alpha, beta) - target
 }

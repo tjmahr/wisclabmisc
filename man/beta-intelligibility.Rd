@@ -4,6 +4,7 @@
 \alias{fit_beta_gamlss}
 \alias{fit_beta_gamlss_se}
 \alias{predict_beta_gamlss}
+\alias{optimize_beta_gamlss_slope}
 \title{Fit a beta regression model (for intelligibility)}
 \source{
 Associated article: \url{https://doi.org/10.1044/2021_JSLHR-21-00142}
@@ -21,6 +22,14 @@ fit_beta_gamlss_se(
 )
 
 predict_beta_gamlss(newdata, model, centiles = c(5, 10, 50, 90, 95))
+
+optimize_beta_gamlss_slope(
+  model,
+  centiles = 50,
+  interval = c(30, 119),
+  maximum = TRUE,
+  ...
+)
 }
 \arguments{
 \item{data}{a data frame}
@@ -35,14 +44,22 @@ which uses default settings, except for setting trace to \code{FALSE} to silence
 the output from gamlss.}
 
 \item{name_x, name_y}{quoted variable names giving the predictor variable
-(e.g., \code{"age"}) and outcome variable (.e.g, \code{"intelligibility"}). These arguments
-apply to \code{fit_beta_gamlss_se()}.}
+(e.g., \code{"age"}) and outcome variable (.e.g, \code{"intelligibility"}). These
+arguments apply to \code{fit_beta_gamlss_se()}.}
 
 \item{newdata}{a one-column dataframe for predictions}
 
 \item{model}{a model fitted by \code{\link[=fit_beta_gamlss]{fit_beta_gamlss()}}}
 
 \item{centiles}{centiles to use for prediction. Defaults to \code{c(5, 10, 50, 90, 95)}.}
+
+\item{interval}{for \code{optimize_beta_gamlss_slope()}, the range of x values to
+optimize over.}
+
+\item{maximum}{for \code{optimize_beta_gamlss_slope()}, whethre to find the
+maximum slope (\code{TRUE}) or minimum slope (\code{FALSE}).}
+
+\item{...}{arguments passed to \code{gamlss::centiles.pred()}}
 }
 \value{
 for \code{fit_beta_gamlss()} and \code{fit_beta_gamlss_se()}, a
@@ -50,7 +67,9 @@ for \code{fit_beta_gamlss()} and \code{fit_beta_gamlss_se()}, a
 of freedom for each parameter and the \code{\link[splines:ns]{splines::ns()}} basis for each
 parameter. For \code{predict_beta_gamlss()}, a dataframe containing the
 model predictions for mu and sigma, plus columns for each centile in
-\code{centiles}.
+\code{centiles}. For \code{optimize_beta_gamlss_slope()}, a dataframe with the
+optimized \code{x} values (\code{maximum} or \code{minimum}), the gradient at that \code{x}
+value (\code{objective}), and the quantile (\code{quantile}).
 }
 \description{
 The function fits the same type of GAMLSS model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00142}{Hustad and colleagues (2021)} 🔓:
@@ -69,9 +88,23 @@ models using parallel computing with \code{\link[furrr:future_map]{furrr::future
 bootstrap resampling).
 
 \code{\link[=predict_centiles]{predict_centiles()}} will work with this function, but it will likely throw a
-warning message. Therefore, \code{predict_beta_gamlss()} provides an
-alternative way to compute centiles from the model. It manually computes the
-centiles instead of relying on \code{\link[gamlss:centiles]{gamlss::centiles()}}.
+warning message. Therefore, \code{predict_beta_gamlss()} provides an alternative
+way to compute centiles from the model. This function manually computes the
+centiles instead of relying on \code{\link[gamlss:centiles]{gamlss::centiles()}}. The main difference is
+that new \emph{x} values go through \code{\link[splines:predict.bs]{splines::predict.ns()}} and then these are
+multiplied by model coefficients.
+
+\code{optimize_beta_gamlss_slope()} computes the point (i.e., age) and rate of
+steepest growth for different quantiles. This function wraps over the
+following process:
+\itemize{
+\item an internal prediction function computes a quantile at some \code{x} from model
+coefficients and spline bases.
+\item another internal function uses \code{numDeriv::grad()} to get the gradient
+of this prediction function for \code{x}.
+\item \code{optimize_beta_gamlss_slope()} uses \code{stats::optimize()} on the gradient
+function to find the \code{x} with the maximum or minimum slope.
+}
 \subsection{GAMLSS does beta regression differently}{
 
 This part is a brief note that GAMLSS uses a different parameterization of the
@@ -172,5 +205,19 @@ if(requireNamespace("ggplot2", quietly = TRUE)) {
       )
     )
 }
+
+# Age of steepest growth for each centile
+optimize_beta_gamlss_slope(
+  model,
+  centiles = c(5, 10, 50, 90),
+  interval = range(data_fake_intelligibility$age_months)
+)
+
+# Manual approach: Make fine grid of predictions and find largest jump
+centiles <- predict_beta_gamlss(
+  data.frame(age_months = seq(28, 95, length.out = 1000)),
+  model
+)
+centiles[which.max(diff(centiles$c5)), "age_months"]
 }
 \concept{models}
