@@ -156,8 +156,10 @@ models using parallel computing with <code><a href="https://furrr.futureverse.or
 bootstrap resampling).</p>
 <p><code><a href="predict_centiles.html">predict_centiles()</a></code> will work with this function, but it will likely throw a
 warning message. Therefore, <code>predict_gen_gamma_gamlss()</code> provides an
-alternative way to compute centiles from the model. It manually computes the
-centiles instead of relying on <code><a href="https://rdrr.io/pkg/gamlss/man/centiles.html" class="external-link">gamlss::centiles()</a></code>.</p>
+alternative way to compute centiles from the model. This function manually
+computes the centiles instead of relying on <code><a href="https://rdrr.io/pkg/gamlss/man/centiles.html" class="external-link">gamlss::centiles()</a></code>. The main
+difference is that new <em>x</em> values go through <code><a href="https://rdrr.io/r/splines/predict.bs.html" class="external-link">splines::predict.ns()</a></code> and then
+these are multiplied by model coefficients.</p>
     </div>
 
     <div class="section level2">

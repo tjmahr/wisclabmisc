@@ -75,7 +75,15 @@ on the mean (mu) and scale (sigma). This model is fitted using this package's
   control <span class="op">=</span> <span class="cn">NULL</span>
 <span class="op">)</span>
 
-<span class="fu">predict_beta_gamlss</span><span class="op">(</span><span class="va">newdata</span>, <span class="va">model</span>, centiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">50</span>, <span class="fl">90</span>, <span class="fl">95</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu">predict_beta_gamlss</span><span class="op">(</span><span class="va">newdata</span>, <span class="va">model</span>, centiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">50</span>, <span class="fl">90</span>, <span class="fl">95</span><span class="op">)</span><span class="op">)</span>
+
+<span class="fu">optimize_beta_gamlss_slope</span><span class="op">(</span>
+  <span class="va">model</span>,
+  centiles <span class="op">=</span> <span class="fl">50</span>,
+  interval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">119</span><span class="op">)</span>,
+  maximum <span class="op">=</span> <span class="cn">TRUE</span>,
+  <span class="va">...</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -105,8 +113,8 @@ the output from gamlss.</p></dd>
 
 <dt>name_x, name_y</dt>
 <dd><p>quoted variable names giving the predictor variable
-(e.g., <code>"age"</code>) and outcome variable (.e.g, <code>"intelligibility"</code>). These arguments
-apply to <code>fit_beta_gamlss_se()</code>.</p></dd>
+(e.g., <code>"age"</code>) and outcome variable (.e.g, <code>"intelligibility"</code>). These
+arguments apply to <code>fit_beta_gamlss_se()</code>.</p></dd>
 
 
 <dt>newdata</dt>
@@ -120,6 +128,20 @@ apply to <code>fit_beta_gamlss_se()</code>.</p></dd>
 <dt>centiles</dt>
 <dd><p>centiles to use for prediction. Defaults to <code>c(5, 10, 50, 90, 95)</code>.</p></dd>
 
+
+<dt>interval</dt>
+<dd><p>for <code>optimize_beta_gamlss_slope()</code>, the range of x values to
+optimize over.</p></dd>
+
+
+<dt>maximum</dt>
+<dd><p>for <code>optimize_beta_gamlss_slope()</code>, whethre to find the
+maximum slope (<code>TRUE</code>) or minimum slope (<code>FALSE</code>).</p></dd>
+
+
+<dt>...</dt>
+<dd><p>arguments passed to <code><a href="https://rdrr.io/pkg/gamlss/man/centiles.pred.html" class="external-link">gamlss::centiles.pred()</a></code></p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -130,7 +152,11 @@ apply to <code>fit_beta_gamlss_se()</code>.</p></dd>
 of freedom for each parameter and the <code><a href="https://rdrr.io/r/splines/ns.html" class="external-link">splines::ns()</a></code> basis for each
 parameter. For <code>predict_beta_gamlss()</code>, a dataframe containing the
 model predictions for mu and sigma, plus columns for each centile in
-<code>centiles</code>.</p>
+<code>centiles</code>. For <code>optimize_beta_gamlss_slope()</code>, a dataframe with the
+optimized <code>x</code> values (<code>maximum</code> or <code>minimum</code>), the gradient at that <code>x</code></p>
+
+
+<p>value (<code>objective</code>), and the quantile (<code>quantile</code>).</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -143,9 +169,20 @@ bare name <code>age</code>). This alternative version is necessary when we fit s
 models using parallel computing with <code><a href="https://furrr.futureverse.org/reference/future_map.html" class="external-link">furrr::future_map()</a></code> (as when using
 bootstrap resampling).</p>
 <p><code><a href="predict_centiles.html">predict_centiles()</a></code> will work with this function, but it will likely throw a
-warning message. Therefore, <code>predict_beta_gamlss()</code> provides an
-alternative way to compute centiles from the model. It manually computes the
-centiles instead of relying on <code><a href="https://rdrr.io/pkg/gamlss/man/centiles.html" class="external-link">gamlss::centiles()</a></code>.</p><div class="section">
+warning message. Therefore, <code>predict_beta_gamlss()</code> provides an alternative
+way to compute centiles from the model. This function manually computes the
+centiles instead of relying on <code><a href="https://rdrr.io/pkg/gamlss/man/centiles.html" class="external-link">gamlss::centiles()</a></code>. The main difference is
+that new <em>x</em> values go through <code><a href="https://rdrr.io/r/splines/predict.bs.html" class="external-link">splines::predict.ns()</a></code> and then these are
+multiplied by model coefficients.</p>
+<p><code>optimize_beta_gamlss_slope()</code> computes the point (i.e., age) and rate of
+steepest growth for different quantiles. This function wraps over the
+following process:</p><ul><li><p>an internal prediction function computes a quantile at some <code>x</code> from model
+coefficients and spline bases.</p></li>
+<li><p>another internal function uses <code><a href="https://rdrr.io/pkg/numDeriv/man/grad.html" class="external-link">numDeriv::grad()</a></code> to get the gradient
+of this prediction function for <code>x</code>.</p></li>
+<li><p><code>optimize_beta_gamlss_slope()</code> uses <code><a href="https://rdrr.io/r/stats/optimize.html" class="external-link">stats::optimize()</a></code> on the gradient
+function to find the <code>x</code> with the maximum or minimum slope.</p></li>
+</ul><div class="section">
 <h3 id="gamlss-does-beta-regression-differently">GAMLSS does beta regression differently<a class="anchor" aria-label="anchor" href="#gamlss-does-beta-regression-differently"></a></h3>
 
 
@@ -339,6 +376,26 @@ $$</p>
 <span class="r-in">    <span class="op">)</span></span>
 <span class="r-in"><span class="op">}</span></span>
 <span class="r-plt img"><img src="beta-intelligibility-1.png" alt="" width="1094" height="676"></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># Age of steepest growth for each centile</span></span>
+<span class="r-in"><span class="fu">optimize_beta_gamlss_slope</span><span class="op">(</span></span>
+<span class="r-in">  <span class="va">model</span>,</span>
+<span class="r-in">  centiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">50</span>, <span class="fl">90</span><span class="op">)</span>,</span>
+<span class="r-in">  interval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">data_fake_intelligibility</span><span class="op">$</span><span class="va">age_months</span><span class="op">)</span></span>
+<span class="r-in"><span class="op">)</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in stats::coef(model, "mu"):</span> object 'model' not found</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># Manual approach: Make fine grid of predictions and find largest jump</span></span>
+<span class="r-in"><span class="va">centiles</span> <span class="op">&lt;-</span> <span class="fu">predict_beta_gamlss</span><span class="op">(</span></span>
+<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>age_months <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">28</span>, <span class="fl">95</span>, length.out <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span><span class="op">)</span>,</span>
+<span class="r-in">  <span class="va">model</span></span>
+<span class="r-in"><span class="op">)</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in predict_beta_gamlss(data.frame(age_months = seq(28, 95, length.out = 1000)),     model):</span> object 'model' not found</span>
+<span class="r-in"><span class="va">centiles</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="va">centiles</span><span class="op">$</span><span class="va">c5</span><span class="op">)</span><span class="op">)</span>, <span class="st">"age_months"</span><span class="op">]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   age_months</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>         48</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
