@@ -318,6 +318,11 @@ optimize_beta_gamlss_slope <- function(
   maximum = TRUE,
   ...
 ) {
+  rlang::check_installed(
+    pkg = c("numDeriv"),
+    reason = "for optimize_beta_gamlss_slope()"
+  )
+
   quantiles <- centiles / 100
 
   coef_mu <- stats::coef(model, "mu")

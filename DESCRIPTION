@@ -31,7 +31,8 @@ Suggests:
     tidyverse,
     gamlss.dist,
     ggplot2,
-    nlme
+    nlme,
+    numDeriv
 Imports: 
     rlang (>= 0.4.11),
     gamlss (>= 5.2.0),
