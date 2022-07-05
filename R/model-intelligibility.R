@@ -28,7 +28,11 @@ utils::globalVariables(c("BE"))
 #'   model predictions for mu and sigma, plus columns for each centile in
 #'   `centiles`. For `optimize_beta_gamlss_slope()`, a dataframe with the
 #'   optimized `x` values (`maximum` or `minimum`), the gradient at that `x`
-#'   value (`objective`), and the quantile (`quantile`).
+#'   value (`objective`), and the quantile (`quantile`). For
+#'   `uniroot_beta_gamlss()`, a dataframe one row per quantile/target
+#'   combination with the results of calling [stats::uniroot()]. The `root`
+#'   column is the `x` value where the `quantile` curve crosses the `target`
+#'   value.
 #' @export
 #' @details
 #'
@@ -59,6 +63,14 @@ utils::globalVariables(c("BE"))
 #' - `optimize_beta_gamlss_slope()` uses `stats::optimize()` on the gradient
 #'   function to find the `x` with the maximum or minimum slope.
 #'
+#' `uniroot_beta_gamlss()` also uses this internal prediction function to find
+#' when a quantile growth curve crosses a given value. [stats::uniroot()] finds
+#' where a function crosses 0 (a root). If we modify our prediction function to
+#' always subtract .5 at the end, then the root for this prediction function
+#' would be the x value where the predicted value crosses .5. In our work, this
+#' function would be used to find, say, the age (`root`) when children in the
+#' 10th percentile (`centiles`) cross 50% intelligibility (`targets`).
+#'
 #' ## GAMLSS does beta regression differently
 #'
 #' This part is a brief note that GAMLSS uses a different parameterization of the
@@ -76,9 +88,9 @@ utils::globalVariables(c("BE"))
 #' mean probability \eqn{\mu} and some other parameter that represents the
 #' spread around that mean. In GAMLSS ([gamlss.dist::BE()]), they use a scale
 #' parameter \eqn{\sigma} (larger values mean more spread around mean).
-#' Everywhere else---[betareg::betareg()] and [rstanarm::stan_betareg()] in
+#' Everywhere else—[betareg::betareg()] and [rstanarm::stan_betareg()] in
 #' `vignette("betareg", "betareg")`, [brms::Beta()] in
-#' `vignette("brms_families", "brms")`, [mgcv::betar()]---it's a precision
+#' `vignette("brms_families", "brms")`, [mgcv::betar()]—it's a precision
 #' parameter \eqn{\phi} (larger values mean more precision, less spread around
 #' mean). Here is a comparison:
 #'
@@ -170,11 +182,18 @@ utils::globalVariables(c("BE"))
 #' )
 #'
 #' # Manual approach: Make fine grid of predictions and find largest jump
-#' centiles <- predict_beta_gamlss(
+#' fine_centiles <- predict_beta_gamlss(
 #'   data.frame(age_months = seq(28, 95, length.out = 1000)),
 #'   m
 #' )
-#' centiles[which.max(diff(centiles$c5)), "age_months"]
+#' fine_centiles[which.max(diff(fine_centiles$c5)), "age_months"]
+#'
+#' # When do children in different centiles reach 50%, 70% intelligibility?
+#' uniroot_beta_gamlss(
+#'   model,
+#'   centiles = c(5, 10, 50),
+#'   targets = c(.5, .7)
+#' )
 fit_beta_gamlss <- function(
   data,
   var_x,
@@ -264,8 +283,12 @@ fit_beta_gamlss_se <- function(
 
 
 #' @rdname beta-intelligibility
-#' @param model a model fitted by [fit_beta_gamlss()]
 #' @inheritParams predict_centiles
+#' @param model a model fitted by [fit_beta_gamlss()]
+#' @param centiles centiles to use for prediction. Defaults to
+#' `c(5, 10, 50, 90, 95)` for `predict_beta_gamlss()`. Defaults to `50` for
+#' `optimize_beta_gamlss_slope()` and `uniroot_beta_gamlss()`, although both
+#' of these functions support multiple centile values.
 #' @export
 predict_beta_gamlss <- function(
   newdata,
@@ -307,7 +330,8 @@ predict_beta_gamlss <- function(
 #' @rdname beta-intelligibility
 #' @inheritParams predict_beta_gamlss
 #' @param interval for `optimize_beta_gamlss_slope()`, the range of `x` values
-#'   to optimize over.
+#'   to optimize over. For `uniroot_beta_gamlss()`, the range of `x` values to
+#'   search for roots (target y values) in.
 #' @param maximum for `optimize_beta_gamlss_slope()`, whether to find the
 #'   maximum slope (`TRUE`) or minimum slope (`FALSE`).
 #' @export
@@ -315,8 +339,7 @@ optimize_beta_gamlss_slope <- function(
   model,
   centiles = 50,
   interval = c(30, 119),
-  maximum = TRUE,
-  ...
+  maximum = TRUE
 ) {
   rlang::check_installed(
     pkg = c("numDeriv"),
@@ -371,6 +394,43 @@ gradient_beta_gamlss <- function(
   )
 }
 
+#' @rdname beta-intelligibility
+#' @inheritParams predict_beta_gamlss
+#' @param targets for `uniroot_beta_gamlss()`, the target y values to use as
+#'   roots. By default, .5 is used, so that `uniroot_beta_gamlss()` returns the
+#'   `x` value where the y value is .5. Multiple targets are supported.
+#' @export
+uniroot_beta_gamlss <- function(
+  model,
+  centiles = 50,
+  targets = .5,
+  interval = c(30, 119)
+) {
+  basis_mu <- model$.user$basis_mu
+  basis_sigma <- model$.user$basis_sigma
+  coef_mu <- stats::coef(model, "mu")
+  coef_sigma <- stats::coef(model, "sigma")
+  quantiles <- centiles / 100
+
+  l <- expand.grid(quantile = quantiles, target = targets)
+  f_one <- function(q, t) {
+    results <- try_uniroot(
+      .predict_beta_gamlss_quantile,
+      interval = interval,
+      quantile = q,
+      coef_mu = coef_mu,
+      coef_sigma = coef_sigma,
+      basis_mu = basis_mu,
+      basis_sigma = basis_sigma,
+      target = t
+    )
+    c(list(quantile = q, target = t), results)
+  }
+
+  Map(f_one, l$quantile, l$target) |>
+    lapply(tibble::as_tibble) |>
+    do.call(rbind, args = _)
+}
 
 # Predict quantiles from model coefficients
 .predict_beta_gamlss_quantile <- function(

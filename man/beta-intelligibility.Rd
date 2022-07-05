@@ -5,6 +5,7 @@
 \alias{fit_beta_gamlss_se}
 \alias{predict_beta_gamlss}
 \alias{optimize_beta_gamlss_slope}
+\alias{uniroot_beta_gamlss}
 \title{Fit a beta regression model (for intelligibility)}
 \source{
 Associated article: \url{https://doi.org/10.1044/2021_JSLHR-21-00142}
@@ -27,9 +28,10 @@ optimize_beta_gamlss_slope(
   model,
   centiles = 50,
   interval = c(30, 119),
-  maximum = TRUE,
-  ...
+  maximum = TRUE
 )
+
+uniroot_beta_gamlss(model, centiles = 50, targets = 0.5, interval = c(30, 119))
 }
 \arguments{
 \item{data}{a data frame}
@@ -51,15 +53,21 @@ arguments apply to \code{fit_beta_gamlss_se()}.}
 
 \item{model}{a model fitted by \code{\link[=fit_beta_gamlss]{fit_beta_gamlss()}}}
 
-\item{centiles}{centiles to use for prediction. Defaults to \code{c(5, 10, 50, 90, 95)}.}
+\item{centiles}{centiles to use for prediction. Defaults to
+\code{c(5, 10, 50, 90, 95)} for \code{predict_beta_gamlss()}. Defaults to \code{50} for
+\code{optimize_beta_gamlss_slope()} and \code{uniroot_beta_gamlss()}, although both
+of these functions support multiple centile values.}
 
 \item{interval}{for \code{optimize_beta_gamlss_slope()}, the range of \code{x} values
-to optimize over.}
+to optimize over. For \code{uniroot_beta_gamlss()}, the range of \code{x} values to
+search for roots (target y values) in.}
 
 \item{maximum}{for \code{optimize_beta_gamlss_slope()}, whether to find the
 maximum slope (\code{TRUE}) or minimum slope (\code{FALSE}).}
 
-\item{...}{arguments passed to \code{gamlss::centiles.pred()}}
+\item{targets}{for \code{uniroot_beta_gamlss()}, the target y values to use as
+roots. By default, .5 is used, so that \code{uniroot_beta_gamlss()} returns the
+\code{x} value where the y value is .5. Multiple targets are supported.}
 }
 \value{
 for \code{fit_beta_gamlss()} and \code{fit_beta_gamlss_se()}, a
@@ -69,7 +77,11 @@ parameter. For \code{predict_beta_gamlss()}, a dataframe containing the
 model predictions for mu and sigma, plus columns for each centile in
 \code{centiles}. For \code{optimize_beta_gamlss_slope()}, a dataframe with the
 optimized \code{x} values (\code{maximum} or \code{minimum}), the gradient at that \code{x}
-value (\code{objective}), and the quantile (\code{quantile}).
+value (\code{objective}), and the quantile (\code{quantile}). For
+\code{uniroot_beta_gamlss()}, a dataframe one row per quantile/target
+combination with the results of calling \code{\link[stats:uniroot]{stats::uniroot()}}. The \code{root}
+column is the \code{x} value where the \code{quantile} curve crosses the \code{target}
+value.
 }
 \description{
 The function fits the same type of GAMLSS model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00142}{Hustad and colleagues (2021)} 🔓:
@@ -105,6 +117,14 @@ of this prediction function for \code{x}.
 \item \code{optimize_beta_gamlss_slope()} uses \code{stats::optimize()} on the gradient
 function to find the \code{x} with the maximum or minimum slope.
 }
+
+\code{uniroot_beta_gamlss()} also uses this internal prediction function to find
+when a quantile growth curve crosses a given value. \code{\link[stats:uniroot]{stats::uniroot()}} finds
+where a function crosses 0 (a root). If we modify our prediction function to
+always subtract .5 at the end, then the root for this prediction function
+would be the x value where the predicted value crosses .5. In our work, this
+function would be used to find, say, the age (\code{root}) when children in the
+10th percentile (\code{centiles}) cross 50\% intelligibility (\code{targets}).
 \subsection{GAMLSS does beta regression differently}{
 
 This part is a brief note that GAMLSS uses a different parameterization of the
@@ -121,9 +141,9 @@ For beta regression, the distribution is reparameterized so that there is a
 mean probability \eqn{\mu} and some other parameter that represents the
 spread around that mean. In GAMLSS (\code{\link[gamlss.dist:BE]{gamlss.dist::BE()}}), they use a scale
 parameter \eqn{\sigma} (larger values mean more spread around mean).
-Everywhere else---\code{\link[betareg:betareg]{betareg::betareg()}} and \code{\link[rstanarm:stan_betareg]{rstanarm::stan_betareg()}} in
+Everywhere else—\code{\link[betareg:betareg]{betareg::betareg()}} and \code{\link[rstanarm:stan_betareg]{rstanarm::stan_betareg()}} in
 \code{vignette("betareg", "betareg")}, \code{\link[brms:brmsfamily]{brms::Beta()}} in
-\code{vignette("brms_families", "brms")}, \code{\link[mgcv:Beta]{mgcv::betar()}}---it's a precision
+\code{vignette("brms_families", "brms")}, \code{\link[mgcv:Beta]{mgcv::betar()}}—it's a precision
 parameter \eqn{\phi} (larger values mean more precision, less spread around
 mean). Here is a comparison:
 
@@ -214,10 +234,17 @@ optimize_beta_gamlss_slope(
 )
 
 # Manual approach: Make fine grid of predictions and find largest jump
-centiles <- predict_beta_gamlss(
+fine_centiles <- predict_beta_gamlss(
   data.frame(age_months = seq(28, 95, length.out = 1000)),
   m
 )
-centiles[which.max(diff(centiles$c5)), "age_months"]
+fine_centiles[which.max(diff(fine_centiles$c5)), "age_months"]
+
+# When do children in different centiles reach 50\%, 70\% intelligibility?
+uniroot_beta_gamlss(
+  model,
+  centiles = c(5, 10, 50),
+  targets = c(.5, .7)
+)
 }
 \concept{models}
