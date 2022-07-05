@@ -425,11 +425,19 @@ $$</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># When do children in different centiles reach 50%, 70% intelligibility?</span></span>
 <span class="r-in"><span class="fu">uniroot_beta_gamlss</span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">model</span>,</span>
+<span class="r-in">  <span class="va">m</span>,</span>
 <span class="r-in">  centiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">50</span><span class="op">)</span>,</span>
 <span class="r-in">  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.5</span>, <span class="fl">.7</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in uniroot_beta_gamlss(model, centiles = c(5, 10, 50), targets = c(0.5,     0.7)):</span> object 'model' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 7</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   quantile target  root    f.root  iter init.it estim.prec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     0.05    0.5  46.7 -<span style="color: #BB0000;">3.31</span><span style="color: #949494;">e</span><span style="color: #BB0000;">-11</span>     7      <span style="color: #BB0000;">NA</span>  0.000<span style="text-decoration: underline;">061</span>0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     0.1     0.5  43.7  1.38<span style="color: #949494;">e</span><span style="color: #BB0000;">- 7</span>     6      <span style="color: #BB0000;">NA</span>  0.000<span style="text-decoration: underline;">061</span>0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     0.5     0.5  32.4 -<span style="color: #BB0000;">1.91</span><span style="color: #949494;">e</span><span style="color: #BB0000;">- 9</span>     5      <span style="color: #BB0000;">NA</span>  0.000<span style="text-decoration: underline;">061</span>0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     0.05    0.7  58.2 -<span style="color: #BB0000;">1.23</span><span style="color: #949494;">e</span><span style="color: #BB0000;">-11</span>     7      <span style="color: #BB0000;">NA</span>  0.000<span style="text-decoration: underline;">061</span>0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     0.1     0.7  54.8 -<span style="color: #BB0000;">1.72</span><span style="color: #949494;">e</span><span style="color: #BB0000;">- 8</span>     7      <span style="color: #BB0000;">NA</span>  0.000<span style="text-decoration: underline;">061</span>0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     0.5     0.7  42.7 -<span style="color: #BB0000;">2.51</span><span style="color: #949494;">e</span><span style="color: #BB0000;">- 7</span>     7      <span style="color: #BB0000;">NA</span>  0.000<span style="text-decoration: underline;">061</span>0</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
