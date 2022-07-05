@@ -1,3 +1,5 @@
+
+
 testthat::test_that("Predictive values example from Wikipedia work", {
   # https://en.wikipedia.org/wiki/Bayes%27_theorem#Drug_testing
   ppv <- compute_predictive_value_from_rates(

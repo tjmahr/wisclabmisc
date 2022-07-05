@@ -384,8 +384,8 @@ gradient_beta_gamlss <- function(
 ) {
   inv_logit <- stats::plogis
 
-  mat_mu <- cbind(1, predict(basis_mu, xs))
-  mat_sigma <- cbind(1, predict(basis_sigma, xs))
+  mat_mu <- cbind(1, stats::predict(basis_mu, xs))
+  mat_sigma <- cbind(1, stats::predict(basis_sigma, xs))
 
   mu <- inv_logit(mat_mu %*% coef_mu)
   sigma2 <- inv_logit(mat_sigma %*% coef_sigma) ^ 2
