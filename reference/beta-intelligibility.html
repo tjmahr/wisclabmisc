@@ -201,9 +201,10 @@ function to find the <code>x</code> with the maximum or minimum slope.</p></li>
 when a quantile growth curve crosses a given value. <code><a href="https://rdrr.io/r/stats/uniroot.html" class="external-link">stats::uniroot()</a></code> finds
 where a function crosses 0 (a root). If we modify our prediction function to
 always subtract .5 at the end, then the root for this prediction function
-would be the x value where the predicted value crosses .5. In our work, this
-function would be used to find, say, the age (<code>root</code>) when children in the
-10th percentile (<code>centiles</code>) cross 50% intelligibility (<code>targets</code>).</p><div class="section">
+would be the x value where the predicted value crosses .5. That's the idea
+behind how <code>uniroot_beta_gamlss()</code> works. In our work, we would use this
+approach to find, say, the age (root) when children in the 10th percentile
+(<code>centiles</code>) cross 50% intelligibility (<code>targets</code>).</p><div class="section">
 <h3 id="gamlss-does-beta-regression-differently">GAMLSS does beta regression differently<a class="anchor" aria-label="anchor" href="#gamlss-does-beta-regression-differently"></a></h3>
 
 
@@ -400,7 +401,7 @@ $$</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Age of steepest growth for each centile</span></span>
 <span class="r-in"><span class="fu">optimize_beta_gamlss_slope</span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">m</span>,</span>
+<span class="r-in">  model <span class="op">=</span> <span class="va">m</span>,</span>
 <span class="r-in">  centiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">50</span>, <span class="fl">90</span><span class="op">)</span>,</span>
 <span class="r-in">  interval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">data_fake_intelligibility</span><span class="op">$</span><span class="va">age_months</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
@@ -413,11 +414,11 @@ $$</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>    28.0    0.015<span style="text-decoration: underline;">3</span>     0.9 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Manual approach: Make fine grid of predictions and find largest jump</span></span>
-<span class="r-in"><span class="va">fine_centiles</span> <span class="op">&lt;-</span> <span class="fu">predict_beta_gamlss</span><span class="op">(</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>age_months <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">28</span>, <span class="fl">95</span>, length.out <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">  <span class="va">m</span></span>
+<span class="r-in"><span class="va">centiles_grid</span> <span class="op">&lt;-</span> <span class="fu">predict_beta_gamlss</span><span class="op">(</span></span>
+<span class="r-in">  newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>age_months <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">28</span>, <span class="fl">95</span>, length.out <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span><span class="op">)</span>,</span>
+<span class="r-in">  model <span class="op">=</span> <span class="va">m</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">fine_centiles</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="va">fine_centiles</span><span class="op">$</span><span class="va">c5</span><span class="op">)</span><span class="op">)</span>, <span class="st">"age_months"</span><span class="op">]</span></span>
+<span class="r-in"><span class="va">centiles_grid</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="va">centiles_grid</span><span class="op">$</span><span class="va">c5</span><span class="op">)</span><span class="op">)</span>, <span class="st">"age_months"</span><span class="op">]</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   age_months</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -425,7 +426,7 @@ $$</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># When do children in different centiles reach 50%, 70% intelligibility?</span></span>
 <span class="r-in"><span class="fu">uniroot_beta_gamlss</span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">m</span>,</span>
+<span class="r-in">  model <span class="op">=</span> <span class="va">m</span>,</span>
 <span class="r-in">  centiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">50</span><span class="op">)</span>,</span>
 <span class="r-in">  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.5</span>, <span class="fl">.7</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
