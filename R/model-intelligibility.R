@@ -67,9 +67,10 @@ utils::globalVariables(c("BE"))
 #' when a quantile growth curve crosses a given value. [stats::uniroot()] finds
 #' where a function crosses 0 (a root). If we modify our prediction function to
 #' always subtract .5 at the end, then the root for this prediction function
-#' would be the x value where the predicted value crosses .5. In our work, this
-#' function would be used to find, say, the age (`root`) when children in the
-#' 10th percentile (`centiles`) cross 50% intelligibility (`targets`).
+#' would be the x value where the predicted value crosses .5. That's the idea
+#' behind how `uniroot_beta_gamlss()` works. In our work, we would use this
+#' approach to find, say, the age (root) when children in the 10th percentile
+#' (`centiles`) cross 50% intelligibility (`targets`).
 #'
 #' ## GAMLSS does beta regression differently
 #'
@@ -176,21 +177,21 @@ utils::globalVariables(c("BE"))
 #'
 #' # Age of steepest growth for each centile
 #' optimize_beta_gamlss_slope(
-#'   m,
+#'   model = m,
 #'   centiles = c(5, 10, 50, 90),
 #'   interval = range(data_fake_intelligibility$age_months)
 #' )
 #'
 #' # Manual approach: Make fine grid of predictions and find largest jump
-#' fine_centiles <- predict_beta_gamlss(
-#'   data.frame(age_months = seq(28, 95, length.out = 1000)),
-#'   m
+#' centiles_grid <- predict_beta_gamlss(
+#'   newdata = data.frame(age_months = seq(28, 95, length.out = 1000)),
+#'   model = m
 #' )
-#' fine_centiles[which.max(diff(fine_centiles$c5)), "age_months"]
+#' centiles_grid[which.max(diff(centiles_grid$c5)), "age_months"]
 #'
 #' # When do children in different centiles reach 50%, 70% intelligibility?
 #' uniroot_beta_gamlss(
-#'   m,
+#'   model = m,
 #'   centiles = c(5, 10, 50),
 #'   targets = c(.5, .7)
 #' )
