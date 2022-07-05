@@ -81,9 +81,10 @@ on the mean (mu) and scale (sigma). This model is fitted using this package's
   <span class="va">model</span>,
   centiles <span class="op">=</span> <span class="fl">50</span>,
   interval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">119</span><span class="op">)</span>,
-  maximum <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+  maximum <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
+
+<span class="fu">uniroot_beta_gamlss</span><span class="op">(</span><span class="va">model</span>, centiles <span class="op">=</span> <span class="fl">50</span>, targets <span class="op">=</span> <span class="fl">0.5</span>, interval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">119</span><span class="op">)</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -126,12 +127,16 @@ arguments apply to <code>fit_beta_gamlss_se()</code>.</p></dd>
 
 
 <dt>centiles</dt>
-<dd><p>centiles to use for prediction. Defaults to <code>c(5, 10, 50, 90, 95)</code>.</p></dd>
+<dd><p>centiles to use for prediction. Defaults to
+<code>c(5, 10, 50, 90, 95)</code> for <code>predict_beta_gamlss()</code>. Defaults to <code>50</code> for
+<code>optimize_beta_gamlss_slope()</code> and <code>uniroot_beta_gamlss()</code>, although both
+of these functions support multiple centile values.</p></dd>
 
 
 <dt>interval</dt>
 <dd><p>for <code>optimize_beta_gamlss_slope()</code>, the range of <code>x</code> values
-to optimize over.</p></dd>
+to optimize over. For <code>uniroot_beta_gamlss()</code>, the range of <code>x</code> values to
+search for roots (target y values) in.</p></dd>
 
 
 <dt>maximum</dt>
@@ -139,8 +144,10 @@ to optimize over.</p></dd>
 maximum slope (<code>TRUE</code>) or minimum slope (<code>FALSE</code>).</p></dd>
 
 
-<dt>...</dt>
-<dd><p>arguments passed to <code><a href="https://rdrr.io/pkg/gamlss/man/centiles.pred.html" class="external-link">gamlss::centiles.pred()</a></code></p></dd>
+<dt>targets</dt>
+<dd><p>for <code>uniroot_beta_gamlss()</code>, the target y values to use as
+roots. By default, .5 is used, so that <code>uniroot_beta_gamlss()</code> returns the
+<code>x</code> value where the y value is .5. Multiple targets are supported.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -156,7 +163,15 @@ model predictions for mu and sigma, plus columns for each centile in
 optimized <code>x</code> values (<code>maximum</code> or <code>minimum</code>), the gradient at that <code>x</code></p>
 
 
-<p>value (<code>objective</code>), and the quantile (<code>quantile</code>).</p>
+<p>value (<code>objective</code>), and the quantile (<code>quantile</code>). For
+<code>uniroot_beta_gamlss()</code>, a dataframe one row per quantile/target
+combination with the results of calling <code><a href="https://rdrr.io/r/stats/uniroot.html" class="external-link">stats::uniroot()</a></code>. The <code>root</code></p>
+
+
+<p>column is the <code>x</code> value where the <code>quantile</code> curve crosses the <code>target</code></p>
+
+
+<p>value.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -182,7 +197,13 @@ coefficients and spline bases.</p></li>
 of this prediction function for <code>x</code>.</p></li>
 <li><p><code>optimize_beta_gamlss_slope()</code> uses <code><a href="https://rdrr.io/r/stats/optimize.html" class="external-link">stats::optimize()</a></code> on the gradient
 function to find the <code>x</code> with the maximum or minimum slope.</p></li>
-</ul><div class="section">
+</ul><p><code>uniroot_beta_gamlss()</code> also uses this internal prediction function to find
+when a quantile growth curve crosses a given value. <code><a href="https://rdrr.io/r/stats/uniroot.html" class="external-link">stats::uniroot()</a></code> finds
+where a function crosses 0 (a root). If we modify our prediction function to
+always subtract .5 at the end, then the root for this prediction function
+would be the x value where the predicted value crosses .5. In our work, this
+function would be used to find, say, the age (<code>root</code>) when children in the
+10th percentile (<code>centiles</code>) cross 50% intelligibility (<code>targets</code>).</p><div class="section">
 <h3 id="gamlss-does-beta-regression-differently">GAMLSS does beta regression differently<a class="anchor" aria-label="anchor" href="#gamlss-does-beta-regression-differently"></a></h3>
 
 
@@ -196,9 +217,9 @@ beta distribution for its beta family than other packages.</p>
 mean probability \(\mu\) and some other parameter that represents the
 spread around that mean. In GAMLSS (<code><a href="https://rdrr.io/pkg/gamlss.dist/man/BE.html" class="external-link">gamlss.dist::BE()</a></code>), they use a scale
 parameter \(\sigma\) (larger values mean more spread around mean).
-Everywhere else---<code>betareg::betareg()</code> and <code><a href="https://mc-stan.org/rstanarm/reference/stan_betareg.html" class="external-link">rstanarm::stan_betareg()</a></code> in
+Everywhere else—<code>betareg::betareg()</code> and <code><a href="https://mc-stan.org/rstanarm/reference/stan_betareg.html" class="external-link">rstanarm::stan_betareg()</a></code> in
 <code>vignette("betareg", "betareg")</code>, <code>brms::Beta()</code> in
-<code>vignette("brms_families", "brms")</code>, <code><a href="https://rdrr.io/pkg/mgcv/man/Beta.html" class="external-link">mgcv::betar()</a></code>---it's a precision
+<code>vignette("brms_families", "brms")</code>, <code><a href="https://rdrr.io/pkg/mgcv/man/Beta.html" class="external-link">mgcv::betar()</a></code>—it's a precision
 parameter \(\phi\) (larger values mean more precision, less spread around
 mean). Here is a comparison:</p>
 <p>$$
@@ -392,15 +413,23 @@ $$</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>    28.0    0.015<span style="text-decoration: underline;">3</span>     0.9 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Manual approach: Make fine grid of predictions and find largest jump</span></span>
-<span class="r-in"><span class="va">centiles</span> <span class="op">&lt;-</span> <span class="fu">predict_beta_gamlss</span><span class="op">(</span></span>
+<span class="r-in"><span class="va">fine_centiles</span> <span class="op">&lt;-</span> <span class="fu">predict_beta_gamlss</span><span class="op">(</span></span>
 <span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>age_months <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">28</span>, <span class="fl">95</span>, length.out <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span><span class="op">)</span>,</span>
 <span class="r-in">  <span class="va">m</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">centiles</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="va">centiles</span><span class="op">$</span><span class="va">c5</span><span class="op">)</span><span class="op">)</span>, <span class="st">"age_months"</span><span class="op">]</span></span>
+<span class="r-in"><span class="va">fine_centiles</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="va">fine_centiles</span><span class="op">$</span><span class="va">c5</span><span class="op">)</span><span class="op">)</span>, <span class="st">"age_months"</span><span class="op">]</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   age_months</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>       39.9</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># When do children in different centiles reach 50%, 70% intelligibility?</span></span>
+<span class="r-in"><span class="fu">uniroot_beta_gamlss</span><span class="op">(</span></span>
+<span class="r-in">  <span class="va">model</span>,</span>
+<span class="r-in">  centiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">50</span><span class="op">)</span>,</span>
+<span class="r-in">  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.5</span>, <span class="fl">.7</span><span class="op">)</span></span>
+<span class="r-in"><span class="op">)</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in uniroot_beta_gamlss(model, centiles = c(5, 10, 50), targets = c(0.5,     0.7)):</span> object 'model' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
