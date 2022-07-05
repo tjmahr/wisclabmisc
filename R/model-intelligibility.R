@@ -190,7 +190,7 @@ utils::globalVariables(c("BE"))
 #'
 #' # When do children in different centiles reach 50%, 70% intelligibility?
 #' uniroot_beta_gamlss(
-#'   model,
+#'   m,
 #'   centiles = c(5, 10, 50),
 #'   targets = c(.5, .7)
 #' )
