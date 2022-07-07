@@ -2,6 +2,7 @@
 
 export("%>%")
 export(check_sample_centiles)
+export(chrono_age)
 export(compute_empirical_roc)
 export(compute_predictive_value_from_rates)
 export(compute_smooth_density_roc)
