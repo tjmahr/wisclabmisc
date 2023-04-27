@@ -27,12 +27,12 @@ utils::globalVariables(c("BE"))
 #'   parameter. For `predict_beta_gamlss()`, a dataframe containing the
 #'   model predictions for mu and sigma, plus columns for each centile in
 #'   `centiles`. For `optimize_beta_gamlss_slope()`, a dataframe with the
-#'   optimized `x` values (`maximum` or `minimum`), the gradient at that `x`
-#'   value (`objective`), and the quantile (`quantile`). For
+#'   optimized `x` values (`maximum` or `minimum`), the gradient at that
+#'   `x` value (`objective`), and the quantile (`quantile`). For
 #'   `uniroot_beta_gamlss()`, a dataframe one row per quantile/target
-#'   combination with the results of calling [stats::uniroot()]. The `root`
-#'   column is the `x` value where the `quantile` curve crosses the `target`
-#'   value.
+#'   combination with the results of calling [stats::uniroot()]. The
+#'   `root` column is the `x` value where the `quantile` curve crosses the
+#'   `target` value.
 #' @export
 #' @details
 #'

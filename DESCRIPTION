@@ -45,8 +45,9 @@ Imports:
     rsample,
     magrittr,
     purrr,
-    pROC
-RoxygenNote: 7.2.0
+    pROC,
+    tidyselect
+RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)

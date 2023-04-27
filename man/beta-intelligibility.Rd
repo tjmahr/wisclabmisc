@@ -76,12 +76,12 @@ of freedom for each parameter and the \code{\link[splines:ns]{splines::ns()}} ba
 parameter. For \code{predict_beta_gamlss()}, a dataframe containing the
 model predictions for mu and sigma, plus columns for each centile in
 \code{centiles}. For \code{optimize_beta_gamlss_slope()}, a dataframe with the
-optimized \code{x} values (\code{maximum} or \code{minimum}), the gradient at that \code{x}
-value (\code{objective}), and the quantile (\code{quantile}). For
+optimized \code{x} values (\code{maximum} or \code{minimum}), the gradient at that
+\code{x} value (\code{objective}), and the quantile (\code{quantile}). For
 \code{uniroot_beta_gamlss()}, a dataframe one row per quantile/target
-combination with the results of calling \code{\link[stats:uniroot]{stats::uniroot()}}. The \code{root}
-column is the \code{x} value where the \code{quantile} curve crosses the \code{target}
-value.
+combination with the results of calling \code{\link[stats:uniroot]{stats::uniroot()}}. The
+\code{root} column is the \code{x} value where the \code{quantile} curve crosses the
+\code{target} value.
 }
 \description{
 The function fits the same type of GAMLSS model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00142}{Hustad and colleagues (2021)} 🔓:

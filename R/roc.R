@@ -110,11 +110,14 @@ compute_smooth_density_roc <- function(
   df[[".roc_row"]] <- seq_len(nrow(df))
   df[[".direction"]] <- dir
 
-  tidied <- tidy_best_roc_coords(roc, best_weights = best_weights)
+  tidied <- tidy_best_roc_coords(roc, best_weights = best_weights) |>
+    distinct()
   df <- df |>
     left_join(
       tidied,
-      by = c(".sensitivities", ".specificities")
+      by = c(".sensitivities", ".specificities"),
+      # there can be multiple sens = 1, spec = 0 rows
+      relationship = "many-to-one"
     ) |>
     mutate(
       .is_best_youden = coalesce(.data$.is_best_youden, FALSE),
@@ -125,7 +128,7 @@ compute_smooth_density_roc <- function(
     )
 
   old_data |>
-    right_join(df, by = join_names)
+    right_join(df, by = join_names, relationship = "one-to-one")
 }
 
 #' Create an ROC curve from observed data
@@ -169,7 +172,7 @@ compute_smooth_density_roc <- function(
 #' # better
 #' compute_empirical_roc(data, group, y, levels = c("control", "case"))
 #' @concept roc
- compute_empirical_roc <- function(
+compute_empirical_roc <- function(
   data,
   response,
   predictor,
@@ -193,11 +196,16 @@ compute_smooth_density_roc <- function(
 
   tidied <- tidy_best_roc_coords(roc, best_weights = best_weights)
 
+  rename_plan <- c(
+    .sensitivities = "sensitivity",
+    .specificities = "specificity"
+  )
+
+  rename_plan_2 <- c("threshold") |>
+    stats::setNames(names(x)[1])
+
   pROC::coords(roc) %>%
-    dplyr::rename(
-      .sensitivities = .data$sensitivity,
-      .specificities = .data$specificity
-    ) %>%
+    dplyr::rename(tidyselect::all_of(rename_plan)) %>%
     dplyr::mutate(
       .auc = as.numeric(roc$auc),
       .direction = roc$direction,
@@ -205,8 +213,9 @@ compute_smooth_density_roc <- function(
       .cases = roc$levels[2],
     ) %>%
     dplyr::left_join(
-      tidied,
-      by = c(".sensitivities", ".specificities", "threshold")
+      dplyr::distinct(tidied),
+      by = c(".sensitivities", ".specificities", "threshold"),
+      relationship = "many-to-one"
     ) %>%
     dplyr::mutate(
       .is_best_youden = dplyr::coalesce(.data$.is_best_youden, FALSE),
@@ -215,9 +224,7 @@ compute_smooth_density_roc <- function(
         FALSE
       )
     ) %>%
-    dplyr::rename(
-      !! q_predictor := .data$threshold
-    ) %>%
+    dplyr::rename(tidyselect::all_of(rename_plan_2)) %>%
     tibble::as_tibble()
 }
 
@@ -245,9 +252,22 @@ tidy_best_roc_coords <- function(x, best_weights = c(1, 0.5)) {
     ) |>
     dplyr::mutate(.is_best_closest_topleft = TRUE)
 
+  rename_plan <- c(
+    .sensitivities = "sensitivity",
+    .specificities = "specificity"
+  )
+
   coords |>
-    dplyr::left_join(youden, c("specificity", "sensitivity")) |>
-    dplyr::left_join(closest, c("specificity", "sensitivity")) |>
+    dplyr::left_join(
+      dplyr::distinct(youden),
+      c("specificity", "sensitivity"),
+      relationship = "many-to-one"
+    ) |>
+    dplyr::left_join(
+      dplyr::distinct(closest),
+      c("specificity", "sensitivity"),
+      relationship = "many-to-one"
+    ) |>
     dplyr::filter(.data$.is_best_closest_topleft | .data$.is_best_youden) |>
     dplyr::mutate(
       .is_best_youden = dplyr::coalesce(.data$.is_best_youden, FALSE),
@@ -257,11 +277,7 @@ tidy_best_roc_coords <- function(x, best_weights = c(1, 0.5)) {
       )
     ) |>
     tibble::as_tibble() |>
-    dplyr::rename(
-      .sensitivities = .data$sensitivity,
-      .specificities = .data$specificity
-    )
-
+    dplyr::rename(tidyselect::all_of(rename_plan))
 }
 
 
