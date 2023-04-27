@@ -3,7 +3,7 @@
 generalized gamma regression model (via gamlss.dist::GG()) with natural
 cubic splines on the mean (mu), scale (sigma), and shape (nu) of the
 distribution. This model is fitted using this package's mem_gamlss()
-wrapper function."><title>Fit a generalized gamma regression model (for speaking rate) — fit_gen_gamma_gamlss • wisclabmisc</title><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Fit a generalized gamma regression model (for speaking rate) — fit_gen_gamma_gamlss"><meta property="og:description" content="The function fits the same type of GAMLSS model as used in Mahr and colleagues (2021) 🔓: A
+wrapper function."><title>Fit a generalized gamma regression model (for speaking rate) — fit_gen_gamma_gamlss • wisclabmisc</title><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Fit a generalized gamma regression model (for speaking rate) — fit_gen_gamma_gamlss"><meta property="og:description" content="The function fits the same type of GAMLSS model as used in Mahr and colleagues (2021) 🔓: A
 generalized gamma regression model (via gamlss.dist::GG()) with natural
 cubic splines on the mean (mu), scale (sigma), and shape (nu) of the
 distribution. This model is fitted using this package's mem_gamlss()
@@ -67,27 +67,27 @@ wrapper function.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">fit_gen_gamma_gamlss</span><span class="op">(</span>
-  <span class="va">data</span>,
-  <span class="va">var_x</span>,
-  <span class="va">var_y</span>,
-  df_mu <span class="op">=</span> <span class="fl">3</span>,
-  df_sigma <span class="op">=</span> <span class="fl">2</span>,
-  df_nu <span class="op">=</span> <span class="fl">1</span>,
-  control <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span>
-
-<span class="fu">fit_gen_gamma_gamlss_se</span><span class="op">(</span>
-  <span class="va">data</span>,
-  <span class="va">name_x</span>,
-  <span class="va">name_y</span>,
-  df_mu <span class="op">=</span> <span class="fl">3</span>,
-  df_sigma <span class="op">=</span> <span class="fl">2</span>,
-  df_nu <span class="op">=</span> <span class="fl">1</span>,
-  control <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span>
-
-<span class="fu">predict_gen_gamma_gamlss</span><span class="op">(</span><span class="va">newdata</span>, <span class="va">model</span>, centiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">50</span>, <span class="fl">90</span>, <span class="fl">95</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit_gen_gamma_gamlss</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">var_x</span>,</span>
+<span>  <span class="va">var_y</span>,</span>
+<span>  df_mu <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  df_sigma <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  df_nu <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  control <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">fit_gen_gamma_gamlss_se</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">name_x</span>,</span>
+<span>  <span class="va">name_y</span>,</span>
+<span>  df_mu <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  df_sigma <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  df_nu <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  control <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">predict_gen_gamma_gamlss</span><span class="op">(</span><span class="va">newdata</span>, <span class="va">model</span>, centiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">50</span>, <span class="fl">90</span>, <span class="fl">95</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -164,7 +164,7 @@ these are multiplied by model coefficients.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">data_fake_rates</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data_fake_rates</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 200 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    age_months speaking_sps</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -178,12 +178,12 @@ these are multiplied by model coefficients.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>         51         2.84</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>         48         3.24</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>         37         2.39</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 190 more rows</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">fit_gen_gamma_gamlss</span><span class="op">(</span><span class="va">data_fake_rates</span>, <span class="va">age_months</span>, <span class="va">speaking_sps</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># using "qr" in summary() just to suppress a warning message</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m</span>, type <span class="op">=</span> <span class="st">"qr"</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 190 more rows</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">fit_gen_gamma_gamlss</span><span class="op">(</span><span class="va">data_fake_rates</span>, <span class="va">age_months</span>, <span class="va">speaking_sps</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># using "qr" in summary() just to suppress a warning message</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m</span>, type <span class="op">=</span> <span class="st">"qr"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ******************************************************************</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Family:  c("GG", "generalised Gamma Lopatatsidis-Green") </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -200,7 +200,7 @@ these are multiplied by model coefficients.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mu link function:  log</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Mu Coefficients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         Estimate Std. Error t value Pr(&gt;|t|)    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)              0.92763    0.04539  20.435  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)              0.92763    0.04540  20.435  &lt; 2e-16 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ns(age_months, df = 3)1  0.14393    0.03919   3.672 0.000310 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ns(age_months, df = 3)2  0.36779    0.10288   3.575 0.000441 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ns(age_months, df = 3)3  0.20240    0.03780   5.355 2.38e-07 ***</span>
@@ -222,7 +222,7 @@ these are multiplied by model coefficients.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Nu Coefficients:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                        Estimate Std. Error t value Pr(&gt;|t|)  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)              -3.438      1.647  -2.088   0.0381 *</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ns(age_months, df = 1)    8.336      4.312   1.933   0.0547 .</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ns(age_months, df = 1)    8.336      4.312   1.933   0.0546 .</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -236,31 +236,31 @@ these are multiplied by model coefficients.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             AIC:     202.5313 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             SBC:     232.2161 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ******************************************************************</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Alternative interface</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">data_fake_rates</span></span>
-<span class="r-in"><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu">fit_gen_gamma_gamlss_se</span><span class="op">(</span></span>
-<span class="r-in">  data <span class="op">=</span> <span class="va">d</span>,</span>
-<span class="r-in">  name_x <span class="op">=</span> <span class="st">"age_months"</span>,</span>
-<span class="r-in">  name_y <span class="op">=</span> <span class="st">"speaking_sps"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">m2</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Alternative interface</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">data_fake_rates</span></span></span>
+<span class="r-in"><span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu">fit_gen_gamma_gamlss_se</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">d</span>,</span></span>
+<span class="r-in"><span>  name_x <span class="op">=</span> <span class="st">"age_months"</span>,</span></span>
+<span class="r-in"><span>  name_y <span class="op">=</span> <span class="st">"speaking_sps"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">m2</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             (Intercept) ns(age_months, df = 3)1 ns(age_months, df = 3)2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    TRUE                    TRUE                    TRUE </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ns(age_months, df = 3)3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    TRUE </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># how to use control to change gamlss() behavior</span></span>
-<span class="r-in"><span class="va">m_traced</span> <span class="op">&lt;-</span> <span class="fu">fit_gen_gamma_gamlss</span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">data_fake_rates</span>,</span>
-<span class="r-in">  <span class="va">age_months</span>,</span>
-<span class="r-in">  <span class="va">speaking_sps</span>,</span>
-<span class="r-in">  control <span class="op">=</span> <span class="fu">gamlss</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss/man/gamlss.control.html" class="external-link">gamlss.control</a></span><span class="op">(</span>n.cyc <span class="op">=</span> <span class="fl">15</span>, trace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># how to use control to change gamlss() behavior</span></span></span>
+<span class="r-in"><span><span class="va">m_traced</span> <span class="op">&lt;-</span> <span class="fu">fit_gen_gamma_gamlss</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">data_fake_rates</span>,</span></span>
+<span class="r-in"><span>  <span class="va">age_months</span>,</span></span>
+<span class="r-in"><span>  <span class="va">speaking_sps</span>,</span></span>
+<span class="r-in"><span>  control <span class="op">=</span> <span class="fu">gamlss</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss/man/gamlss.control.html" class="external-link">gamlss.control</a></span><span class="op">(</span>n.cyc <span class="op">=</span> <span class="fl">15</span>, trace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 1: Global Deviance = 185.9307 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 2: Global Deviance = 185.2313 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 3: Global Deviance = 184.9111 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 4: Global Deviance = 184.7408 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 3: Global Deviance = 184.9109 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 4: Global Deviance = 184.7407 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 5: Global Deviance = 184.6482 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 6: Global Deviance = 184.5971 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 7: Global Deviance = 184.5691 </span>
@@ -271,27 +271,27 @@ these are multiplied by model coefficients.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 12: Global Deviance = 184.5329 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 13: Global Deviance = 184.5319 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 14: Global Deviance = 184.5313 </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># The `.user` space includes the spline bases, so that we can make accurate</span></span>
-<span class="r-in"><span class="co"># predictions of new xs.</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">m</span><span class="op">$</span><span class="va">.user</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The `.user` space includes the spline bases, so that we can make accurate</span></span></span>
+<span class="r-in"><span><span class="co"># predictions of new xs.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">m</span><span class="op">$</span><span class="va">.user</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "data"         "session_info" "call"         "df_mu"        "df_sigma"    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6] "df_nu"        "basis_mu"     "basis_sigma"  "basis_nu"    </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># predict log(mean) at 55 months:</span></span>
-<span class="r-in"><span class="va">log_mean_55</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">m</span><span class="op">$</span><span class="va">.user</span><span class="op">$</span><span class="va">basis_mu</span>, <span class="fl">55</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">log_mean_55</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.07022</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">log_mean_55</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># predict log(mean) at 55 months:</span></span></span>
+<span class="r-in"><span><span class="va">log_mean_55</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">m</span><span class="op">$</span><span class="va">.user</span><span class="op">$</span><span class="va">basis_mu</span>, <span class="fl">55</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">log_mean_55</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 2.916022</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># But predict_gen_gamma_gamlss() does this work for us and also provides</span></span>
-<span class="r-in"><span class="co"># centiles</span></span>
-<span class="r-in"><span class="va">new_ages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>age_months <span class="op">=</span> <span class="fl">48</span><span class="op">:</span><span class="fl">71</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">centiles</span> <span class="op">&lt;-</span> <span class="fu">predict_gen_gamma_gamlss</span><span class="op">(</span><span class="va">new_ages</span>, <span class="va">m</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">centiles</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.070224</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">log_mean_55</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 2.916033</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># But predict_gen_gamma_gamlss() does this work for us and also provides</span></span></span>
+<span class="r-in"><span><span class="co"># centiles</span></span></span>
+<span class="r-in"><span><span class="va">new_ages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>age_months <span class="op">=</span> <span class="fl">48</span><span class="op">:</span><span class="fl">71</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">centiles</span> <span class="op">&lt;-</span> <span class="fu">predict_gen_gamma_gamlss</span><span class="op">(</span><span class="va">new_ages</span>, <span class="va">m</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">centiles</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 9</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    age_months    mu sigma     nu    c5   c10   c50   c90   c95</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
@@ -305,31 +305,31 @@ these are multiplied by model coefficients.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>         55  2.92 0.134 -<span style="color: #BB0000;">0.920</span>  2.37  2.48  2.93  3.50  3.68</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>         56  2.93 0.132 -<span style="color: #BB0000;">0.823</span>  2.38  2.49  2.94  3.50  3.68</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>         57  2.94 0.131 -<span style="color: #BB0000;">0.726</span>  2.39  2.50  2.95  3.50  3.68</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 14 more rows</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Confirm that the manual prediction matches the automatic one</span></span>
-<span class="r-in"><span class="va">centiles</span><span class="op">[</span><span class="va">centiles</span><span class="op">$</span><span class="va">age_months</span> <span class="op">==</span> <span class="fl">55</span>, <span class="st">"mu"</span><span class="op">]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 14 more rows</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Confirm that the manual prediction matches the automatic one</span></span></span>
+<span class="r-in"><span><span class="va">centiles</span><span class="op">[</span><span class="va">centiles</span><span class="op">$</span><span class="va">age_months</span> <span class="op">==</span> <span class="fl">55</span>, <span class="st">"mu"</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      mu</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>  2.92</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">log_mean_55</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">log_mean_55</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 2.916022</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span class="r-in">  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="predict_centiles.html">pivot_centiles_longer</a></span><span class="op">(</span><span class="va">centiles</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age_months</span>, y <span class="op">=</span> <span class="va">.value</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="va">.centile</span>, color <span class="op">=</span> <span class="va">.centile_pair</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span></span>
-<span class="r-in">      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">speaking_sps</span><span class="op">)</span>,</span>
-<span class="r-in">      data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span>
-<span class="r-in">        <span class="va">data_fake_rates</span>,</span>
-<span class="r-in">        <span class="fl">48</span> <span class="op">&lt;=</span> <span class="va">age_months</span> <span class="op">&amp;</span> <span class="va">age_months</span> <span class="op">&lt;=</span> <span class="fl">71</span></span>
-<span class="r-in">      <span class="op">)</span></span>
-<span class="r-in">    <span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 2.916033</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="predict_centiles.html">pivot_centiles_longer</a></span><span class="op">(</span><span class="va">centiles</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age_months</span>, y <span class="op">=</span> <span class="va">.value</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="va">.centile</span>, color <span class="op">=</span> <span class="va">.centile_pair</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">speaking_sps</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>      data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>        <span class="va">data_fake_rates</span>,</span></span>
+<span class="r-in"><span>        <span class="fl">48</span> <span class="op">&lt;=</span> <span class="va">age_months</span> <span class="op">&amp;</span> <span class="va">age_months</span> <span class="op">&lt;=</span> <span class="fl">71</span></span></span>
+<span class="r-in"><span>      <span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-plt img"><img src="gen-gamma-rate-1.png" alt="" width="1094" height="676"></span>
 </code></pre></div>
     </div>
@@ -342,7 +342,7 @@ these are multiplied by model coefficients.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
     </footer></div>
