@@ -17,7 +17,8 @@ Description: A collection of 'R' functions for use (and re-use) across
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/tjmahr/wisclabmisc,
+URL:
+    https://github.com/tjmahr/wisclabmisc,
     https://www.tjmahr.com/wisclabmisc/
 BugReports: https://github.com/tjmahr/wisclabmisc/issues
 Depends:
