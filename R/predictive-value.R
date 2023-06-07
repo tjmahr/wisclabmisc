@@ -26,9 +26,9 @@
 #'   prevalence = c(.15, .3)
 #' )
 compute_predictive_value_from_rates <- function(
-  sensitivity,
-  specificity,
-  prevalence
+    sensitivity,
+    specificity,
+    prevalence
 ) {
   # want equal-length vectors or scalars
   lengths <- lengths(list(sensitivity, specificity, prevalence))

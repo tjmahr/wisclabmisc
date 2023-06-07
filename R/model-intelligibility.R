@@ -196,12 +196,12 @@ utils::globalVariables(c("BE"))
 #'   targets = c(.5, .7)
 #' )
 fit_beta_gamlss <- function(
-  data,
-  var_x,
-  var_y,
-  df_mu = 3,
-  df_sigma = 2,
-  control = NULL
+    data,
+    var_x,
+    var_y,
+    df_mu = 3,
+    df_sigma = 2,
+    control = NULL
 ) {
   # See link for a guide on the nonstandard evaluation used here
   # https://adv-r.hadley.nz/evaluation.html#wrapping-modelling-functions
@@ -263,12 +263,12 @@ fit_beta_gamlss <- function(
 #' @rdname beta-intelligibility
 #' @export
 fit_beta_gamlss_se <- function(
-  data,
-  name_x,
-  name_y,
-  df_mu = 3,
-  df_sigma = 2,
-  control = NULL
+    data,
+    name_x,
+    name_y,
+    df_mu = 3,
+    df_sigma = 2,
+    control = NULL
 ) {
   # Standard evaluation version for future-based parallelism, see
   # https://furrr.futureverse.org/articles/gotchas.html
@@ -292,9 +292,9 @@ fit_beta_gamlss_se <- function(
 #' of these functions support multiple centile values.
 #' @export
 predict_beta_gamlss <- function(
-  newdata,
-  model,
-  centiles = c(5, 10, 50, 90, 95)
+    newdata,
+    model,
+    centiles = c(5, 10, 50, 90, 95)
 ) {
   stopifnot(ncol(newdata) == 1)
   newx <- newdata[[1]]
@@ -337,10 +337,10 @@ predict_beta_gamlss <- function(
 #'   maximum slope (`TRUE`) or minimum slope (`FALSE`).
 #' @export
 optimize_beta_gamlss_slope <- function(
-  model,
-  centiles = 50,
-  interval = c(30, 119),
-  maximum = TRUE
+    model,
+    centiles = 50,
+    interval = c(30, 119),
+    maximum = TRUE
 ) {
   rlang::check_installed(
     pkg = c("numDeriv"),
@@ -376,12 +376,12 @@ optimize_beta_gamlss_slope <- function(
 }
 
 gradient_beta_gamlss <- function(
-  xs,
-  quantile,
-  coef_mu,
-  coef_sigma,
-  basis_mu,
-  basis_sigma
+    xs,
+    quantile,
+    coef_mu,
+    coef_sigma,
+    basis_mu,
+    basis_sigma
 ) {
   numDeriv::grad(
     .predict_beta_gamlss_quantile,
@@ -402,10 +402,10 @@ gradient_beta_gamlss <- function(
 #'   `x` value where the y value is .5. Multiple targets are supported.
 #' @export
 uniroot_beta_gamlss <- function(
-  model,
-  centiles = 50,
-  targets = .5,
-  interval = c(30, 119)
+    model,
+    centiles = 50,
+    targets = .5,
+    interval = c(30, 119)
 ) {
   basis_mu <- model$.user$basis_mu
   basis_sigma <- model$.user$basis_sigma
@@ -435,13 +435,13 @@ uniroot_beta_gamlss <- function(
 
 # Predict quantiles from model coefficients
 .predict_beta_gamlss_quantile <- function(
-  xs,
-  quantile,
-  coef_mu,
-  coef_sigma,
-  basis_mu,
-  basis_sigma,
-  target = 0
+    xs,
+    quantile,
+    coef_mu,
+    coef_sigma,
+    basis_mu,
+    basis_sigma,
+    target = 0
 ) {
   inv_logit <- stats::plogis
 

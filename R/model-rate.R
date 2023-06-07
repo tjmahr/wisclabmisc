@@ -106,13 +106,13 @@ utils::globalVariables(c("ns", "GG", "gamlss.control"))
 #'     )
 #' }
 fit_gen_gamma_gamlss <- function(
-  data,
-  var_x,
-  var_y,
-  df_mu = 3,
-  df_sigma = 2,
-  df_nu = 1,
-  control = NULL
+    data,
+    var_x,
+    var_y,
+    df_mu = 3,
+    df_sigma = 2,
+    df_nu = 1,
+    control = NULL
 ) {
   # See link for a guide on the nonstandard evaluation used here
   # https://adv-r.hadley.nz/evaluation.html#wrapping-modelling-functions
@@ -179,13 +179,13 @@ fit_gen_gamma_gamlss <- function(
 #' @rdname gen-gamma-rate
 #' @export
 fit_gen_gamma_gamlss_se <- function(
-  data,
-  name_x,
-  name_y,
-  df_mu = 3,
-  df_sigma = 2,
-  df_nu = 1,
-  control = NULL
+    data,
+    name_x,
+    name_y,
+    df_mu = 3,
+    df_sigma = 2,
+    df_nu = 1,
+    control = NULL
 ) {
   # Standard evaluation version for future-based parallelism, see
   # https://furrr.futureverse.org/articles/gotchas.html
@@ -203,9 +203,9 @@ fit_gen_gamma_gamlss_se <- function(
 #' @inheritParams predict_centiles
 #' @export
 predict_gen_gamma_gamlss <- function(
-  newdata,
-  model,
-  centiles = c(5, 10, 50, 90, 95)
+    newdata,
+    model,
+    centiles = c(5, 10, 50, 90, 95)
 ) {
   stopifnot(ncol(newdata) == 1)
   newx <- newdata[[1]]

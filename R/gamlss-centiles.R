@@ -32,6 +32,7 @@ mem_gamlss <- function(...) {
   model
 }
 
+
 #' Predict and tidy centiles from a GAMLSS model
 #'
 #' gamlss has trouble doing predictions without the original training data.
@@ -49,10 +50,10 @@ mem_gamlss <- function(...) {
 #' @rdname predict_centiles
 #' @concept gamlss
 predict_centiles <- function(
-  newdata,
-  model,
-  centiles = c(5, 10, 50, 90, 95),
-  ...
+    newdata,
+    model,
+    centiles = c(5, 10, 50, 90, 95),
+    ...
 ) {
   if (!inherits(model, "mem_gamlss")) {
     msg <- "
@@ -75,6 +76,7 @@ predict_centiles <- function(
   names(pred)[1] <- names(newdata)
   tibble::as_tibble(pred)
 }
+
 
 #' @export
 #' @rdname predict_centiles
@@ -122,11 +124,11 @@ pivot_centiles_longer <- function(data) {
 #' @export
 #' @concept gamlss
 check_sample_centiles <- function(
-  data,
-  model,
-  var_x,
-  var_y,
-  centiles = c(5, 10, 25, 50, 75, 90, 95)
+    data,
+    model,
+    var_x,
+    var_y,
+    centiles = c(5, 10, 25, 50, 75, 90, 95)
 ) {
   quo_x <- enquo(var_x)
   quo_y <- enquo(var_y)

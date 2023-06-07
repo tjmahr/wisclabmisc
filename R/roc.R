@@ -41,13 +41,13 @@
 #' compute_smooth_density_roc(data_shuffled, d1, d2, along = y)
 #' @concept roc
 compute_smooth_density_roc <- function(
-  data,
-  controls,
-  cases,
-  along = NULL,
-  best_weights = c(1, 0.5),
-  direction = "auto",
-  ...
+    data,
+    controls,
+    cases,
+    along = NULL,
+    best_weights = c(1, 0.5),
+    direction = "auto",
+    ...
 ) {
   q_controls <- enquo(controls)
   q_cases <- enquo(cases)
@@ -173,12 +173,12 @@ compute_smooth_density_roc <- function(
 #' compute_empirical_roc(data, group, y, levels = c("control", "case"))
 #' @concept roc
 compute_empirical_roc <- function(
-  data,
-  response,
-  predictor,
-  direction = "auto",
-  best_weights = c(1, 0.5),
-  ...
+    data,
+    response,
+    predictor,
+    direction = "auto",
+    best_weights = c(1, 0.5),
+    ...
 ) {
   q_response <- enquo(response)
   q_predictor <- enquo(predictor)
