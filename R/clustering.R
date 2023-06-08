@@ -5,23 +5,22 @@
 #'
 #' @param data a dataframe
 #' @param k number of clusters to create
-#' @param vars variables to select for the clustering. Select multiple variables
-#'   with `c()`, e.g., `c(x, y)`. Supports tidyselect semantics
+#' @param vars variable selection for clustering. Select multiple variables
+#'   with `c()`, e.g., `c(x, y)`. The selection supports tidyselect semantics
 #'   [tidyselect::select_helpers], e.g., `c(x, starts_with("mean_")`.
 #' @param args_kmeans additional arguments passed to `stats::kmeans()`.
-#' @return the original `data` but augmented to included clustering details.
-#'   including columns `.kmeans_cluster` giving the cluster number of
-#'   each observation (as a factor) and `.kmeans_k` giving the selected number
-#'   of clusters.
+#' @return the original `data` but augmented with additional columns for
+#'   clustering details. including `.kmeans_cluster` (cluster number of each
+#'   observation, as a factor) and `.kmeans_k` (selected number of clusters).
 #'
 #'   Cluster-level information is also included. For example, suppose that
 #'   we cluster using the variable `x`. Then the output will have a
 #'   column `.kmeans_x` giving the cluster mean for `x` and
 #'   `.kmeans_rank_x` giving the cluster labels reordered using the cluster
-#'   means for `x`. The
-#'   column `.kmeans_sort` contains the cluster sorted using the first principal
-#'   component of the scaled variables. All columns of cluster indices are a
-#'   `factor()` so that they can be plotted as discrete variables.
+#'   means for `x`. The column `.kmeans_sort` contains the cluster sorted
+#'   using the first principal component of the scaled variables. All columns
+#'   of cluster indices are a `factor()` so that they can be plotted as
+#'   discrete variables.
 #' @export
 #' @details Note that each variable is `scaled()` before clustering
 #' and then cluster means are unscaled to match the original data scale.
@@ -33,6 +32,7 @@
 #'
 #' @examples
 #' data_kmeans <- fit_kmeans(mtcars, 3, c(mpg, wt, hp))
+#'
 #' library(ggplot2)
 #' ggplot(data_kmeans) +
 #'   aes(x = wt, y = mpg) +
@@ -62,21 +62,20 @@
 #' # differ between model runs and across bootstraps.
 #' ggplot(data_boots) +
 #'   aes(x = .kmeans_wt, y = .kmeans_mpg) +
-#'   geom_point(aes(color = .kmeans_cluster))
+#'   geom_point(aes(color = .kmeans_cluster)) +
+#'   labs(title = "k-means centers on 10 bootstraps")
 #'
 #' # Labels sorted using first principal component
 #' # so the labels are more consistent.
 #' ggplot(data_boots) +
 #'   aes(x = .kmeans_wt, y = .kmeans_mpg) +
-#'   geom_point(aes(color = .kmeans_sort))
+#'   geom_point(aes(color = .kmeans_sort)) +
+#'   labs(title = "k-means centers on 10 bootstraps")
 fit_kmeans <- function(data, k, vars, args_kmeans = list()) {
   fct_rank <- function(x) factor(dplyr::row_number(x))
-
   vars_model <- tidyselect::eval_select(enquo(vars), data)
 
-  data_model <- data |>
-    dplyr::select(all_of(vars_model)) |>
-    scale()
+  data_model <- data[, vars_model, drop = FALSE] |> scale()
 
   args <- utils::modifyList(
     list(x = data_model, centers = k),
@@ -92,25 +91,31 @@ fit_kmeans <- function(data, k, vars, args_kmeans = list()) {
   zsd <- matrix(z_sds, nrow = k, ncol = length(z_sds), byrow = TRUE)
 
   data_means <- ((model$centers * zsd) + zm) |>
-    as.data.frame() |>
-    dplyr::mutate(
-      # Reordering cluster labels by rankings of variables
-      dplyr::across(dplyr::everything(), fct_rank, .names = "rank_{.col}"),
-      cluster = k |> seq_len() |> factor(),
-      k = k
-    ) |>
-    rlang::set_names(function(x) paste0(".kmeans_", x))
+    as.data.frame()
+  data_means2 <- data_means |>
+    lapply(fct_rank) |>
+    rlang::set_names(function(x) paste0("rank_", x)) |>
+    as.data.frame()
+
+  data_means[["k"]] <- k
+  data_means[["cluster"]] <- k |> seq_len() |> factor()
 
   # Try to make labels more similar by sorting on first principal component
-  p <- data_model |> stats::princomp(fix_sign = TRUE)
-  data_means$.kmeans_sort <- stats::predict(p, newdata = model$centers)[, 1] |>
+  get_column <- function(x, j) x[, j, drop = TRUE]
+  data_means[["sort"]] <- data_model |>
+    stats::princomp(fix_sign = TRUE) |>
+    stats::predict(newdata = model$centers) |>
+    get_column(1) |>
     fct_rank()
 
-  data |>
-    dplyr::mutate(
-      .kmeans_cluster = factor(model$cluster)
-    ) |>
-    dplyr::left_join(data_means, by = ".kmeans_cluster")
+  data_means <- cbind(data_means, data_means2) |>
+    rlang::set_names(function(x) paste0(".kmeans_", x))
+
+  # Not using left_join() or merge() because I noticed rownames dropped
+  # on mtcars example
+  data[[".kmeans_cluster"]] <- factor(model$cluster)
+  data[names(data_means)] <- data_means[data$.kmeans_cluster, ]
+  data
 }
 
 

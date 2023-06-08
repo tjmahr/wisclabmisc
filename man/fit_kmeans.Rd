@@ -11,26 +11,25 @@ fit_kmeans(data, k, vars, args_kmeans = list())
 
 \item{k}{number of clusters to create}
 
-\item{vars}{variables to select for the clustering. Select multiple variables
-with \code{c()}, e.g., \code{c(x, y)}. Supports tidyselect semantics
+\item{vars}{variable selection for clustering. Select multiple variables
+with \code{c()}, e.g., \code{c(x, y)}. The selection supports tidyselect semantics
 \link[tidyselect:language]{tidyselect::select_helpers}, e.g., \verb{c(x, starts_with("mean_")}.}
 
 \item{args_kmeans}{additional arguments passed to \code{stats::kmeans()}.}
 }
 \value{
-the original \code{data} but augmented to included clustering details.
-including columns \code{.kmeans_cluster} giving the cluster number of
-each observation (as a factor) and \code{.kmeans_k} giving the selected number
-of clusters.
+the original \code{data} but augmented with additional columns for
+clustering details. including \code{.kmeans_cluster} (cluster number of each
+observation, as a factor) and \code{.kmeans_k} (selected number of clusters).
 
 Cluster-level information is also included. For example, suppose that
 we cluster using the variable \code{x}. Then the output will have a
 column \code{.kmeans_x} giving the cluster mean for \code{x} and
 \code{.kmeans_rank_x} giving the cluster labels reordered using the cluster
-means for \code{x}. The
-column \code{.kmeans_sort} contains the cluster sorted using the first principal
-component of the scaled variables. All columns of cluster indices are a
-\code{factor()} so that they can be plotted as discrete variables.
+means for \code{x}. The column \code{.kmeans_sort} contains the cluster sorted
+using the first principal component of the scaled variables. All columns
+of cluster indices are a \code{factor()} so that they can be plotted as
+discrete variables.
 }
 \description{
 Observations are \code{scale()}-ed before clustering.
@@ -46,6 +45,7 @@ bootstrapping example below.
 }
 \examples{
 data_kmeans <- fit_kmeans(mtcars, 3, c(mpg, wt, hp))
+
 library(ggplot2)
 ggplot(data_kmeans) +
   aes(x = wt, y = mpg) +
@@ -75,11 +75,13 @@ data_boots <- lapply(
 # differ between model runs and across bootstraps.
 ggplot(data_boots) +
   aes(x = .kmeans_wt, y = .kmeans_mpg) +
-  geom_point(aes(color = .kmeans_cluster))
+  geom_point(aes(color = .kmeans_cluster)) +
+  labs(title = "k-means centers on 10 bootstraps")
 
 # Labels sorted using first principal component
 # so the labels are more consistent.
 ggplot(data_boots) +
   aes(x = .kmeans_wt, y = .kmeans_mpg) +
-  geom_point(aes(color = .kmeans_sort))
+  geom_point(aes(color = .kmeans_sort)) +
+  labs(title = "k-means centers on 10 bootstraps")
 }
