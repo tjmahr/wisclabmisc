@@ -69,8 +69,8 @@
 
 
 <dt>vars</dt>
-<dd><p>variables to select for the clustering. Select multiple variables
-with <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code>, e.g., <code>c(x, y)</code>. Supports tidyselect semantics
+<dd><p>variable selection for clustering. Select multiple variables
+with <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code>, e.g., <code>c(x, y)</code>. The selection supports tidyselect semantics
 <a href="https://tidyselect.r-lib.org/reference/language.html" class="external-link">tidyselect::select_helpers</a>, e.g., <code>c(x, starts_with("mean_")</code>.</p></dd>
 
 
@@ -82,20 +82,19 @@ with <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>the original <code>data</code> but augmented to included clustering details.
-including columns <code>.kmeans_cluster</code> giving the cluster number of
-each observation (as a factor) and <code>.kmeans_k</code> giving the selected number
-of clusters.</p>
+<p>the original <code>data</code> but augmented with additional columns for
+clustering details. including <code>.kmeans_cluster</code> (cluster number of each
+observation, as a factor) and <code>.kmeans_k</code> (selected number of clusters).</p>
 
 
 <p>Cluster-level information is also included. For example, suppose that
 we cluster using the variable <code>x</code>. Then the output will have a
 column <code>.kmeans_x</code> giving the cluster mean for <code>x</code> and
 <code>.kmeans_rank_x</code> giving the cluster labels reordered using the cluster
-means for <code>x</code>. The
-column <code>.kmeans_sort</code> contains the cluster sorted using the first principal
-component of the scaled variables. All columns of cluster indices are a
-<code><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor()</a></code> so that they can be plotted as discrete variables.</p>
+means for <code>x</code>. The column <code>.kmeans_sort</code> contains the cluster sorted
+using the first principal component of the scaled variables. All columns
+of cluster indices are a <code><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor()</a></code> so that they can be plotted as
+discrete variables.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -110,6 +109,7 @@ bootstrapping example below.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data_kmeans</span> <span class="op">&lt;-</span> <span class="fu">fit_kmeans</span><span class="op">(</span><span class="va">mtcars</span>, <span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">wt</span>, <span class="va">hp</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_kmeans</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">wt</span>, y <span class="op">=</span> <span class="va">mpg</span><span class="op">)</span> <span class="op">+</span></span></span>
@@ -141,14 +141,16 @@ bootstrapping example below.</p>
 <span class="r-in"><span><span class="co"># differ between model runs and across bootstraps.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_boots</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">.kmeans_wt</span>, y <span class="op">=</span> <span class="va">.kmeans_mpg</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">.kmeans_cluster</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">.kmeans_cluster</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"k-means centers on 10 bootstraps"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="fit_kmeans-3.png" alt="" width="1094" height="676"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Labels sorted using first principal component</span></span></span>
 <span class="r-in"><span><span class="co"># so the labels are more consistent.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_boots</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">.kmeans_wt</span>, y <span class="op">=</span> <span class="va">.kmeans_mpg</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">.kmeans_sort</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">.kmeans_sort</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"k-means centers on 10 bootstraps"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="fit_kmeans-4.png" alt="" width="1094" height="676"></span>
 </code></pre></div>
     </div>
