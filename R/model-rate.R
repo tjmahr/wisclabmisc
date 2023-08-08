@@ -17,7 +17,8 @@ utils::globalVariables(c("ns", "GG", "gamlss.control"))
 #' @param name_x,name_y quoted variable names giving the predictor variable
 #'   (e.g., `"age"`) and outcome variable (.e.g, `"rate"`). These arguments
 #'   apply to `fit_gen_gamma_gamlss_se()`.
-#' @param df_mu,df_sigma,df_nu degrees of freedom
+#' @param df_mu,df_sigma,df_nu degrees of freedom. If `0` is used, the
+#'   [splines::ns()] term is dropped from the model formula for the parameter.
 #' @param control a [gamlss::gamlss.control()] controller. Defaults to `NULL`
 #'   which uses default settings, except for setting trace to `FALSE` to silence
 #'   the output from gamlss.
@@ -105,6 +106,22 @@ utils::globalVariables(c("ns", "GG", "gamlss.control"))
 #'       )
 #'     )
 #' }
+#'
+#' # Example of 0-df splines
+#' m <- fit_gen_gamma_gamlss(
+#'   data_fake_rates,
+#'   age_months,
+#'   speaking_sps,
+#'   df_mu = 0,
+#'   df_sigma = 2,
+#'   df_nu = 0
+#' )
+#' coef(m, what = "mu")
+#' coef(m, what = "sigma")
+#' coef(m, what = "nu")
+#'
+#' # mu and nu fixed, c50 mostly locked in
+#' predict_gen_gamma_gamlss(new_ages, m)[c(1, 9, 17, 24), ]
 fit_gen_gamma_gamlss <- function(
     data,
     var_x,
@@ -142,9 +159,9 @@ fit_gen_gamma_gamlss <- function(
   var_x <- enexpr(var_x)
 
   # Build the formula by plugging the variable names and degrees of freedom
-  ns_mu    <- expr(ns(!!var_x, df = !! df_mu))
-  ns_sigma <- expr(ns(!!var_x, df = !! df_sigma))
-  ns_nu    <- expr(ns(!!var_x, df = !! df_nu))
+  ns_mu    <- if (df_mu    == 0) 1 else expr(ns(!!var_x, df = !!df_mu))
+  ns_sigma <- if (df_sigma == 0) 1 else expr(ns(!!var_x, df = !!df_sigma))
+  ns_nu    <- if (df_nu    == 0) 1 else expr(ns(!!var_x, df = !!df_nu))
 
   f_mu    <- rlang::new_formula(expr(!!var_y), ns_mu,    env = model_env)
   f_sigma <- rlang::new_formula(NULL,          ns_sigma, env = model_env)
@@ -154,12 +171,12 @@ fit_gen_gamma_gamlss <- function(
   # the actual formula used so we need to create a call.
   model_call <- expr(
     mem_gamlss(
-      !! f_mu,
-      sigma.formula = !! f_sigma,
-      nu.formula = !! f_nu,
+      !!f_mu,
+      sigma.formula = !!f_sigma,
+      nu.formula = !!f_nu,
       family = GG(),
       data = {{ data }},
-      control = !! control
+      control = !!control
     )
   )
   model <- rlang::eval_tidy(model_call, env = model_env)
@@ -168,7 +185,7 @@ fit_gen_gamma_gamlss <- function(
   model$.user$df_sigma <- df_sigma
   model$.user$df_nu    <- df_nu
 
-  # Actually evaluated the spline formula
+  # Actually evaluate the spline formula
   d <- rlang::eval_tidy(data)
   model$.user$basis_mu    <- rlang::eval_tidy(ns_mu, d, env = model_env)
   model$.user$basis_sigma <- rlang::eval_tidy(ns_sigma, d, env = model_env)
@@ -194,7 +211,7 @@ fit_gen_gamma_gamlss_se <- function(
   var_x <- ensym(name_x)
   var_y <- ensym(name_y)
   fit_gen_gamma_gamlss(
-    {{ data }}, !! var_x, !! var_y, df_mu, df_sigma, df_nu, control
+    {{ data }}, !!var_x, !!var_y, df_mu, df_sigma, df_nu, control
   )
 }
 
@@ -216,7 +233,12 @@ predict_gen_gamma_gamlss <- function(
 
   for (param in params) {
     basis <- model$.user[[paste0("basis_", param)]]
-    basis_w_intercept <- cbind(1, stats::predict(basis, newx = newx))
+    df <- model$.user[[paste0("df_", param)]]
+    if (df != 0) {
+      basis_w_intercept <- cbind(1, stats::predict(basis, newx = newx))
+    } else {
+      basis_w_intercept <- cbind(1, newx)[, 1, drop = FALSE]
+    }
     f <- g[[paste0(param, ".linkinv")]]
     list_results[[param]] <- f(basis_w_intercept %*% stats::coef(model, what = param))[, 1]
   }

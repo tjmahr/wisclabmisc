@@ -37,7 +37,8 @@ predict_gen_gamma_gamlss(newdata, model, centiles = c(5, 10, 50, 90, 95))
 \item{var_x, var_y}{(unquoted) variable names giving the predictor variable
 (e.g., \code{age}) and outcome variable (.e.g, \code{rate}).}
 
-\item{df_mu, df_sigma, df_nu}{degrees of freedom}
+\item{df_mu, df_sigma, df_nu}{degrees of freedom. If \code{0} is used, the
+\code{\link[splines:ns]{splines::ns()}} term is dropped from the model formula for the parameter.}
 
 \item{control}{a \code{\link[gamlss:gamlss.control]{gamlss::gamlss.control()}} controller. Defaults to \code{NULL}
 which uses default settings, except for setting trace to \code{FALSE} to silence
@@ -142,5 +143,21 @@ if(requireNamespace("ggplot2", quietly = TRUE)) {
       )
     )
 }
+
+# Example of 0-df splines
+m <- fit_gen_gamma_gamlss(
+  data_fake_rates,
+  age_months,
+  speaking_sps,
+  df_mu = 0,
+  df_sigma = 2,
+  df_nu = 0
+)
+coef(m, what = "mu")
+coef(m, what = "sigma")
+coef(m, what = "nu")
+
+# mu and nu fixed, c50 mostly locked in
+predict_gen_gamma_gamlss(new_ages, m)[c(1, 9, 17, 24), ]
 }
 \concept{models}

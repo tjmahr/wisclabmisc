@@ -17,7 +17,8 @@ utils::globalVariables(c("BE"))
 #' @param name_x,name_y quoted variable names giving the predictor variable
 #'   (e.g., `"age"`) and outcome variable (.e.g, `"intelligibility"`). These
 #'   arguments apply to `fit_beta_gamlss_se()`.
-#' @param df_mu,df_sigma degrees of freedom
+#' @param df_mu,df_sigma degrees of freedom. If `0` is used, the
+#'   [splines::ns()] term is dropped from the model formula for the parameter.
 #' @param control a [gamlss::gamlss.control()] controller. Defaults to `NULL`
 #'   which uses default settings, except for setting trace to `FALSE` to silence
 #'   the output from gamlss.
@@ -230,8 +231,8 @@ fit_beta_gamlss <- function(
   var_x <- enexpr(var_x)
 
   # Build the formula by plugging the variable names and degrees of freedom
-  ns_mu    <- expr(ns(!!var_x, df = !! df_mu))
-  ns_sigma <- expr(ns(!!var_x, df = !! df_sigma))
+  ns_mu    <- if (df_mu    == 0) 1 else expr(ns(!!var_x, df = !!df_mu))
+  ns_sigma <- if (df_sigma == 0) 1 else expr(ns(!!var_x, df = !!df_sigma))
 
   f_mu    <- rlang::new_formula(expr(!!var_y), ns_mu,    env = model_env)
   f_sigma <- rlang::new_formula(NULL,          ns_sigma, env = model_env)
@@ -240,11 +241,11 @@ fit_beta_gamlss <- function(
   # the actual formula used so we need to create a call.
   model_call <- expr(
     mem_gamlss(
-      !! f_mu,
-      sigma.formula = !! f_sigma,
+      !!f_mu,
+      sigma.formula = !!f_sigma,
       family = BE(),
       data = {{ data }},
-      control = !! control
+      control = !!control
     )
   )
   model <- rlang::eval_tidy(model_call, env = model_env)
@@ -277,7 +278,7 @@ fit_beta_gamlss_se <- function(
   var_x <- ensym(name_x)
   var_y <- ensym(name_y)
   fit_beta_gamlss(
-    {{ data }}, !! var_x, !! var_y, df_mu, df_sigma, control
+    {{ data }}, !!var_x, !!var_y, df_mu, df_sigma, control
   )
 }
 
@@ -304,7 +305,12 @@ predict_beta_gamlss <- function(
 
   for (param in params) {
     basis <- model$.user[[paste0("basis_", param)]]
-    basis_w_intercept <- cbind(1, stats::predict(basis, newx = newx))
+    df <- model$.user[[paste0("df_", param)]]
+    if (df != 0) {
+      basis_w_intercept <- cbind(1, stats::predict(basis, newx = newx))
+    } else {
+      basis_w_intercept <- cbind(1, newx)[, 1, drop = FALSE]
+    }
     f <- g[[paste0(param, ".linkinv")]]
 
     result <- basis_w_intercept %*% stats::coef(model, what = param)
@@ -445,8 +451,16 @@ uniroot_beta_gamlss <- function(
 ) {
   inv_logit <- stats::plogis
 
-  mat_mu <- cbind(1, stats::predict(basis_mu, xs))
-  mat_sigma <- cbind(1, stats::predict(basis_sigma, xs))
+  if (!isTRUE(all.equal(basis_mu, 1))) {
+    mat_mu <- cbind(1, stats::predict(basis_mu, xs))
+  } else {
+    mat_mu <- cbind(1, xs)[, 1, drop = FALSE]
+  }
+  if (!isTRUE(all.equal(basis_sigma, 1))) {
+    mat_sigma <- cbind(1, stats::predict(basis_sigma, xs))
+  } else {
+    mat_sigma <- cbind(1, xs)[, 1, drop = FALSE]
+  }
 
   mu <- inv_logit(mat_mu %*% coef_mu)
   sigma2 <- inv_logit(mat_sigma %*% coef_sigma) ^ 2

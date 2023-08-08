@@ -39,7 +39,8 @@ uniroot_beta_gamlss(model, centiles = 50, targets = 0.5, interval = c(30, 119))
 \item{var_x, var_y}{(unquoted) variable names giving the predictor variable
 (e.g., \code{age}) and outcome variable (.e.g, \code{intelligibility}).}
 
-\item{df_mu, df_sigma}{degrees of freedom}
+\item{df_mu, df_sigma}{degrees of freedom. If \code{0} is used, the
+\code{\link[splines:ns]{splines::ns()}} term is dropped from the model formula for the parameter.}
 
 \item{control}{a \code{\link[gamlss:gamlss.control]{gamlss::gamlss.control()}} controller. Defaults to \code{NULL}
 which uses default settings, except for setting trace to \code{FALSE} to silence
