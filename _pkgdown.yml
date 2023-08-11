@@ -10,23 +10,25 @@ figures:
   dev: ragg::agg_png
   dpi: 150
 
-
 reference:
-  - title: GAMLSS helpers
+  - title: Analyses 🔬
+    contents:
+    - has_concept("models")
+  - title: GAMLSS helpers ⛑️
     contents:
     - mem_gamlss
     - has_concept("gamlss")
-  - title: Analyses
-    contents:
-    - has_concept("models")
-  - title: ROC statistics
+  - title: ROC statistics 🥅
     contents:
     - compute_smooth_density_roc
     - compute_empirical_roc
     - has_concept("roc")
-  - title: Other functions
+  - title: Data cleaning 🧹
+    contents:
+    - has_concept("data-cleaning")
+  - title: Other functions 📌
     contents:
     - lacks_concepts(c("datasets", "roc", "models", "gamlss"))
-  - title: Datasets
+  - title: Datasets 🗺️
     contents:
     - has_concept("datasets")
