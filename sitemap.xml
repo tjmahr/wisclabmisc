@@ -19,6 +19,9 @@
     <loc>https://www.tjmahr.com/wisclabmisc/articles/roc.html</loc>
   </url>
   <url>
+    <loc>https://www.tjmahr.com/wisclabmisc/articles/utterance-length-imputation.html</loc>
+  </url>
+  <url>
     <loc>https://www.tjmahr.com/wisclabmisc/authors.html</loc>
   </url>
   <url>
@@ -44,6 +47,9 @@
   </url>
   <url>
     <loc>https://www.tjmahr.com/wisclabmisc/reference/compute_smooth_density_roc.html</loc>
+  </url>
+  <url>
+    <loc>https://www.tjmahr.com/wisclabmisc/reference/data_example_intelligibility_by_length.html</loc>
   </url>
   <url>
     <loc>https://www.tjmahr.com/wisclabmisc/reference/data_fake_intelligibility.html</loc>
