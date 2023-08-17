@@ -1,5 +1,9 @@
 
 #' Staged imputation
+#'
+#' Impute missing data at different utterance lengths using successive linear
+#' models.
+#'
 #' @param data dataframe in which to impute missing value
 #' @param var_y bare name of the response variable for imputation
 #' @param var_length bare name of the length variable
@@ -21,14 +25,14 @@
 #' # Background
 #'
 #' In Hustad and colleagues (2020), we modeled intelligibility data in young
-#' children's speech. Children would hear and utterance and then they would
+#' children's speech. Children would hear an utterance and then they would
 #' repeat it. The utterances started at 2 words in length, then increased to 3
-#' words in length, and so on in batches, all the way to 7 words in length.
-#' There was a problem, however: Not all of the children could produce
-#' utterances at every length. Specifically, if a child could not reliably
-#' produced 5 utterances of a given length length, the task was halted. So given
-#' the nature of the task, if a child had produced 5-word utterances, they also
-#' produced 2--4 words as well.
+#' words in length, and so on in batches of 10 sentences, all the way to 7
+#' words in length. There was a problem, however: Not all of the children could
+#' produce utterances at every length. Specifically, if a child could not
+#' reliably produced 5 utterances of a given length length, the task was halted.
+#' So given the nature of the task, if a child had produced 5-word utterances,
+#' they also produced 2--4-word utterances as well.
 #'
 #' The length of the utterance probably influenced the outcome variable: Longer
 #' utterances have more words that might help a listener understand the
@@ -37,82 +41,6 @@
 #' [Supplemental Materials](https://doi.org/10.23641/asha.12330956.v1) for more
 #' detail):
 #'
-#' 1. impute the missing values at each utterance length using values from
-#' shorter lengths, and do the imputation in stages , so that an imputed value
-#' for length *l* can be used a predictor for *l* + 1.
-#'
-#' 2. weight each utterance length by the probability of it being produced for a
-#' child at a given age and take the weighted average of the outcome variable
-#' across all length.
-#'
-#' Our goal for the data preparation was to produce a single number
-#' intelligibility score, which this final weighted average provides such a
-#' number. Moreover, missing data is not ignored, but implausible data (like the
-#' longest utterances at the youngest ages) is downweighted.
-#'
-#' ## The Implementation
-#'
-#' The original code consisting of some code to reshape the data into a wide
-#' format, followed by a series of linear models trained on the *observed* data,
-#'
-#' ```r
-#' fit_imputation_models <- function(data) {
-#'   list(
-#'     m_7 = lm(y_7 ~ y_1 + y_2 + y_3 + y_4 + y_5 + y_6, data),
-#'     m_6 = lm(y_6 ~ y_1 + y_2 + y_3 + y_4 + y_5 + length_longest, data),
-#'     m_5 = lm(y_5 ~ y_1 + y_2 + y_3 + y_4 + length_longest, data),
-#'     m_4 = lm(y_4 ~ y_1 + y_2 + y_3 + length_longest, data),
-#'     m_3 = lm(y_3 ~ y_1 + y_2 + length_longest, data)
-#'   )
-#' }
-#' ```
-#'
-#' some code to predict the responses for missing values,
-#'
-#' ```r
-#' data_imputed <- data_wide %>%
-#'   mutate(
-#'     y_3 = ifelse(is.na(y_3), predict(models$m_3, .), y_3)
-#'   ) %>%
-#'   mutate(
-#'     y_4 = ifelse(is.na(y_4), predict(models$m_4, .), y_4)
-#'   ) %>%
-#'   mutate(
-#'     y_5 = ifelse(is.na(y_5), predict(models$m_5, .), y_5)
-#'   ) %>%
-#'   mutate(
-#'     y_6 = ifelse(is.na(y_6), predict(models$m_6, .), y_6)
-#'   ) %>%
-#'   mutate(
-#'     y_7 = ifelse(is.na(y_7), predict(models$m_7, .), y_7)
-#'   )
-#'
-#' ## later on, without the `%>%` pipe and `.` variable
-#'
-#' data_imputed <- data_wide |>
-#'   mutate(
-#'     y_3 = ifelse(is.na(y_3), predict(models$m_3, pick(everything())), y_3)
-#'   ) |>
-#'   mutate(
-#'     y_4 = ifelse(is.na(y_4), predict(models$m_4, pick(everything())), y_4)
-#'   ) |>
-#'   mutate(
-#'     y_5 = ifelse(is.na(y_5), predict(models$m_5, pick(everything())), y_5)
-#'   ) |>
-#'   mutate(
-#'     y_6 = ifelse(is.na(y_6), predict(models$m_6, pick(everything())), y_6)
-#'   ) |>
-#'   mutate(
-#'     y_7 = ifelse(is.na(y_7), predict(models$m_7, pick(everything())), y_7)
-#'   )
-#' ```
-#'
-#' and finally some code to reshape back to a long format.
-#'
-#' In the original implementation, the number of models and imputation stages
-#' were hard-coded. For the package implementation, the number of models is
-#' figured out from the data, so the iteration in the above lines is replaced
-#' by loops.
 #'
 #' ## Other notes
 #'
@@ -230,7 +158,7 @@ impute_values_by_length <- function(
 
   # Store the longest length value without missing data
   data_wide[[chr_var_max_length]] <- data_wide |>
-    dplyr::select(-1) |>
+    dplyr::select(dplyr::all_of(spec$.name)) |>
     apply(1, get_position_of_last_non_na_value)
 
   # Set up the dataset for training the models if they are provided
@@ -244,7 +172,7 @@ impute_values_by_length <- function(
       id_cols = {{ id_cols }}
     )
     data_wide_train[[chr_var_max_length]] <- data_wide_train |>
-      dplyr::select(-1) |>
+      dplyr::select(dplyr::all_of(spec$.name)) |>
       apply(1, get_position_of_last_non_na_value)
   }
 
@@ -262,7 +190,7 @@ impute_values_by_length <- function(
     vals <- data_imputed[[y_name]]
     data_imputed[[y_name]] <- ifelse(
       is.na(vals),
-      predict(models[[y_name]], data_imputed),
+      stats::predict(models[[y_name]], data_imputed),
       vals
     )
   }

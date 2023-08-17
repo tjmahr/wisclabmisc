@@ -1,0 +1,326 @@
+---
+title: "Utterance length imputation and weighting"
+author: Tristan Mahr
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(wisclabmisc)
+```
+
+In this article, I describe the background of the
+`impute_values_by_length()` function in our work and demonstrate its
+use.
+
+
+## Background
+
+In Hustad and colleagues (2020), we modeled intelligibility data in
+young children's speech. Children would hear an utterance and then 
+would repeat it. The utterances started at 2 words in length, then
+increased to 3 words in length, and so on in batches of 10 sentences,
+all the way to 7 words in length. There was a problem, however: Not all
+of the children could produce utterances at every length. Specifically,
+if a child could not reliably produced 5 utterances of a given length
+length, the task was halted. So given the nature of the task, if a child
+had produced 5-word utterances, they also produced 2--4-word utterances
+as well.
+
+Here, in our modeled/re-simulated version of the dataset, observe how
+the number of children per utterance length decreases:
+
+```{r}
+library(tidyverse)
+
+data_example_intelligibility_by_length |> 
+  count(tocs_level)
+```
+
+The length of the utterance plausibly influenced the outcome variable:
+Longer utterances have more words that might help a listener understand
+the sentence, for example. Therefore, it did not seem appropriate to
+ignore the missing values. We used the following two-step procedure (see
+the [Supplemental Materials](https://doi.org/10.23641/asha.12330956.v1)
+for more detail):
+
+
+1.  impute the missing values at each utterance length using values from
+    shorter lengths, and do the imputation in stages, so that an
+    imputed value for length *L* can be used a predictor for *L* + 1.
+
+2.  weight each utterance length by the probability of it being produced
+    for a child at a given age and take the weighted average of the
+    outcome variable across all length.
+
+Our goal for the data preparation was to produce a single number
+intelligibility score, which this final weighted average provides such a
+number. With this procedure, missing data is not ignored and implausible
+data (like the longest utterances at the youngest ages) is downweighted.
+
+## Non-package implementation
+
+Because I re-used this imputation procedure on two later projects, I
+have refactored a couple of times, so below is the last version of the
+procedure before I decided to clean it up and put in this R package.
+
+The flow for the code consists of the following steps:
+
+  - reshape the data into a wide format,
+  - train a series of linear models trained on the *observed* data,
+  - predict the responses for missing values
+  - reshape back to a long format
+
+Here is the most recent version of the non-package version:
+
+```{r}
+impute_values <- function(data, var, data_train = NULL) {
+  spec <- build_wider_spec_for_imputation(data, {{ var }})
+  data_wide <- pivot_wider_for_imputation(data, spec)
+
+  if (is.null(data_train)) {
+    data_train <- data
+  }
+
+  data_wide_train <- pivot_wider_for_imputation(data_train, spec)
+  models <- fit_imputation_models(data_wide_train)
+
+  data_imputed <- data_wide |>
+    mutate(
+      y_3 = ifelse(is.na(y_3), predict(models$m_3, pick(everything())), y_3)
+    ) |>
+    mutate(
+      y_4 = ifelse(is.na(y_4), predict(models$m_4, pick(everything())), y_4)
+    ) |>
+    mutate(
+      y_5 = ifelse(is.na(y_5), predict(models$m_5, pick(everything())), y_5)
+    ) |>
+    mutate(
+      y_6 = ifelse(is.na(y_6), predict(models$m_6, pick(everything())), y_6)
+    ) |>
+    mutate(
+      y_7 = ifelse(is.na(y_7), predict(models$m_7, pick(everything())), y_7)
+    )
+
+  # handle these separately because `length_longest` could have been imputed if
+  # there was a different strategy
+  data_child_ll <- data_wide |>
+    distinct(group, subject_num, visit_id, age_months, length_longest)
+
+  data_original_values <- data_wide |>
+    tidyr::pivot_longer_spec(spec) |>
+    distinct(group, subject_num, visit_id, tocs_level, {{ var }})
+
+  d <- data_imputed |>
+    tidyr::pivot_longer_spec(spec) |>
+    rename("imputed_{{ var }}" := {{ var }}) |>
+    select(-length_longest) |>
+    left_join(
+      data_child_ll,
+      by = c("group", "subject_num", "visit_id", "age_months")
+    ) |>
+    left_join(
+      data_original_values,
+      by = c("group", "subject_num", "visit_id", "tocs_level")
+    ) |>
+    mutate(
+      imputed = ifelse(is.na({{ var }}), "imputed", "observed"),
+      facet_lab = paste0(tocs_level, " words")
+    )
+
+  d
+}
+
+fit_imputation_models <- function(data) {
+  list(
+    m_7 = lm(y_7 ~ y_1 + y_2 + y_3 + y_4 + y_5 + y_6, data),
+    m_6 = lm(y_6 ~ y_1 + y_2 + y_3 + y_4 + y_5 + length_longest, data),
+    m_5 = lm(y_5 ~ y_1 + y_2 + y_3 + y_4 + length_longest, data),
+    m_4 = lm(y_4 ~ y_1 + y_2 + y_3 + length_longest, data),
+    m_3 = lm(y_3 ~ y_1 + y_2 + length_longest, data)
+  )
+}
+
+build_wider_spec_for_imputation <- function(data, var) {
+  tidyr::build_wider_spec(
+    data,
+    names_from = tocs_level,
+    names_prefix = "y_",
+    # {{ }}: plugs in variable name
+    values_from = {{ var }}
+  )
+}
+
+pivot_wider_for_imputation <- function(data, spec) {
+  data |>
+    tidyr::pivot_wider_spec(
+      spec,
+      id_cols = c(
+        group, subject_num, visit_id, length_longest, age_months
+      )
+    )
+}
+```
+
+This implementation is unsatisfactory for a number of reasons. It
+hardcodes many unneeded variables, so to apply it to the example
+dataset, I have to add filler values for those variables. It also
+hardcodes the number of models and the predictors for the imputation
+model. The `y_1` in the `lm()` indicates that the scores from the
+single-word trials are being used for the imputation. This inclusion may
+or may not be appropriate. In speaking rate studies, it doesn't make
+sense to use include data from the single-word trials.
+
+But, these caveats aside, it works:
+
+```{r}
+sim1 <- data_example_intelligibility_by_length |>
+  mutate(group = "fake", visit_id = 1) |>
+  filter(length_longest != 1) |> 
+  rename(subject_num = child) |> 
+  impute_values(sim_intelligibility)
+```
+
+And here is how we can recreate Figure 3 from the supplemental
+materials:
+
+```{r, fig.width = 6, fig.height = 5, fig.cap = "Results of imputing multiword intelligibility using length-of-longest utterance and the average intelligibilities of shorter utterance lengths."}
+plotting_constants <- list(
+  pal = c(
+    imputed = "#C7A76C", 
+    observed = "#7DB0DD", 
+    "mean ± SE" = "grey30"
+  ),
+  guides_pal = guides(
+    shape = "none",
+    color = guide_legend(
+      title = NULL,
+      override.aes = list(
+        alpha = 1,
+        shape = c(16, 17, 16),
+        linetype = c("blank", "blank", "solid")
+      )
+    )
+  )
+) 
+
+plotting_constants$scale_pal <- scale_color_manual(
+  values = plotting_constants$pal, 
+  limits = names(plotting_constants$pal)
+)
+
+set.seed(100)
+ggplot(sim1 |> filter(tocs_level != 1)) + 
+  aes(
+    x = length_longest, 
+    y = imputed_sim_intelligibility, 
+    color = imputed, 
+    shape = imputed
+  ) + 
+  geom_jitter(width = .3, alpha = .5, height = 0) +
+  stat_summary(
+    aes(group = length_longest, color = "mean ± SE"), 
+    fun.data = mean_se
+  ) + 
+  plotting_constants$scale_pal + 
+  plotting_constants$guides_pal +
+  facet_wrap("facet_lab") + 
+  scale_y_continuous(
+    "Intelligibility", 
+    labels = scales::percent_format(1)
+  ) +
+  labs(
+    x = "Length of longest utterance (observed)"
+  ) + 
+  theme(legend.position = "bottom", legend.justification = "right")
+```
+
+In comparison, here is the package version of this procedure. We have to
+specify all of the relevant variables ahead of time, but the number of
+models or the variables involved are no longer hard-coded.
+
+```{r, fig.width = 6, fig.height = 5}
+sim2 <- data_example_intelligibility_by_length |>
+  filter(length_longest != 1) |> 
+  impute_values_by_length(
+    var_y = sim_intelligibility,
+    var_length = tocs_level,
+    id_cols = c(child, age_months, length_longest), 
+    include_max_length = TRUE
+  )
+
+all.equal(
+  sim1$imputed_sim_intelligibility, 
+  sim2$sim_intelligibility_imputed
+)
+
+p2 <- ggplot(sim2 |> filter(tocs_level != 1)) + 
+  aes(
+    x = length_longest, 
+    y = sim_intelligibility_imputed, 
+    color = sim_intelligibility_imputation, 
+    shape = sim_intelligibility_imputation
+  ) + 
+  geom_jitter(width = .3, alpha = .5, height = 0) +
+  stat_summary(
+    aes(group = length_longest, color = "mean ± SE"), 
+    fun.data = mean_se
+  ) + 
+  plotting_constants$scale_pal + 
+  plotting_constants$guides_pal +
+  facet_wrap("tocs_level") + 
+  scale_y_continuous(
+    "Intelligibility", 
+    labels = scales::percent_format(1)
+  ) +
+  labs(
+    x = "Length of longest utterance (observed)"
+  ) + 
+  theme(legend.position = "bottom", legend.justification = "right")
+p2
+```
+
+In the original models, the length of the longest utterance is used as a
+continuous predictor in the imputations. In the package version this
+behavior is optional and off by default. It shouldn't matter much.
+
+```{r, fig.width = 6, fig.height = 5,}
+sim3 <- data_example_intelligibility_by_length |>
+  filter(length_longest != 1) |> 
+  impute_values_by_length(
+    var_y = sim_intelligibility,
+    var_length = tocs_level,
+    id_cols = c(child, age_months, length_longest), 
+    # changed line
+    include_max_length = FALSE
+  )
+
+all.equal(
+  sim2$sim_intelligibility_imputed, 
+  sim3$sim_intelligibility_imputed
+)
+
+p2 + list(sim3 |> filter(tocs_level != 1))
+```
+
+## Utterance weighting
+
+TD
+
+## References
+
+Hustad, K. C., Mahr, T., Natzke, P. E. M., & Rathouz, P. J.
+(2020). Development of Speech Intelligibility Between 30 and 47 Months in
+Typically Developing Children: A Cross-Sectional Study of Growth. *Journal
+of Speech, Language, and Hearing Research*, *63*(6), 1675–1687.
+https://doi.org/10.1044/2020_JSLHR-20-00008
+
+Hustad, K. C., Mahr, T., Natzke, P. E. M., & J. Rathouz, P. (2020).
+Supplemental Material S1 (Hustad et al., 2020). ASHA journals.
+https://doi.org/10.23641/asha.12330956.v1
+
