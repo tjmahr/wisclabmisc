@@ -71,6 +71,7 @@ procedure to all new participants.
 }
 
 \examples{
+set.seed(1)
 fake_data <- tibble::tibble(
   child = c(
     "a", "a", "a", "a", "a",
@@ -94,7 +95,13 @@ fake_data <- tibble::tibble(
     c(100, 110, 120, 130, 150) + rbinom(5, 12, .5) - 6
   )
 )
-data_imputed <- impute_values_by_length(fake_data, x, level, id_cols = c(child))
+data_imputed <- impute_values_by_length(
+  fake_data,
+  x,
+  level,
+  id_cols = c(child),
+  include_max_length = FALSE
+)
 
 if (requireNamespace("ggplot2")) {
   library(ggplot2)

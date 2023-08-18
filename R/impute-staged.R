@@ -63,6 +63,7 @@
 #'   https://doi.org/10.23641/asha.12330956.v1
 #'
 #' @examples
+#' set.seed(1)
 #' fake_data <- tibble::tibble(
 #'   child = c(
 #'     "a", "a", "a", "a", "a",
@@ -86,7 +87,13 @@
 #'     c(100, 110, 120, 130, 150) + rbinom(5, 12, .5) - 6
 #'   )
 #' )
-#' data_imputed <- impute_values_by_length(fake_data, x, level, id_cols = c(child))
+#' data_imputed <- impute_values_by_length(
+#'   fake_data,
+#'   x,
+#'   level,
+#'   id_cols = c(child),
+#'   include_max_length = FALSE
+#' )
 #'
 #' if (requireNamespace("ggplot2")) {
 #'   library(ggplot2)
@@ -220,4 +227,131 @@ impute_values_by_length <- function(
   )
 
   data_both
+}
+
+
+#' Weight utterance lengths by using an ordinal regression model
+#'
+#' For each participant, we find their length of longest utterance. We predict
+#' this longest utterance length as a nonlinear function of some variable, and
+#' we compute the probability of reaching each utterance length at each value of
+#' the predictor variable. These probabilities are then normalized to provide
+#' weights for each utterance length.
+#'
+#' @param data_train dataframe used to train the ordinal model
+#' @param var_length bare name of the length variable. For example,
+#'   `tocs_level`.
+#' @param var_x bare name of the predictor variable. For example, `age_months`.
+#' @param id_cols a selection of variable names that uniquely identify each
+#'   group of related observations. For example, `c(child_id, age_months)`.
+#' @param spline_df number of degrees of freedom to use for the ordinal
+#'   regression model.
+#' @param data_join (optional) dataset to use join the weights onto. This
+#'   feature is necessary because we want to train a dataset on the observed
+#'   data but supply the weights to the dataset with missing values imputed.
+#' @return the probability and weights of each utterance length at each observed
+#'   value of `var_x`. These are in the added columns
+#'   `{var_length}_prob_reached` and `{var_length}_weight`, respectively.
+#' @export
+#' @references Hustad, K. C., Mahr, T., Natzke, P. E. M., & Rathouz, P. J.
+#'   (2020). Development of Speech Intelligibility Between 30 and 47 Months in
+#'   Typically Developing Children: A Cross-Sectional Study of Growth. *Journal
+#'   of Speech, Language, and Hearing Research*, *63*(6), 1675–1687.
+#'   https://doi.org/10.1044/2020_JSLHR-20-00008
+#'
+#'   Hustad, K. C., Mahr, T., Natzke, P. E. M., & J. Rathouz, P. (2020).
+#'   Supplemental Material S1 (Hustad et al., 2020). ASHA journals.
+#'   https://doi.org/10.23641/asha.12330956.v1
+#'
+#' @examples
+#' data_weights <- weight_lengths_with_ordinal_model(
+#'   data_example_intelligibility_by_length,
+#'   tocs_level,
+#'   age_months,
+#'   child,
+#'   spline_df = 2
+#' )
+#'
+#' if (requireNamespace("ggplot2")) {
+#'   library(ggplot2)
+#'   ggplot(data_weights) +
+#'     aes(x = age_months, y = tocs_level_prob_reached) +
+#'     geom_line(aes(color = ordered(tocs_level)), linewidth = 1) +
+#'     scale_color_ordinal(end = .85) +
+#'     labs(y = "Prob. of reaching length", color = "Utterance length")
+#'
+#'   last_plot() +
+#'     aes(y = tocs_level_weight) +
+#'     labs(y = "Weight of utterance length")
+#' }
+weight_lengths_with_ordinal_model <- function(
+    data_train,
+    var_length,
+    var_x,
+    id_cols,
+    spline_df = 2,
+    data_join = NULL
+) {
+  chr_var_x <- rlang::englue("{{ var_x }}")
+  chr_var_length <- rlang::englue("{{ var_length }}")
+  chr_var_longest_length <- rlang::englue(".longest_{{ var_length }}")
+  chr_cols_to_select <- c(chr_var_length, chr_var_x, chr_var_longest_length)
+  chr_var_longest_length_ord <- rlang::englue(".longest_{{ var_length }}_ord")
+  chr_var_length_prob <- rlang::englue("{{ var_length }}_prob_reached")
+  chr_var_length_weight <- rlang::englue("{{ var_length }}_weight")
+  expr_x <- rlang::enexpr(var_x)
+
+  data_model <- data_train |>
+    dplyr::group_by(dplyr::pick({{ id_cols }})) |>
+    dplyr::mutate(
+      "{chr_var_longest_length}" := max({{ var_length }}, na.rm = TRUE)
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::distinct(
+      dplyr::pick({{ id_cols }}, dplyr::all_of(chr_cols_to_select))
+    ) |>
+    dplyr::mutate(
+      "{chr_var_longest_length_ord}" := ordered(.data[[chr_var_longest_length]])
+    ) |>
+    dplyr::filter(
+      {{ var_length }} == .data[[chr_var_longest_length]]
+    )
+
+  f <- rlang::new_formula(
+    lhs = rlang::sym(chr_var_longest_length_ord),
+    rhs = rlang::expr(splines::ns(!! expr_x, df = !! spline_df))
+  )
+
+  model <- ordinal::clm(f, data = data_model)
+
+  data_x <- data_train |>
+    dplyr::distinct({{ var_x }})
+
+  # Each length gets a probability so we have to reshape from a wide matrix
+  # into a long dataframe
+  data_probs <- stats::predict(model, data_x, type = "prob") |>
+    getElement("fit") |>
+    dplyr::bind_cols(data_x) |>
+    tidyr::pivot_longer(
+      cols = -dplyr::all_of(names(data_x)),
+      names_to = chr_var_length,
+      names_transform = as.integer,
+      values_to = chr_var_length_prob
+    ) |>
+    # Normalize probabilities at each x (age)
+    dplyr::group_by({{ var_x }}) |>
+    dplyr::arrange(desc({{ var_length }})) |>
+    dplyr::mutate(
+      "{chr_var_length_prob}" := cumsum(.data[[chr_var_length_prob]]),
+      "{chr_var_length_weight}" :=
+        .data[[chr_var_length_prob]] / sum(.data[[chr_var_length_prob]])
+    ) |>
+    dplyr::ungroup()
+
+  if (!is.null(data_join)) {
+    data_join |>
+      dplyr::left_join(data_probs, by = c(chr_var_length, chr_var_x))
+  } else {
+    data_probs
+  }
 }

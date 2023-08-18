@@ -8,10 +8,14 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+library(tidyverse)
 ```
+
+
 
 ```{r setup}
 library(wisclabmisc)
+library(tidyverse)
 ```
 
 In this article, I describe the background of the
@@ -310,7 +314,174 @@ p2 + list(sim3 |> filter(tocs_level != 1))
 
 ## Utterance weighting
 
-TD
+Below is the most recent non-package version of the utterance length
+weighting code. The basic steps are
+
+  - preparing a dataset
+  - fitting an ordinal regression model on the length of longest
+    utterance using age as a predictor
+  - computing the probabilities for each utterance length as a function
+    of age
+
+Originally, we had used `MASS::polr()` for the models but I think
+`ordinal::clm()` is easier to use.
+
+```{r}
+prepare_longest_length_model_data <- function(data) {
+  data |>
+    group_by(child) |>
+    mutate(
+      length_longest = max(tocs_level)
+    ) |>
+    ungroup() |>
+    distinct(child, tocs_level, age_months, length_longest) |>
+    filter(tocs_level == length_longest) |>
+    mutate(
+      lol = factor(length_longest),
+      lol_ord = ordered(lol)
+    )
+}
+
+fit_longest_length_model <- function(data, df = 2) {
+  ordinal::clm(
+    lol_ord ~ splines::ns(age_months, df = df),
+    data = data
+  )
+}
+
+compute_longest_length_weights <- function(data, model) {
+  d_ages <- data |>
+    distinct(age_months) |>
+    mutate(
+      # predicted longest length by age
+      lol_predicted = model |>
+        predict(newdata = pick(everything()), type = "class") |>
+        getElement("fit")
+    )
+
+  d_ages |>
+    predict(model, newdata = _, type = "prob") |>
+    getElement("fit") |>
+    bind_cols(d_ages) |>
+    tidyr::pivot_longer(
+      cols = -c(age_months, lol_predicted),
+      names_to = "lol",
+      values_to = "lol_prob"
+    ) |>
+    group_by(age_months) |>
+    mutate(
+      lol_num = as.numeric(as.character(lol)),
+      lol_weighted = lol_prob * lol_num
+    ) |>
+    arrange(-lol_num) |>
+    mutate(
+      prob_reach_length = cumsum(lol_prob),
+      normalized_prob_reach_length = prob_reach_length / sum(prob_reach_length)
+    ) |>
+    ungroup()
+}
+```
+
+Here we can apply this non-package implementation to the example data:
+
+```{r, fig.width = 6, fig.height = 3}
+data_lol <- data_example_intelligibility_by_length |> 
+  filter(tocs_level != 1) |> 
+  prepare_longest_length_model_data()
+
+m <- fit_longest_length_model(data_lol, df = 2)
+
+data_lol_weights <- data_lol |> 
+  compute_longest_length_weights(model = m) |>
+  distinct(
+    age_months, 
+    tocs_level = lol_num, 
+    prob_reach_length, 
+    normalized_prob_reach_length
+  )
+
+# data_weighted <- data_example_intelligibility_by_length |> 
+#   left_join(
+#     data_lol_weights,
+#     by = join_by(age_months, tocs_level)
+#   )
+```
+
+And here is how we can recreate the Figure from the supplemental
+materials:
+
+```{r, fig.width = 6, fig.height = 3}
+library(patchwork)
+
+p1 <- ggplot(data_lol_weights) + 
+  aes(x = age_months, y = prob_reach_length  ) + 
+  geom_line(aes(color = ordered(tocs_level))) +
+  ggrepel::geom_label_repel(
+    aes(label = tocs_level),
+    data = data_lol_weights |> 
+      filter(age_months == 30), 
+    xlim = c(28, 30), 
+    seed = 1
+  ) +
+  ggrepel::geom_label_repel(
+    aes(label = tocs_level),
+    data = data_lol_weights |> 
+      filter(age_months == 47), 
+    xlim = c(47, 49), 
+    seed = 1
+  ) +
+  scale_color_ordinal(end = .85) +
+  guides(color = "none") + 
+  labs(x = "Age [months]", y = "Prob. of reaching length") +
+  scale_x_continuous(limits = c(28, 49))
+p2 <- p1 + 
+  aes(y = normalized_prob_reach_length) + 
+  labs(y = "Weight of utterance length")
+p1 + p2
+```
+
+This implementation is somewhat unsatisfactory. It hardcodes variable
+names, so it's harder to reuse, and it is complicated to use, requiring
+three functions and a join.
+
+In the package implementation, we hide everything behind a single function.
+
+```{r, fig.width = 6, fig.height = 3}
+data_plot <- weight_lengths_with_ordinal_model(
+  data_train = data_example_intelligibility_by_length, 
+  var_length = tocs_level,
+  var_x = age_months, 
+  id_cols = c(child), 
+  spline_df = 3
+)
+    
+p1 <- ggplot(data_plot) + 
+  aes(x = age_months, y = tocs_level_prob_reached ) + 
+  geom_line(aes(color = ordered(tocs_level))) +
+  ggrepel::geom_label_repel(
+    aes(label = tocs_level),
+    data = data_plot |> 
+      filter(age_months == 30), 
+    xlim = c(28, 30), 
+    seed = 1
+  ) +
+  ggrepel::geom_label_repel(
+    aes(label = tocs_level),
+    data = data_plot |> 
+      filter(age_months == 47), 
+    xlim = c(47, 49), 
+    seed = 1
+  ) +
+  scale_color_ordinal(end = .85) +
+  guides(color = "none") + 
+  labs(x = "Age [months]", y = "Prob. of reaching length") +
+  scale_x_continuous(limits = c(28, 49))
+p2 <- p1 + aes(y = tocs_level_weight) + labs(y = "Weight of utterance length")
+p1 + p2
+```
+
+
+
 
 ## References
 
