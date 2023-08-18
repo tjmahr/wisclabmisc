@@ -274,15 +274,17 @@ impute_values_by_length <- function(
 #'
 #' if (requireNamespace("ggplot2")) {
 #'   library(ggplot2)
-#'   ggplot(data_weights) +
+#'   p1 <- ggplot(data_weights) +
 #'     aes(x = age_months, y = tocs_level_prob_reached) +
 #'     geom_line(aes(color = ordered(tocs_level)), linewidth = 1) +
 #'     scale_color_ordinal(end = .85) +
 #'     labs(y = "Prob. of reaching length", color = "Utterance length")
+#'   print(p1)
 #'
-#'   last_plot() +
+#'   p2 <- p1 +
 #'     aes(y = tocs_level_weight) +
 #'     labs(y = "Weight of utterance length")
+#'   print(p2)
 #' }
 weight_lengths_with_ordinal_model <- function(
     data_train,
