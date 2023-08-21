@@ -82,10 +82,24 @@ Mahr</h4>
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tjmahr/wisclabmisc" class="external-link">wisclabmisc</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tjmahr/wisclabmisc" class="external-link">wisclabmisc</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span></code></pre></div>
 <p>In this article, I describe the background of the
-<code><a href="../reference/impute_values_by_length.html">impute_values_by_length()</a></code> function in our work and
-demonstrate its use.</p>
+<code><a href="../reference/impute_values_by_length.html">impute_values_by_length()</a></code> and
+<code><a href="../reference/weight_lengths_with_ordinal_model.html">weight_lengths_with_ordinal_model()</a></code> functions in our work
+and demonstrate their use. Each of these functions had been used in
+different projects (for example, intelligibility and then later
+articulation rate), and I had been copying and tweaking the code from
+project to project. I have decided to give them a more static, public
+implementation in this package. For each function, I will first show the
+most recent package implementation and demonstrate the package version,
+verifying that produce similar results.</p>
+<p>For the demonstrations that follow, I used the
+<code>data_example_intelligibility_by_length</code> dataset which
+consists of model-simulated intelligibility scores. In short, I fit a
+model for children’s intelligibility scores and then asked the most to
+estimate back the original data, provide a statistically faithful but
+jittered version of the original dataset.</p>
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
@@ -103,16 +117,6 @@ well.</p>
 the number of children per utterance length decreases:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; ── <span style="font-weight: bold;">Attaching core tidyverse packages</span> ──────────────────────── tidyverse 2.0.0 ──</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">dplyr    </span> 1.1.2     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">readr    </span> 2.1.4</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">forcats  </span> 1.0.0     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">stringr  </span> 1.5.0</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">ggplot2  </span> 3.4.3     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">tibble   </span> 3.2.1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">lubridate</span> 1.9.2     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">tidyr    </span> 1.3.0</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">purrr    </span> 1.0.2     </span></span>
-<span><span class="co">#&gt; ── <span style="font-weight: bold;">Conflicts</span> ────────────────────────────────────────── tidyverse_conflicts() ──</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">filter()</span> masks <span style="color: #0000BB;">stats</span>::filter()</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">lag()</span>    masks <span style="color: #0000BB;">stats</span>::lag()</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use the conflicted package (<span style="color: #0000BB; font-style: italic;">&lt;http://conflicted.r-lib.org/&gt;</span>) to force all conflicts to become errors</span></span>
 <span></span>
 <span><span class="va">data_example_intelligibility_by_length</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">tocs_level</span><span class="op">)</span></span>
@@ -141,18 +145,15 @@ imputed value for length <em>L</em> can be used a predictor for
 produced for a child at a given age and take the weighted average of the
 outcome variable across all length.</p></li>
 </ol>
-<p>Our goal for the data preparation was to produce a single number
+<p>Our goal for the data preparation was to produce a single-number
 intelligibility score, which this final weighted average provides such a
 number. With this procedure, missing data is not ignored and implausible
 data (like the longest utterances at the youngest ages) is
 downweighted.</p>
 </div>
 <div class="section level2">
-<h2 id="non-package-implementation">Non-package implementation<a class="anchor" aria-label="anchor" href="#non-package-implementation"></a>
+<h2 id="imputation">Imputation<a class="anchor" aria-label="anchor" href="#imputation"></a>
 </h2>
-<p>Because I re-used this imputation procedure on two later projects, I
-have refactored a couple of times, so below is the last version of the
-procedure before I decided to clean it up and put in this R package.</p>
 <p>The flow for the code consists of the following steps:</p>
 <ul>
 <li>reshape the data into a wide format,</li>
@@ -161,7 +162,7 @@ data,</li>
 <li>predict the responses for missing values</li>
 <li>reshape back to a long format</li>
 </ul>
-<p>Here is the most recent version of the non-package version:</p>
+<p>Here is the most recent non-package version of the function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">impute_values</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">var</span>, <span class="va">data_train</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">spec</span> <span class="op">&lt;-</span> <span class="fu">build_wider_spec_for_imputation</span><span class="op">(</span><span class="va">data</span>, <span class="op">{</span><span class="op">{</span> <span class="va">var</span> <span class="op">}</span><span class="op">}</span><span class="op">)</span></span>
@@ -235,7 +236,6 @@ data,</li>
 <span>    <span class="va">data</span>,</span>
 <span>    names_from <span class="op">=</span> <span class="va">tocs_level</span>,</span>
 <span>    names_prefix <span class="op">=</span> <span class="st">"y_"</span>,</span>
-<span>    <span class="co"># {{ }}: plugs in variable name</span></span>
 <span>    values_from <span class="op">=</span> <span class="op">{</span><span class="op">{</span> <span class="va">var</span> <span class="op">}</span><span class="op">}</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -347,9 +347,37 @@ of models or the variables involved are no longer hard-coded.</p>
 <span>  <span class="va">sim1</span><span class="op">$</span><span class="va">imputed_sim_intelligibility</span>, </span>
 <span>  <span class="va">sim2</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>In the original models, the length of the longest utterance is used
+as a continuous predictor in the imputations. In the package version
+this behavior is optional and disabled by default. It does not affect
+the results noticeably.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sim3</span> <span class="op">&lt;-</span> <span class="va">data_example_intelligibility_by_length</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">length_longest</span> <span class="op">!=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="../reference/impute_values_by_length.html">impute_values_by_length</a></span><span class="op">(</span></span>
+<span>    var_y <span class="op">=</span> <span class="va">sim_intelligibility</span>,</span>
+<span>    var_length <span class="op">=</span> <span class="va">tocs_level</span>,</span>
+<span>    id_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">child</span>, <span class="va">age_months</span>, <span class="va">length_longest</span><span class="op">)</span>, </span>
+<span>    <span class="co"># changed line</span></span>
+<span>    include_max_length <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in predict.lm(models[[y_name]], data_imputed): prediction from</span></span>
+<span><span class="co">#&gt; rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
 <span></span>
-<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">sim2</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tocs_level</span> <span class="op">!=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
+<span>  <span class="va">sim2</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span>, </span>
+<span>  <span class="va">sim3</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Mean relative difference: 8.473438e-05"</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span></span>
+<span>  <span class="va">sim2</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span>, </span>
+<span>  <span class="va">sim3</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">sim2</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tocs_level</span> <span class="op">!=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="va">length_longest</span>, </span>
 <span>    y <span class="op">=</span> <span class="va">sim_intelligibility_imputed</span>, </span>
@@ -371,39 +399,169 @@ of models or the variables involved are no longer hard-coded.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="st">"Length of longest utterance (observed)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span>, legend.justification <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span>
-<span><span class="va">p2</span></span></code></pre></div>
-<p><img src="utterance-length-imputation_files/figure-html/unnamed-chunk-6-1.png" width="900"></p>
-<p>In the original models, the length of the longest utterance is used
-as a continuous predictor in the imputations. In the package version
-this behavior is optional and off by default. It shouldn’t matter
-much.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sim3</span> <span class="op">&lt;-</span> <span class="va">data_example_intelligibility_by_length</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">length_longest</span> <span class="op">!=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="../reference/impute_values_by_length.html">impute_values_by_length</a></span><span class="op">(</span></span>
-<span>    var_y <span class="op">=</span> <span class="va">sim_intelligibility</span>,</span>
-<span>    var_length <span class="op">=</span> <span class="va">tocs_level</span>,</span>
-<span>    id_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">child</span>, <span class="va">age_months</span>, <span class="va">length_longest</span><span class="op">)</span>, </span>
-<span>    <span class="co"># changed line</span></span>
-<span>    include_max_length <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(models[[y_name]], data_imputed): prediction from</span></span>
-<span><span class="co">#&gt; rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
-<span>  <span class="va">sim2</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span>, </span>
-<span>  <span class="va">sim3</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Mean relative difference: 8.473438e-05"</span></span>
-<span></span>
-<span><span class="va">p2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">sim3</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tocs_level</span> <span class="op">!=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span>, legend.justification <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="utterance-length-imputation_files/figure-html/unnamed-chunk-7-1.png" width="900"></p>
 </div>
 <div class="section level2">
 <h2 id="utterance-weighting">Utterance weighting<a class="anchor" aria-label="anchor" href="#utterance-weighting"></a>
 </h2>
-<p>TD</p>
+<p>Below is the most recent non-package version of the utterance length
+weighting code. The basic steps are</p>
+<ul>
+<li>preparing a dataset</li>
+<li>fitting an ordinal regression model on the length of longest
+utterance using age as a predictor</li>
+<li>computing the probabilities for each utterance length as a function
+of age</li>
+</ul>
+<p>Originally, we had used <code><a href="https://rdrr.io/pkg/MASS/man/polr.html" class="external-link">MASS::polr()</a></code> for the models but
+I think <code><a href="https://rdrr.io/pkg/ordinal/man/clm.html" class="external-link">ordinal::clm()</a></code> is easier to use.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">prepare_longest_length_model_data</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">data</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">child</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>      length_longest <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">tocs_level</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">child</span>, <span class="va">tocs_level</span>, <span class="va">age_months</span>, <span class="va">length_longest</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tocs_level</span> <span class="op">==</span> <span class="va">length_longest</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>      lol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">length_longest</span><span class="op">)</span>,</span>
+<span>      lol_ord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">ordered</a></span><span class="op">(</span><span class="va">lol</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">fit_longest_length_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">df</span> <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">ordinal</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ordinal/man/clm.html" class="external-link">clm</a></span><span class="op">(</span></span>
+<span>    <span class="va">lol_ord</span> <span class="op">~</span> <span class="fu">splines</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">age_months</span>, df <span class="op">=</span> <span class="va">df</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">data</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">compute_longest_length_weights</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">model</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">d_ages</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">age_months</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>      <span class="co"># predicted longest length by age</span></span>
+<span>      lol_predicted <span class="op">=</span> <span class="va">model</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span>newdata <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pick.html" class="external-link">pick</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/Extract.html" class="external-link">getElement</a></span><span class="op">(</span><span class="st">"fit"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">d_ages</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">model</span>, newdata <span class="op">=</span> <span class="va">_</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/Extract.html" class="external-link">getElement</a></span><span class="op">(</span><span class="st">"fit"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_cols.html" class="external-link">bind_cols</a></span><span class="op">(</span><span class="va">d_ages</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
+<span>      cols <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">age_months</span>, <span class="va">lol_predicted</span><span class="op">)</span>,</span>
+<span>      names_to <span class="op">=</span> <span class="st">"lol"</span>,</span>
+<span>      values_to <span class="op">=</span> <span class="st">"lol_prob"</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">age_months</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>      lol_num <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">lol</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      lol_weighted <span class="op">=</span> <span class="va">lol_prob</span> <span class="op">*</span> <span class="va">lol_num</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="op">-</span><span class="va">lol_num</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>      prob_reach_length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">lol_prob</span><span class="op">)</span>,</span>
+<span>      normalized_prob_reach_length <span class="op">=</span> <span class="va">prob_reach_length</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">prob_reach_length</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Here we can apply this non-package implementation to the example
+data:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_lol</span> <span class="op">&lt;-</span> <span class="va">data_example_intelligibility_by_length</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tocs_level</span> <span class="op">!=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">prepare_longest_length_model_data</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">fit_longest_length_model</span><span class="op">(</span><span class="va">data_lol</span>, df <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">data_lol_weights</span> <span class="op">&lt;-</span> <span class="va">data_lol</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">compute_longest_length_weights</span><span class="op">(</span>model <span class="op">=</span> <span class="va">m</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span></span>
+<span>    <span class="va">age_months</span>, </span>
+<span>    tocs_level <span class="op">=</span> <span class="va">lol_num</span>, </span>
+<span>    <span class="va">prob_reach_length</span>, </span>
+<span>    <span class="va">normalized_prob_reach_length</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># data_weighted &lt;- data_example_intelligibility_by_length |&gt; </span></span>
+<span><span class="co">#   left_join(</span></span>
+<span><span class="co">#     data_lol_weights,</span></span>
+<span><span class="co">#     by = join_by(age_months, tocs_level)</span></span>
+<span><span class="co">#   )</span></span></code></pre></div>
+<p>And here is how we can recreate the Figure from the supplemental
+materials:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_lol_weights</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age_months</span>, y <span class="op">=</span> <span class="va">prob_reach_length</span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">ordered</a></span><span class="op">(</span><span class="va">tocs_level</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggrepel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggrepel/man/geom_text_repel.html" class="external-link">geom_label_repel</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">tocs_level</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">data_lol_weights</span> <span class="op">|&gt;</span> </span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age_months</span> <span class="op">==</span> <span class="fl">30</span><span class="op">)</span>, </span>
+<span>    xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">28</span>, <span class="fl">30</span><span class="op">)</span>, </span>
+<span>    seed <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggrepel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggrepel/man/geom_text_repel.html" class="external-link">geom_label_repel</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">tocs_level</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">data_lol_weights</span> <span class="op">|&gt;</span> </span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age_months</span> <span class="op">==</span> <span class="fl">47</span><span class="op">)</span>, </span>
+<span>    xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">47</span>, <span class="fl">49</span><span class="op">)</span>, </span>
+<span>    seed <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_color_ordinal</a></span><span class="op">(</span>end <span class="op">=</span> <span class="fl">.85</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html" class="external-link">guides</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Age [months]"</span>, y <span class="op">=</span> <span class="st">"Prob. of reaching length"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">28</span>, <span class="fl">49</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="va">p1</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">normalized_prob_reach_length</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Weight of utterance length"</span><span class="op">)</span></span>
+<span><span class="va">p1</span></span>
+<span><span class="va">p2</span></span></code></pre></div>
+<p><img src="utterance-length-imputation_files/figure-html/unnamed-chunk-10-1.png" width="40%"><img src="utterance-length-imputation_files/figure-html/unnamed-chunk-10-2.png" width="40%"></p>
+<p>This implementation is somewhat unsatisfactory. It hardcodes variable
+names, so it’s harder to reuse, and it is complicated to use, requiring
+three functions and a join.</p>
+<p>In the package implementation, we hide everything behind a single
+function.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/weight_lengths_with_ordinal_model.html">weight_lengths_with_ordinal_model</a></span><span class="op">(</span></span>
+<span>  data_train <span class="op">=</span> <span class="va">data_example_intelligibility_by_length</span>, </span>
+<span>  var_length <span class="op">=</span> <span class="va">tocs_level</span>,</span>
+<span>  var_x <span class="op">=</span> <span class="va">age_months</span>, </span>
+<span>  id_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">child</span><span class="op">)</span>, </span>
+<span>  spline_df <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="op">)</span></span>
+<span>    </span>
+<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_plot</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">age_months</span>, y <span class="op">=</span> <span class="va">tocs_level_prob_reached</span> <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">ordered</a></span><span class="op">(</span><span class="va">tocs_level</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggrepel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggrepel/man/geom_text_repel.html" class="external-link">geom_label_repel</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">tocs_level</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">data_plot</span> <span class="op">|&gt;</span> </span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age_months</span> <span class="op">==</span> <span class="fl">30</span><span class="op">)</span>, </span>
+<span>    xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">28</span>, <span class="fl">30</span><span class="op">)</span>, </span>
+<span>    seed <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggrepel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggrepel/man/geom_text_repel.html" class="external-link">geom_label_repel</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">tocs_level</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">data_plot</span> <span class="op">|&gt;</span> </span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age_months</span> <span class="op">==</span> <span class="fl">47</span><span class="op">)</span>, </span>
+<span>    xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">47</span>, <span class="fl">49</span><span class="op">)</span>, </span>
+<span>    seed <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_color_ordinal</a></span><span class="op">(</span>end <span class="op">=</span> <span class="fl">.85</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html" class="external-link">guides</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Age [months]"</span>, y <span class="op">=</span> <span class="st">"Prob. of reaching length"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">28</span>, <span class="fl">49</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="va">p1</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">tocs_level_weight</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Weight of utterance length"</span><span class="op">)</span></span>
+<span><span class="va">p1</span></span>
+<span><span class="va">p2</span></span></code></pre></div>
+<p><img src="utterance-length-imputation_files/figure-html/unnamed-chunk-11-1.png" width="40%"><img src="utterance-length-imputation_files/figure-html/unnamed-chunk-11-2.png" width="40%"></p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
