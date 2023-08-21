@@ -19,9 +19,21 @@ library(tidyverse)
 ```
 
 In this article, I describe the background of the
-`impute_values_by_length()` function in our work and demonstrate its
-use.
+`impute_values_by_length()` and `weight_lengths_with_ordinal_model()`
+functions in our work and demonstrate their use. Each of these functions
+had been used in different projects (for example, intelligibility and
+then later articulation rate), and I had been copying and tweaking the
+code from project to project. I have decided to give them a more static,
+public implementation in this package. For each function, I will first
+show the most recent package implementation and demonstrate the package
+version, verifying that produce similar results.
 
+For the demonstrations that follow, I used the
+`data_example_intelligibility_by_length` dataset which consists of
+model-simulated intelligibility scores. In short, I fit a model for
+children's intelligibility scores and then asked the most to estimate
+back the original data, provide a statistically faithful but jittered
+version of the original dataset.
 
 ## Background
 
@@ -62,16 +74,12 @@ for more detail):
     for a child at a given age and take the weighted average of the
     outcome variable across all length.
 
-Our goal for the data preparation was to produce a single number
+Our goal for the data preparation was to produce a single-number
 intelligibility score, which this final weighted average provides such a
 number. With this procedure, missing data is not ignored and implausible
 data (like the longest utterances at the youngest ages) is downweighted.
 
-## Non-package implementation
-
-Because I re-used this imputation procedure on two later projects, I
-have refactored a couple of times, so below is the last version of the
-procedure before I decided to clean it up and put in this R package.
+## Imputation
 
 The flow for the code consists of the following steps:
 
@@ -80,7 +88,7 @@ The flow for the code consists of the following steps:
   - predict the responses for missing values
   - reshape back to a long format
 
-Here is the most recent version of the non-package version:
+Here is the most recent non-package version of the function:
 
 ```{r}
 impute_values <- function(data, var, data_train = NULL) {
@@ -155,7 +163,6 @@ build_wider_spec_for_imputation <- function(data, var) {
     data,
     names_from = tocs_level,
     names_prefix = "y_",
-    # {{ }}: plugs in variable name
     values_from = {{ var }}
   )
 }
@@ -248,6 +255,7 @@ In comparison, here is the package version of this procedure. We have to
 specify all of the relevant variables ahead of time, but the number of
 models or the variables involved are no longer hard-coded.
 
+
 ```{r, fig.width = 6, fig.height = 5}
 sim2 <- data_example_intelligibility_by_length |>
   filter(length_longest != 1) |> 
@@ -262,8 +270,34 @@ all.equal(
   sim1$imputed_sim_intelligibility, 
   sim2$sim_intelligibility_imputed
 )
+```
 
-p2 <- ggplot(sim2 |> filter(tocs_level != 1)) + 
+In the original models, the length of the longest utterance is used as a
+continuous predictor in the imputations. In the package version this behavior is
+optional and disabled by default. It does not affect the results noticeably.
+
+```{r, fig.width = 6, fig.height = 5}
+sim3 <- data_example_intelligibility_by_length |>
+  filter(length_longest != 1) |> 
+  impute_values_by_length(
+    var_y = sim_intelligibility,
+    var_length = tocs_level,
+    id_cols = c(child, age_months, length_longest), 
+    # changed line
+    include_max_length = FALSE
+  )
+
+all.equal(
+  sim2$sim_intelligibility_imputed, 
+  sim3$sim_intelligibility_imputed
+)
+
+cor(
+  sim2$sim_intelligibility_imputed, 
+  sim3$sim_intelligibility_imputed
+)
+
+ggplot(sim2 |> filter(tocs_level != 1)) + 
   aes(
     x = length_longest, 
     y = sim_intelligibility_imputed, 
@@ -286,30 +320,6 @@ p2 <- ggplot(sim2 |> filter(tocs_level != 1)) +
     x = "Length of longest utterance (observed)"
   ) + 
   theme(legend.position = "bottom", legend.justification = "right")
-p2
-```
-
-In the original models, the length of the longest utterance is used as a
-continuous predictor in the imputations. In the package version this
-behavior is optional and off by default. It shouldn't matter much.
-
-```{r, fig.width = 6, fig.height = 5,}
-sim3 <- data_example_intelligibility_by_length |>
-  filter(length_longest != 1) |> 
-  impute_values_by_length(
-    var_y = sim_intelligibility,
-    var_length = tocs_level,
-    id_cols = c(child, age_months, length_longest), 
-    # changed line
-    include_max_length = FALSE
-  )
-
-all.equal(
-  sim2$sim_intelligibility_imputed, 
-  sim3$sim_intelligibility_imputed
-)
-
-p2 + list(sim3 |> filter(tocs_level != 1))
 ```
 
 ## Utterance weighting
@@ -410,9 +420,7 @@ data_lol_weights <- data_lol |>
 And here is how we can recreate the Figure from the supplemental
 materials:
 
-```{r, fig.width = 6, fig.height = 3}
-library(patchwork)
-
+```{r, fig.width = 3, fig.height = 3, out.width = "40%", fig.show = "hold"}
 p1 <- ggplot(data_lol_weights) + 
   aes(x = age_months, y = prob_reach_length  ) + 
   geom_line(aes(color = ordered(tocs_level))) +
@@ -437,7 +445,8 @@ p1 <- ggplot(data_lol_weights) +
 p2 <- p1 + 
   aes(y = normalized_prob_reach_length) + 
   labs(y = "Weight of utterance length")
-p1 + p2
+p1
+p2
 ```
 
 This implementation is somewhat unsatisfactory. It hardcodes variable
@@ -446,7 +455,7 @@ three functions and a join.
 
 In the package implementation, we hide everything behind a single function.
 
-```{r, fig.width = 6, fig.height = 3}
+```{r, fig.width = 3, fig.height = 3, out.width = "40%", fig.show = "hold"}
 data_plot <- weight_lengths_with_ordinal_model(
   data_train = data_example_intelligibility_by_length, 
   var_length = tocs_level,
@@ -477,7 +486,8 @@ p1 <- ggplot(data_plot) +
   labs(x = "Age [months]", y = "Prob. of reaching length") +
   scale_x_continuous(limits = c(28, 49))
 p2 <- p1 + aes(y = tocs_level_weight) + labs(y = "Weight of utterance length")
-p1 + p2
+p1
+p2
 ```
 
 

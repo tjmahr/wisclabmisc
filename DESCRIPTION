@@ -35,7 +35,6 @@ Suggests:
     knitr,
     nlme,
     numDeriv,
-    patchwork,
     rmarkdown,
     roxygen2,
     rstanarm,
