@@ -35,6 +35,12 @@ children's intelligibility scores and then asked the most to estimate
 back the original data, provide a statistically faithful but jittered
 version of the original dataset.
 
+```{r}
+data_demo <- data_example_intelligibility_by_length |> 
+  filter(length_longest != 1)
+```
+
+
 ## Background
 
 In Hustad and colleagues (2020), we modeled intelligibility data in
@@ -54,7 +60,7 @@ the number of children per utterance length decreases:
 ```{r}
 library(tidyverse)
 
-data_example_intelligibility_by_length |> 
+data_demo |> 
   count(tocs_level)
 ```
 
@@ -190,9 +196,8 @@ sense to use include data from the single-word trials.
 But, these caveats aside, it works:
 
 ```{r}
-sim1 <- data_example_intelligibility_by_length |>
+data_imputation_1 <- data_demo |>
   mutate(group = "fake", visit_id = 1) |>
-  filter(length_longest != 1) |> 
   rename(subject_num = child) |> 
   impute_values(sim_intelligibility)
 ```
@@ -226,7 +231,7 @@ plotting_constants$scale_pal <- scale_color_manual(
 )
 
 set.seed(100)
-ggplot(sim1 |> filter(tocs_level != 1)) + 
+ggplot(data_imputation_1 |> filter(tocs_level != 1)) + 
   aes(
     x = length_longest, 
     y = imputed_sim_intelligibility, 
@@ -255,10 +260,8 @@ In comparison, here is the package version of this procedure. We have to
 specify all of the relevant variables ahead of time, but the number of
 models or the variables involved are no longer hard-coded.
 
-
 ```{r, fig.width = 6, fig.height = 5}
-sim2 <- data_example_intelligibility_by_length |>
-  filter(length_longest != 1) |> 
+data_imputation_2 <- data_demo |> 
   impute_values_by_length(
     var_y = sim_intelligibility,
     var_length = tocs_level,
@@ -267,8 +270,8 @@ sim2 <- data_example_intelligibility_by_length |>
   )
 
 all.equal(
-  sim1$imputed_sim_intelligibility, 
-  sim2$sim_intelligibility_imputed
+  data_imputation_1$imputed_sim_intelligibility, 
+  data_imputation_2$sim_intelligibility_imputed
 )
 ```
 
@@ -277,27 +280,25 @@ continuous predictor in the imputations. In the package version this behavior is
 optional and disabled by default. It does not affect the results noticeably.
 
 ```{r, fig.width = 6, fig.height = 5}
-sim3 <- data_example_intelligibility_by_length |>
-  filter(length_longest != 1) |> 
+data_imputation_3 <- data_demo |> 
   impute_values_by_length(
     var_y = sim_intelligibility,
     var_length = tocs_level,
     id_cols = c(child, age_months, length_longest), 
-    # changed line
     include_max_length = FALSE
   )
 
 all.equal(
-  sim2$sim_intelligibility_imputed, 
-  sim3$sim_intelligibility_imputed
+  data_imputation_2$sim_intelligibility_imputed, 
+  data_imputation_3$sim_intelligibility_imputed
 )
 
 cor(
-  sim2$sim_intelligibility_imputed, 
-  sim3$sim_intelligibility_imputed
+  data_imputation_2$sim_intelligibility_imputed, 
+  data_imputation_3$sim_intelligibility_imputed
 )
 
-ggplot(sim2 |> filter(tocs_level != 1)) + 
+ggplot(data_imputation_2 |> filter(tocs_level != 1)) + 
   aes(
     x = length_longest, 
     y = sim_intelligibility_imputed, 
@@ -395,7 +396,7 @@ compute_longest_length_weights <- function(data, model) {
 Here we can apply this non-package implementation to the example data:
 
 ```{r, fig.width = 6, fig.height = 3}
-data_lol <- data_example_intelligibility_by_length |> 
+data_lol <- data_demo |> 
   filter(tocs_level != 1) |> 
   prepare_longest_length_model_data()
 
@@ -409,12 +410,6 @@ data_lol_weights <- data_lol |>
     prob_reach_length, 
     normalized_prob_reach_length
   )
-
-# data_weighted <- data_example_intelligibility_by_length |> 
-#   left_join(
-#     data_lol_weights,
-#     by = join_by(age_months, tocs_level)
-#   )
 ```
 
 And here is how we can recreate the Figure from the supplemental
@@ -424,70 +419,174 @@ materials:
 p1 <- ggplot(data_lol_weights) + 
   aes(x = age_months, y = prob_reach_length  ) + 
   geom_line(aes(color = ordered(tocs_level))) +
-  ggrepel::geom_label_repel(
-    aes(label = tocs_level),
+  geom_text(
+    aes(label = tocs_level, color = ordered(tocs_level)),
+    x = 29,
     data = data_lol_weights |> 
-      filter(age_months == 30), 
-    xlim = c(28, 30), 
-    seed = 1
+      filter(age_months == 30, tocs_level %in% c(2, 3, 4, 7)), 
+    fontface = "bold"
   ) +
-  ggrepel::geom_label_repel(
-    aes(label = tocs_level),
+  geom_text(
+    aes(label = tocs_level, color = ordered(tocs_level)),
+    x = 48,
     data = data_lol_weights |> 
-      filter(age_months == 47), 
-    xlim = c(47, 49), 
-    seed = 1
+      filter(age_months == 47, tocs_level %in% c(2, 5, 6, 7)), 
+    fontface = "bold"
   ) +
   scale_color_ordinal(end = .85) +
   guides(color = "none") + 
   labs(x = "Age [months]", y = "Prob. of reaching length") +
   scale_x_continuous(limits = c(28, 49))
+p1
+
 p2 <- p1 + 
   aes(y = normalized_prob_reach_length) + 
   labs(y = "Weight of utterance length")
-p1
 p2
 ```
 
 This implementation is somewhat unsatisfactory. It hardcodes variable
 names, so it's harder to reuse, and it is complicated to use, requiring
-three functions and a join.
-
-In the package implementation, we hide everything behind a single function.
+three functions and a join. In the package implementation, we hide
+everything behind a single function.
 
 ```{r, fig.width = 3, fig.height = 3, out.width = "40%", fig.show = "hold"}
 data_plot <- weight_lengths_with_ordinal_model(
-  data_train = data_example_intelligibility_by_length, 
+  data_train = data_demo |> 
+    filter(tocs_level != 1), 
   var_length = tocs_level,
   var_x = age_months, 
   id_cols = c(child), 
-  spline_df = 3
+  spline_df = 2
 )
-    
-p1 <- ggplot(data_plot) + 
-  aes(x = age_months, y = tocs_level_prob_reached ) + 
-  geom_line(aes(color = ordered(tocs_level))) +
-  ggrepel::geom_label_repel(
-    aes(label = tocs_level),
-    data = data_plot |> 
-      filter(age_months == 30), 
-    xlim = c(28, 30), 
-    seed = 1
-  ) +
-  ggrepel::geom_label_repel(
-    aes(label = tocs_level),
-    data = data_plot |> 
-      filter(age_months == 47), 
-    xlim = c(47, 49), 
-    seed = 1
-  ) +
-  scale_color_ordinal(end = .85) +
-  guides(color = "none") + 
-  labs(x = "Age [months]", y = "Prob. of reaching length") +
-  scale_x_continuous(limits = c(28, 49))
-p2 <- p1 + aes(y = tocs_level_weight) + labs(y = "Weight of utterance length")
-p1
-p2
+```
+
+We can see a match in weights between the two implementations.
+
+```{r}
+all.equal(
+  data_lol_weights$normalized_prob_reach_length, 
+  data_plot$tocs_level_weight
+)
+
+all.equal(
+  data_lol_weights$prob_reach_length, 
+  data_plot$tocs_level_prob_reached
+)
+```
+
+## Combining the imputation and the weights
+
+The last step of the process is to combine the imputed values and the
+length weights, and then take the means of the imputed values. This step
+is a straightforward table join. Although we used single-word scores for
+imputation (because they are highly correlated with other
+intelligibility scores), we do not use them for weighting. The target
+variable here is a single-number summary of intelligibility in 2--7-word
+utterances, so we exclude 1-word scores.
+
+```{r}
+data_weighted_1 <- data_imputation_1 |> 
+  filter(tocs_level != 1) |> 
+  left_join(data_lol_weights, by = join_by(age_months, tocs_level)) 
+
+data_means_wide_1 <- data_weighted_1 |> 
+  group_by(subject_num, age_months) |> 
+  summarise(
+    observed = mean(sim_intelligibility, na.rm = TRUE),
+    imputed = mean(imputed_sim_intelligibility),
+    weighted = weighted.mean(
+      imputed_sim_intelligibility, 
+      normalized_prob_reach_length
+    ),
+    .groups = "drop"
+  ) 
+data_means_wide_1
+```
+
+We can automate the joining step. Our
+`weight_lengths_with_ordinal_model()` takes an optional `data_join`
+argument specifying a dataframe that the estimated weights should be
+joined onto. This argument is intended for the dataframe of imputed
+values. We cannot pass in the imputed values as `data_train` because
+with missing values imputed, everyone has the same length of longest
+utterance.
+
+```{r}
+data_weighted_2 <- weight_lengths_with_ordinal_model(
+  data_train = data_demo |> filter(tocs_level != 1), 
+  var_length = tocs_level,
+  var_x = age_months, 
+  id_cols = c(child), 
+  spline_df = 2,
+  data_join = data_imputation_2 |> filter(tocs_level != 1)
+)
+
+data_means_wide_2 <- data_weighted_2 |> 
+  group_by(child, age_months) |> 
+  summarise(
+    observed = mean(sim_intelligibility, na.rm = TRUE),
+    imputed = mean(sim_intelligibility_imputed),
+    weighted = weighted.mean(sim_intelligibility_imputed, tocs_level_weight),
+    .groups = "drop"
+  )
+```
+
+We can see the same results from both methods.
+
+```{r}
+all.equal(data_means_wide_1$observed, data_means_wide_2$observed)
+all.equal(data_means_wide_1$imputed,  data_means_wide_2$imputed)
+all.equal(data_means_wide_1$weighted, data_means_wide_2$weighted)
+```
+
+The three values overall are very similar:
+
+```{r}
+data_means <- data_means_wide_2 |> 
+  tidyr::pivot_longer(
+    cols = c(-child, -age_months),
+    names_to = "score",
+    values_to = "intelligibility"
+  )
+
+ggplot(data_means) + 
+  aes(x = age_months, y = intelligibility, color = score) + 
+  geom_point(alpha = .4)
+```
+
+But importantly, imputation is negatively biased in younger children who
+cannot reach the longer utterance lengths. Points fall below the
+diagonal when the two types of scores are compared, and the difference
+between the two scores is more negative at younger ages.
+
+```{r}
+ggplot(data_means_wide_2) + 
+  aes(x = observed, y = imputed) +
+  geom_abline() +
+  geom_point()
+
+ggplot(data_means_wide_2) + 
+  aes(x = age_months, y = imputed - observed) +
+  geom_hline(yintercept = 0, linewidth = 2, color = "white") +
+  geom_point()
+```
+
+When we weight by utterance length probability, then the score has a
+tighter correlation with observed, un-adjusted scores. The pointwise
+differences between the weighted and observed values is small, between
+±2 percentage points of intelligibility.
+
+```{r}
+ggplot(data_means_wide_2) + 
+  aes(x = observed, y = weighted) +
+  geom_abline() +
+  geom_point()
+
+ggplot(data_means_wide_2) + 
+  aes(x = age_months, y = weighted - observed) +
+  geom_hline(yintercept = 0, linewidth = 2, color = "white") +
+  geom_point()
 ```
 
 
