@@ -33,6 +33,7 @@ Suggests:
     gamlss.dist,
     ggplot2,
     knitr,
+    logitnorm,
     nlme,
     numDeriv,
     rmarkdown,

@@ -28,3 +28,25 @@ try_uniroot <- function(...) {
   )
 }
 
+
+#' Compute the mean of logit-normal distribution(s)
+#'
+#' This function is a wrapper around [logitnorm::momentsLogitnorm()].
+#'
+#' @param mu mean(s) on the logit scale
+#' @param sigma standard deviation(s) on the logit scale
+#' @return the means of the distributions
+#' @export
+#' @examples
+#' \donttest{
+#' x <- logitnorm_mean(2, 1)
+#' x
+#' }
+#' # compare to simulation
+#' set.seed(100)
+#' rnorm(1000, 2, 1) |> plogis() |> mean()
+logitnorm_mean <- function(mu, sigma) {
+  rlang::check_installed("logitnorm", reason = "for `logitnorm_mean()`")
+  x <- Vectorize(logitnorm::momentsLogitnorm)(mu = mu, sigma = sigma)
+  x["mean", ]
+}
