@@ -145,8 +145,8 @@ compute_smooth_density_roc <- function(
 #' @param ... additional arguments passed to `pROC::roc()`.
 #' @return a new dataframe of ROC coordinates is returned with columns for the
 #'   predictor variable, `.sensitivities`, `.specificities`, `.auc`,
-#'   `.direction`, `.controls`, `.cases`, `.is_best_youden` and
-#'   `.is_best_closest_topleft`.
+#'   `.direction`, `.controls`, `.cases`, `.n_controls`, `.n_cases`,
+#'   `.is_best_youden` and `.is_best_closest_topleft`.
 #'
 #' @export
 #' @examples
@@ -204,27 +204,29 @@ compute_empirical_roc <- function(
   rename_plan_2 <- c("threshold") |>
     stats::setNames(names(x)[1])
 
-  pROC::coords(roc) %>%
-    dplyr::rename(tidyselect::all_of(rename_plan)) %>%
+  d <-pROC::coords(roc) |>
+    dplyr::rename(tidyselect::all_of(rename_plan)) |>
     dplyr::mutate(
       .auc = as.numeric(roc$auc),
       .direction = roc$direction,
       .controls = roc$levels[1],
       .cases = roc$levels[2],
-    ) %>%
+      .n_controls = sum(y[[1]] == roc$levels[1]),
+      .n_cases = sum(y[[1]] == roc$levels[2])
+    ) |>
     dplyr::left_join(
       dplyr::distinct(tidied),
       by = c(".sensitivities", ".specificities", "threshold"),
       relationship = "many-to-one"
-    ) %>%
+    ) |>
     dplyr::mutate(
       .is_best_youden = dplyr::coalesce(.data$.is_best_youden, FALSE),
       .is_best_closest_topleft = dplyr::coalesce(
         .data$.is_best_closest_topleft,
         FALSE
       )
-    ) %>%
-    dplyr::rename(tidyselect::all_of(rename_plan_2)) %>%
+    ) |>
+    dplyr::rename(tidyselect::all_of(rename_plan_2)) |>
     tibble::as_tibble()
 }
 

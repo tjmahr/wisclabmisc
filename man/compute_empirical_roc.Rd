@@ -33,8 +33,8 @@ to \code{c(1, .5)}, which are the defaults used by \code{pROC::coords()}.}
 \value{
 a new dataframe of ROC coordinates is returned with columns for the
 predictor variable, \code{.sensitivities}, \code{.specificities}, \code{.auc},
-\code{.direction}, \code{.controls}, \code{.cases}, \code{.is_best_youden} and
-\code{.is_best_closest_topleft}.
+\code{.direction}, \code{.controls}, \code{.cases}, \code{.n_controls}, \code{.n_cases},
+\code{.is_best_youden} and \code{.is_best_closest_topleft}.
 }
 \description{
 Create an ROC curve from observed data
