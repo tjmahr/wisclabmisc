@@ -82,7 +82,7 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tjmahr/wisclabmisc" class="external-link">wisclabmisc</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://expasy.org/tools/pROC/" class="external-link">pROC</a></span>, exclude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cov"</span>, <span class="st">"smooth"</span>, <span class="st">"var"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://xrobin.github.io/pROC/" class="external-link">pROC</a></span>, exclude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cov"</span>, <span class="st">"smooth"</span>, <span class="st">"var"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Type 'citation("pROC")' for a citation.</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="a-primer-on-roc-curves">A primer on ROC curves<a class="anchor" aria-label="anchor" href="#a-primer-on-roc-curves"></a>
@@ -400,22 +400,7 @@ the predictor variable.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compute_empirical_roc.html">compute_empirical_roc</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">outcome</span>, <span class="va">s100b</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Setting levels: control = Good, case = Poor</span></span>
-<span><span class="co">#&gt; Setting direction: controls &lt; cases</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 51 × 9</span></span></span>
-<span><span class="co">#&gt;       s100b .specificities .sensitivities  .auc .direction .controls .cases</span></span>
-<span><span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> -<span style="color: #BB0000;">Inf</span>             0               1     0.731 &lt;          Good      Poor  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>    0.035         0               0.976 0.731 &lt;          Good      Poor  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>    0.045         0.069<span style="text-decoration: underline;">4</span>          0.976 0.731 &lt;          Good      Poor  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>    0.055         0.111           0.976 0.731 &lt;          Good      Poor  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>    0.065         0.139           0.976 0.731 &lt;          Good      Poor  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>    0.075         0.222           0.902 0.731 &lt;          Good      Poor  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>    0.085         0.306           0.878 0.731 &lt;          Good      Poor  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    0.095         0.389           0.829 0.731 &lt;          Good      Poor  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    0.105         0.486           0.780 0.731 &lt;          Good      Poor  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    0.115         0.542           0.756 0.731 &lt;          Good      Poor  </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 41 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: .is_best_youden &lt;lgl&gt;, .is_best_closest_topleft &lt;lgl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; Setting direction: controls &lt; cases</span></span></code></pre></div>
 <p>We can still see the messages emitted by the <code><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">pROC::roc()</a></code>
 call when we use <code><a href="../reference/compute_empirical_roc.html">compute_empirical_roc()</a></code>. We can pass the
 arguments <code>direction</code> and <code>levels</code> to
@@ -429,7 +414,7 @@ arguments <code>direction</code> and <code>levels</code> to
 <span>  levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Poor"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">data_roc</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 51 × 9</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 51 × 11</span></span></span>
 <span><span class="co">#&gt;       s100b .specificities .sensitivities  .auc .direction .controls .cases</span></span>
 <span><span class="co">#&gt;       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> -<span style="color: #BB0000;">Inf</span>             0               1     0.731 &lt;          Good      Poor  </span></span>
@@ -443,7 +428,8 @@ arguments <code>direction</code> and <code>levels</code> to
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    0.105         0.486           0.780 0.731 &lt;          Good      Poor  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    0.115         0.542           0.756 0.731 &lt;          Good      Poor  </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 41 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: .is_best_youden &lt;lgl&gt;, .is_best_closest_topleft &lt;lgl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: .n_controls &lt;int&gt;, .n_cases &lt;int&gt;, .is_best_youden &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   .is_best_closest_topleft &lt;lgl&gt;</span></span></span></code></pre></div>
 <p>According to the help page for <code><a href="https://rdrr.io/pkg/pROC/man/coords.html" class="external-link">pROC::coords()</a></code> is
 Youden’s J statistic is the point that is farthest vertical distance
 from the diagonal line. The other “best” point is the point closest to

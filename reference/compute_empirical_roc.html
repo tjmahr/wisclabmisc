@@ -102,8 +102,8 @@ to <code>c(1, .5)</code>, which are the defaults used by <code><a href="https://
 
 <p>a new dataframe of ROC coordinates is returned with columns for the
 predictor variable, <code>.sensitivities</code>, <code>.specificities</code>, <code>.auc</code>,
-<code>.direction</code>, <code>.controls</code>, <code>.cases</code>, <code>.is_best_youden</code> and
-<code>.is_best_closest_topleft</code>.</p>
+<code>.direction</code>, <code>.controls</code>, <code>.cases</code>, <code>.n_controls</code>, <code>.n_cases</code>,
+<code>.is_best_youden</code> and <code>.is_best_closest_topleft</code>.</p>
     </div>
 
     <div class="section level2">
@@ -127,58 +127,13 @@ predictor variable, <code>.sensitivities</code>, <code>.specificities</code>, <c
 <span class="r-in"><span><span class="fu">compute_empirical_roc</span><span class="op">(</span><span class="va">data</span>, <span class="va">outcome</span>, <span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Setting levels: control = 0, case = 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Setting direction: controls &gt; cases</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 201 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         y .specificities .sensitivities  .auc .direction .controls .cases</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">Inf</span>           0                    1 0.979 &gt;          0         1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>   6.57        0.007<span style="text-decoration: underline;">04</span>              1 0.979 &gt;          0         1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>   6.54        0.014<span style="text-decoration: underline;">1</span>               1 0.979 &gt;          0         1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>   6.51        0.021<span style="text-decoration: underline;">1</span>               1 0.979 &gt;          0         1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>   6.48        0.028<span style="text-decoration: underline;">2</span>               1 0.979 &gt;          0         1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>   6.45        0.035<span style="text-decoration: underline;">2</span>               1 0.979 &gt;          0         1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>   6.43        0.042<span style="text-decoration: underline;">3</span>               1 0.979 &gt;          0         1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>   6.40        0.049<span style="text-decoration: underline;">3</span>               1 0.979 &gt;          0         1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>   6.37        0.056<span style="text-decoration: underline;">3</span>               1 0.979 &gt;          0         1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>   6.34        0.063<span style="text-decoration: underline;">4</span>               1 0.979 &gt;          0         1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 191 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: .is_best_youden &lt;lgl&gt;, .is_best_closest_topleft &lt;lgl&gt;</span></span>
 <span class="r-in"><span><span class="co"># this guess the cases and controls from the group name and gets it wrong</span></span></span>
 <span class="r-in"><span><span class="fu">compute_empirical_roc</span><span class="op">(</span><span class="va">data</span>, <span class="va">group</span>, <span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Setting levels: control = case, case = control</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Setting direction: controls &lt; cases</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 201 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           y .specificities .sensitivities  .auc .direction .controls .cases </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> -<span style="color: #BB0000;">Inf</span>             0                   1 0.979 &lt;          case      control</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>    0.946         0.017<span style="text-decoration: underline;">2</span>              1 0.979 &lt;          case      control</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>    0.974         0.034<span style="text-decoration: underline;">5</span>              1 0.979 &lt;          case      control</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>    1.00          0.051<span style="text-decoration: underline;">7</span>              1 0.979 &lt;          case      control</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>    1.03          0.069<span style="text-decoration: underline;">0</span>              1 0.979 &lt;          case      control</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>    1.06          0.086<span style="text-decoration: underline;">2</span>              1 0.979 &lt;          case      control</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>    1.09          0.103               1 0.979 &lt;          case      control</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>    1.12          0.121               1 0.979 &lt;          case      control</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>    1.14          0.138               1 0.979 &lt;          case      control</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    1.17          0.155               1 0.979 &lt;          case      control</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 191 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: .is_best_youden &lt;lgl&gt;, .is_best_closest_topleft &lt;lgl&gt;</span></span>
 <span class="r-in"><span><span class="co"># better</span></span></span>
 <span class="r-in"><span><span class="fu">compute_empirical_roc</span><span class="op">(</span><span class="va">data</span>, <span class="va">group</span>, <span class="va">y</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span>, <span class="st">"case"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Setting direction: controls &gt; cases</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 201 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         y .specificities .sensitivities  .auc .direction .controls .cases</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">Inf</span>           0                    1 0.979 &gt;          control   case  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>   6.57        0.007<span style="text-decoration: underline;">04</span>              1 0.979 &gt;          control   case  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>   6.54        0.014<span style="text-decoration: underline;">1</span>               1 0.979 &gt;          control   case  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>   6.51        0.021<span style="text-decoration: underline;">1</span>               1 0.979 &gt;          control   case  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>   6.48        0.028<span style="text-decoration: underline;">2</span>               1 0.979 &gt;          control   case  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>   6.45        0.035<span style="text-decoration: underline;">2</span>               1 0.979 &gt;          control   case  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>   6.43        0.042<span style="text-decoration: underline;">3</span>               1 0.979 &gt;          control   case  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>   6.40        0.049<span style="text-decoration: underline;">3</span>               1 0.979 &gt;          control   case  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>   6.37        0.056<span style="text-decoration: underline;">3</span>               1 0.979 &gt;          control   case  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>   6.34        0.063<span style="text-decoration: underline;">4</span>               1 0.979 &gt;          control   case  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 191 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: .is_best_youden &lt;lgl&gt;, .is_best_closest_topleft &lt;lgl&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
