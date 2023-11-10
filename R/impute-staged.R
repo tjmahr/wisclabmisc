@@ -164,9 +164,10 @@ impute_values_by_length <- function(
   data_wide <- tidyr::pivot_wider_spec(data, spec, id_cols = {{ id_cols }})
 
   # Store the longest length value without missing data
-  data_wide[[chr_var_max_length]] <- data_wide |>
+  pos_longest <- data_wide |>
     dplyr::select(dplyr::all_of(spec$.name)) |>
     apply(1, get_position_of_last_non_na_value)
+  data_wide[[chr_var_max_length]] <- spec[[chr_var_length]][pos_longest]
 
   # Set up the dataset for training the models if they are provided
   if (is.null(data_train)) {
@@ -178,9 +179,11 @@ impute_values_by_length <- function(
       spec = spec,
       id_cols = {{ id_cols }}
     )
-    data_wide_train[[chr_var_max_length]] <- data_wide_train |>
+    # Store the longest length value without missing data
+    pos_longest <- data_wide_train |>
       dplyr::select(dplyr::all_of(spec$.name)) |>
       apply(1, get_position_of_last_non_na_value)
+    data_wide_train[[chr_var_max_length]] <- spec[[chr_var_length]][pos_longest]
   }
 
   # Train the imputation model
