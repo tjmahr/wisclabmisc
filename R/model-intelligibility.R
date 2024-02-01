@@ -5,7 +5,7 @@ utils::globalVariables(c("BE"))
 #' Fit a beta regression model (for intelligibility)
 #'
 #' The function fits the same type of GAMLSS model as used in [Hustad and
-#' colleagues (2021)](https://doi.org/10.1044/2021_JSLHR-21-00142) 🔓:
+#' colleagues (2021)](https://doi.org/10.1044/2021_JSLHR-21-00142):
 #' A beta regression model (via [gamlss.dist::BE()]) with natural cubic splines
 #' on the mean (mu) and scale (sigma). This model is fitted using this package's
 #' [mem_gamlss()] wrapper function.

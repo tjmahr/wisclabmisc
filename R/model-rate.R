@@ -4,7 +4,7 @@ utils::globalVariables(c("ns", "GG", "gamlss.control"))
 #' Fit a generalized gamma regression model (for speaking rate)
 #'
 #' The function fits the same type of GAMLSS model as used in [Mahr and
-#' colleagues (2021)](https://doi.org/10.1044/2021_JSLHR-21-00206) 🔓: A
+#' colleagues (2021)](https://doi.org/10.1044/2021_JSLHR-21-00206): A
 #' generalized gamma regression model (via [gamlss.dist::GG()]) with natural
 #' cubic splines on the mean (mu), scale (sigma), and shape (nu) of the
 #' distribution. This model is fitted using this package's [mem_gamlss()]

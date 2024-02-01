@@ -63,7 +63,7 @@ model predictions for mu, sigma, and nu, plus columns for each centile in
 \code{centiles}.
 }
 \description{
-The function fits the same type of GAMLSS model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00206}{Mahr and colleagues (2021)} 🔓: A
+The function fits the same type of GAMLSS model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00206}{Mahr and colleagues (2021)}: A
 generalized gamma regression model (via \code{\link[gamlss.dist:GG]{gamlss.dist::GG()}}) with natural
 cubic splines on the mean (mu), scale (sigma), and shape (nu) of the
 distribution. This model is fitted using this package's \code{\link[=mem_gamlss]{mem_gamlss()}}

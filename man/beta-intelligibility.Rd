@@ -85,7 +85,7 @@ combination with the results of calling \code{\link[stats:uniroot]{stats::uniroo
 \code{target} value.
 }
 \description{
-The function fits the same type of GAMLSS model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00142}{Hustad and colleagues (2021)} 🔓:
+The function fits the same type of GAMLSS model as used in \href{https://doi.org/10.1044/2021_JSLHR-21-00142}{Hustad and colleagues (2021)}:
 A beta regression model (via \code{\link[gamlss.dist:BE]{gamlss.dist::BE()}}) with natural cubic splines
 on the mean (mu) and scale (sigma). This model is fitted using this package's
 \code{\link[=mem_gamlss]{mem_gamlss()}} wrapper function.
