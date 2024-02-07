@@ -93,3 +93,85 @@ NULL
 #'   https://doi.org/10.1044/2020_JSLHR-20-00008
 #' @concept datasets
 "data_example_intelligibility_by_length"
+
+
+
+#' Phonetic features of consonants and vowels
+#'
+#' @section consonants:
+#'
+#'  `data_features_consonants` is a dataframe with 24 rows and
+#' 10 variables:
+#' \describe{
+#'   \item{phone}{phone in IPA}
+#'   \item{cmubet}{phone in the CMU alphabet}
+#'   \item{wiscbet}{phone in an older system used by our lab}
+#'   \item{voicing}{*voiced* versus *voiceless*}
+#'   \item{manner}{manner of articulation}
+#'   \item{manner_alt}{alternative manner coding that separates *approximants*
+#'   into *liquids* and *glides*}
+#'   \item{place}{place of articulation}
+#'   \item{place_fct}{place coded as a factor and ordered based on
+#'   frontness of the articulators. *labiovelar* is recoded as `NA`.}
+#'   \item{sonorance}{*obstruent* versus *sonorant* status}
+#'   \item{sonorance_alt}{*obstruant* versus *sonorant* versus *strident*.
+#'   Here /f,v/ are coded as *strident* out of deference to Wikipedia,
+#'   and if we want to omit them, we should probably use *sibilant* for
+#'   /s,z/ and friends instead.}
+#' }
+#'
+#' The complete consonant table
+#'
+#' ```{r}
+#' knitr::kable(data_features_consonants)
+#' ```
+#'
+#' Levels of the factor columns:
+#'
+#' ```{r}
+#' data_features_consonants |>
+#'   lapply(levels) |>
+#'   Filter(length, x = _)
+#' ```
+#'
+#' @section vowels:
+#'
+#' `data_features_vowels` is a dataframe with 17 rows and
+#' 11 variables:
+#' \describe{
+#'   \item{phone}{phone in IPA}
+#'   \item{cmubet}{phone in the CMU alphabet}
+#'   \item{wiscbet}{phone in an older system used by our lab}
+#'   \item{hint}{a word containing the selected vowel}
+#'   \item{manner}{manner of articulation}
+#'   \item{manner_alt}{alternative manner coding that separates *vowels*
+#'   into *tense*, *lax*, *diphthongs* and *r-colored*}
+#'   \item{height}{vowel height}
+#'   \item{height_fct}{height coded as a factor ordered *high*,
+#'   *mid*, *low*. *diphthong* is recoded to `NA`.}
+#'   \item{backness}{vowel backness}
+#'   \item{backness_fct}{backness coded as a factor ordered *front*,
+#'   *central*, *back*. *diphthong* is recoded to `NA`.}
+#'   \item{rounding}{*unrounded* versus *rounded* versus *diphthong* versus
+#'   *r-colored*}
+#' }
+#'
+#' The complete vowel table
+#'
+#' ```{r}
+#' knitr::kable(data_features_vowels)
+#' ```
+#'
+#' Levels of the factor columns:
+#'
+#' ```{r}
+#' data_features_vowels |>
+#'   lapply(levels) |>
+#'   Filter(length, x = _)
+#' ```
+#'
+#' @concept datasets
+"data_features_consonants"
+
+#' @rdname data_features_consonants
+"data_features_vowels"
