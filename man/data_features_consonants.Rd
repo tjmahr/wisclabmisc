@@ -8,7 +8,7 @@
 \format{
 An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 24 rows and 10 columns.
 
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 17 rows and 11 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 17 rows and 12 columns.
 }
 \usage{
 data_features_consonants
@@ -16,32 +16,23 @@ data_features_consonants
 data_features_vowels
 }
 \description{
-Phonetic features of consonants and vowels
+These are two dataframes that contain conventional phonetic features of
+the consonants and vowels used by CMU phonetic alphabet.
 }
-\section{consonants}{
+\details{
+Most of the features are self-evident and definitional. For example, /p/ is
+\emph{the} bilabial voiceless stop. For fuzzier features, I consulted the general
+IPA chart and the Wikipedia page on English phonology. These issues included
+things like: \emph{what are the lax vowels again?} or \emph{the last two rows of the
+consonant tables are approximants, so /r,l,j/ are approximants.}
 
+Some features have alternative feature sets in order to accommodate degrees
+of aggregation. For example, /r,l,j,w/ are \emph{approximant} in \code{manner}
+but divided into \emph{liquid} and \emph{glide} in \code{manner_alt}.
+\subsection{Consonants}{
 
 \code{data_features_consonants} is a dataframe with 24 rows and
-10 variables:
-\describe{
-\item{phone}{phone in IPA}
-\item{cmubet}{phone in the CMU alphabet}
-\item{wiscbet}{phone in an older system used by our lab}
-\item{voicing}{\emph{voiced} versus \emph{voiceless}}
-\item{manner}{manner of articulation}
-\item{manner_alt}{alternative manner coding that separates \emph{approximants}
-into \emph{liquids} and \emph{glides}}
-\item{place}{place of articulation}
-\item{place_fct}{place coded as a factor and ordered based on
-frontness of the articulators. \emph{labiovelar} is recoded as \code{NA}.}
-\item{sonorance}{\emph{obstruent} versus \emph{sonorant} status}
-\item{sonorance_alt}{\emph{obstruant} versus \emph{sonorant} versus \emph{strident}.
-Here /f,v/ are coded as \emph{strident} out of deference to Wikipedia,
-and if we want to omit them, we should probably use \emph{sibilant} for
-/s,z/ and friends instead.}
-}
-
-The complete consonant table
+10 variables.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_features_consonants)
 }\if{html}{\out{</div>}}\tabular{llllllllll}{
@@ -73,6 +64,23 @@ The complete consonant table
 }
 
 
+Description of each column:
+
+\describe{
+\item{phone}{phone in IPA}
+\item{cmubet}{phone in the CMU alphabet}
+\item{wiscbet}{phone in an older system used by our lab}
+\item{voicing}{\emph{voiced} versus \emph{voiceless}}
+\item{manner}{manner of articulation}
+\item{manner_alt}{alternative manner coding that separates \emph{approximants}
+into \emph{liquids} and \emph{glides}}
+\item{place}{place of articulation}
+\item{place_fct}{place coded as a factor and ordered based on
+frontness of the articulators. \emph{labiovelar} is recoded as \code{NA}.}
+\item{sonorance}{\emph{obstruent} versus \emph{sonorant}}
+\item{sonorance_alt}{\emph{obstruant} versus \emph{sonorant} versus \emph{strident}.}
+}
+
 Levels of the factor columns:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{data_features_consonants |>
@@ -84,53 +92,64 @@ Levels of the factor columns:
 }\if{html}{\out{</div>}}
 }
 
-\section{vowels}{
+\subsection{Considerations about consonant features}{
 
+The CMU alphabet does not include a glottal stop.
+
+Here /f,v/ are coded as \emph{strident} following
+\href{https://en.wikipedia.org/wiki/Sibilant}{Wikipedia} and
+\emph{Sound Pattern of English}. If this feature value doesn't seem right, we
+should probably use an alternative feature of \emph{sibilant} for the
+stridents minus /f,v/.
+}
+
+\subsection{Vowels}{
 
 \code{data_features_vowels} is a dataframe with 17 rows and
-11 variables:
+11 variables.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_features_vowels)
+}\if{html}{\out{</div>}}\tabular{llllllllllll}{
+   phone \tab cmubet \tab wiscbet \tab hint \tab manner \tab manner_alt \tab tenseness \tab height \tab height_fct \tab backness \tab backness_fct \tab rounding \cr
+   i \tab IY \tab i \tab beat \tab vowel \tab vowel \tab tense \tab high \tab high \tab front \tab front \tab unrounded \cr
+   ɪ \tab IH \tab I \tab bit \tab vowel \tab vowel \tab lax \tab high \tab high \tab front \tab front \tab unrounded \cr
+   eɪ \tab EY \tab eI \tab bait \tab vowel \tab vowel \tab tense \tab mid \tab mid \tab front \tab front \tab unrounded \cr
+   ɛ \tab EH \tab E \tab bet \tab vowel \tab vowel \tab lax \tab mid \tab mid \tab front \tab front \tab unrounded \cr
+   æ \tab AE \tab ae \tab bat \tab vowel \tab vowel \tab lax \tab low \tab low \tab front \tab front \tab unrounded \cr
+   ʌ \tab AH \tab ^ \tab but \tab vowel \tab vowel \tab lax \tab mid \tab mid \tab central \tab central \tab unrounded \cr
+   ə \tab AH \tab 4 \tab comma \tab vowel \tab vowel \tab lax \tab mid \tab mid \tab central \tab central \tab unrounded \cr
+   u \tab UW \tab u \tab boot \tab vowel \tab vowel \tab tense \tab high \tab high \tab back \tab back \tab rounded \cr
+   ʊ \tab UH \tab U \tab book \tab vowel \tab vowel \tab lax \tab high \tab high \tab back \tab back \tab rounded \cr
+   oʊ \tab OW \tab oU \tab boat \tab vowel \tab vowel \tab tense \tab mid \tab mid \tab back \tab back \tab rounded \cr
+   ɔ \tab AO \tab c \tab bought \tab vowel \tab vowel \tab tense \tab mid \tab mid \tab back \tab back \tab rounded \cr
+   ɑ \tab AA \tab @ \tab bot \tab vowel \tab vowel \tab tense \tab low \tab low \tab back \tab back \tab unrounded \cr
+   aʊ \tab AW \tab @U \tab bout \tab vowel \tab diphthong \tab diphthong \tab diphthong \tab NA \tab diphthong \tab NA \tab diphthong \cr
+   aɪ \tab AY \tab @I \tab bite \tab vowel \tab diphthong \tab diphthong \tab diphthong \tab NA \tab diphthong \tab NA \tab diphthong \cr
+   ɔɪ \tab OY \tab cI \tab boy \tab vowel \tab diphthong \tab diphthong \tab diphthong \tab NA \tab diphthong \tab NA \tab diphthong \cr
+   ɝ \tab ER \tab 3^ \tab letter \tab vowel \tab r-colored \tab r-colored \tab mid \tab mid \tab central \tab central \tab r-colored \cr
+   ɚ \tab ER \tab 4^ \tab burt \tab vowel \tab r-colored \tab r-colored \tab mid \tab mid \tab central \tab central \tab r-colored \cr
+}
+
+
+Description of each column:
+
 \describe{
 \item{phone}{phone in IPA}
 \item{cmubet}{phone in the CMU alphabet}
 \item{wiscbet}{phone in an older system used by our lab}
 \item{hint}{a word containing the selected vowel}
 \item{manner}{manner of articulation}
-\item{manner_alt}{alternative manner coding that separates \emph{vowels}
-into \emph{tense}, \emph{lax}, \emph{diphthongs} and \emph{r-colored}}
+\item{manner_alt}{alternative manner with \emph{vowel}, \emph{diphthong} and \emph{r-colored}}
+\item{tenseness}{\emph{tense} versus \emph{lax} (versus \emph{diphthong} and \emph{r-colored})}
 \item{height}{vowel height}
 \item{height_fct}{height coded as a factor ordered \emph{high},
 \emph{mid}, \emph{low}. \emph{diphthong} is recoded to \code{NA}.}
 \item{backness}{vowel backness}
 \item{backness_fct}{backness coded as a factor ordered \emph{front},
 \emph{central}, \emph{back}. \emph{diphthong} is recoded to \code{NA}.}
-\item{rounding}{\emph{unrounded} versus \emph{rounded} versus \emph{diphthong} versus
-\emph{r-colored}}
+\item{rounding}{\emph{unrounded} versus \emph{rounded} (versus \emph{diphthong} and
+\emph{r-colored})}
 }
-
-The complete vowel table
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_features_vowels)
-}\if{html}{\out{</div>}}\tabular{lllllllllll}{
-   phone \tab cmubet \tab wiscbet \tab hint \tab manner \tab manner_alt \tab height \tab height_fct \tab backness \tab backness_fct \tab rounding \cr
-   i \tab IY \tab i \tab beat \tab vowel \tab tense \tab high \tab high \tab front \tab front \tab unrounded \cr
-   ɪ \tab IH \tab I \tab bit \tab vowel \tab lax \tab high \tab high \tab front \tab front \tab unrounded \cr
-   eɪ \tab EY \tab eI \tab bait \tab vowel \tab tense \tab mid \tab mid \tab front \tab front \tab unrounded \cr
-   ɛ \tab EH \tab E \tab bet \tab vowel \tab lax \tab mid \tab mid \tab front \tab front \tab unrounded \cr
-   æ \tab AE \tab ae \tab bat \tab vowel \tab lax \tab low \tab low \tab front \tab front \tab unrounded \cr
-   ʌ \tab AH \tab ^ \tab but \tab vowel \tab lax \tab mid \tab mid \tab central \tab central \tab unrounded \cr
-   ə \tab AH \tab 4 \tab comma \tab vowel \tab lax \tab mid \tab mid \tab central \tab central \tab unrounded \cr
-   u \tab UW \tab u \tab boot \tab vowel \tab tense \tab high \tab high \tab back \tab back \tab rounded \cr
-   ʊ \tab UH \tab U \tab book \tab vowel \tab lax \tab high \tab high \tab back \tab back \tab rounded \cr
-   oʊ \tab OW \tab oU \tab boat \tab vowel \tab tense \tab mid \tab mid \tab back \tab back \tab rounded \cr
-   ɔ \tab AO \tab c \tab bought \tab vowel \tab tense \tab mid \tab mid \tab back \tab back \tab rounded \cr
-   ɑ \tab AA \tab @ \tab bot \tab vowel \tab tense \tab low \tab low \tab back \tab back \tab unrounded \cr
-   aʊ \tab AW \tab @U \tab bout \tab vowel \tab diphthong \tab diphthong \tab NA \tab diphthong \tab NA \tab diphthong \cr
-   aɪ \tab AY \tab @I \tab bite \tab vowel \tab diphthong \tab diphthong \tab NA \tab diphthong \tab NA \tab diphthong \cr
-   ɔɪ \tab OY \tab cI \tab boy \tab vowel \tab diphthong \tab diphthong \tab NA \tab diphthong \tab NA \tab diphthong \cr
-   ɝ \tab ER \tab 3^ \tab letter \tab vowel \tab r-colored \tab mid \tab mid \tab central \tab central \tab r-colored \cr
-   ɚ \tab ER \tab 4^ \tab burt \tab vowel \tab r-colored \tab mid \tab mid \tab central \tab central \tab r-colored \cr
-}
-
 
 Levels of the factor columns:
 
@@ -145,5 +164,91 @@ Levels of the factor columns:
 }\if{html}{\out{</div>}}
 }
 
+\subsection{Considerations about vowel features}{
+
+I don't consider /eɪ/ and /oʊ/ to be diphthongs, but perhaps \code{manner_alt}
+could encode the difference of these vowels from the others.
+
+In the CMU alphabet and ARPAbet, vowels can include a number to indicate
+vowel stress, so \code{AH1} or \code{AH2} is /ʌ/ but \code{AH0} is /ə/.
+
+The vowel features for General American English,
+\href{https://en.wikipedia.org/wiki/English_phonology}{according to Wikipedia},
+are as follows:\if{html}{\out{
+<table style="text-align: center;">
+<tbody>
+<tr class="header">
+<th rowspan="2"></th>
+<th colspan="2">Front</th>
+<th colspan="2">Central</th>
+<th colspan="2">Back</th>
+</tr>
+<tr class="odd">
+<th>lax</th>
+<th>tense</th>
+<th>lax</th>
+<th>tense</th>
+<th>lax</th>
+<th>tense</th>
+</tr>
+}}
+\if{html}{\out{
+<tr class="odd">
+<th>Close</th>
+<td>ɪ</td>
+<td>i</td>
+<td></td>
+<td></td>
+<td>ʊ</td>
+<td>u</td>
+</tr>
+<tr class="even">
+<th>Mid</th>
+<td>ɛ</td>
+<td>eɪ</td>
+<td>ə</td>
+<td>(ɜ)</td>
+<td></td>
+<td>oʊ</td>
+</tr>
+<tr class="odd">
+<th>Open</th>
+<td>æ</td>
+<td></td>
+<td>(ʌ)</td>
+<td>ɑ</td>
+<td></td>
+<td>(ɔ)</td>
+</tr>
+<tr class="even">
+<th>Diphthongs</th>
+<td colspan="6">aɪ ɔɪ aʊ</td>
+</tr>
+</tbody>
+</table>
+}}
+
+
+I adapted these features in this way:
+\itemize{
+\item \emph{tense} and \emph{lax} features were directly borrowed. Diphthongs and
+r-colored vowels are were not assign a tenseness.
+\item /ʌ,ɔ/ raised to \emph{mid} (following the general IPA chart)
+\item /ɑ/ moved to \emph{back} (following the general IPA)
+\item diphthongs have no backness or height
+\item r-colored vowels were given the backness and height of the /ʌ,ə/
+}
+
+Based on the assumption that /ʌ,ə/ are the same general vowel with
+differing stress, these vowels have the same features. This definition
+clashes with the general IPA chart which places /ʌ/ as a back vowel. However,
+/ʌ/ is a conventional notation. Quoting
+\href{https://en.wikipedia.org/wiki/English_phonology}{Wikipedia} again:
+"Although the notation /ʌ/ is used for the vowel of STRUT in RP and General
+American, the actual pronunciation is closer to a near-open central
+vowel [ɐ] in RP and advanced back [ʌ̟] in General American." That is,
+/ʌ/ is fronted in American English (hence, \emph{mid}) in American English.
+}
+}
 \concept{datasets}
 \keyword{datasets}

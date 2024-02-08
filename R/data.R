@@ -98,10 +98,32 @@ NULL
 
 #' Phonetic features of consonants and vowels
 #'
-#' @section consonants:
+#' These are two dataframes that contain conventional phonetic features of
+#' the consonants and vowels used by CMU phonetic alphabet.
+#'
+#' @details
+#'
+#' Most of the features are self-evident and definitional. For example, /p/ is
+#' *the* bilabial voiceless stop. For fuzzier features, I consulted the general
+#' IPA chart and the Wikipedia page on English phonology. These issues included
+#' things like: *what are the lax vowels again?* or *the last two rows of the
+#' consonant tables are approximants, so /r,l,j/ are approximants.*
+#'
+#' Some features have alternative feature sets in order to accommodate degrees
+#' of aggregation. For example, /r,l,j,w/ are *approximant* in `manner`
+#' but divided into *liquid* and *glide* in `manner_alt`.
+#'
+#' ## Consonants
 #'
 #'  `data_features_consonants` is a dataframe with 24 rows and
-#' 10 variables:
+#' 10 variables.
+#'
+#' ```{r}
+#' knitr::kable(data_features_consonants)
+#' ```
+#'
+#' Description of each column:
+#'
 #' \describe{
 #'   \item{phone}{phone in IPA}
 #'   \item{cmubet}{phone in the CMU alphabet}
@@ -113,18 +135,9 @@ NULL
 #'   \item{place}{place of articulation}
 #'   \item{place_fct}{place coded as a factor and ordered based on
 #'   frontness of the articulators. *labiovelar* is recoded as `NA`.}
-#'   \item{sonorance}{*obstruent* versus *sonorant* status}
-#'   \item{sonorance_alt}{*obstruant* versus *sonorant* versus *strident*.
-#'   Here /f,v/ are coded as *strident* out of deference to Wikipedia,
-#'   and if we want to omit them, we should probably use *sibilant* for
-#'   /s,z/ and friends instead.}
+#'   \item{sonorance}{*obstruent* versus *sonorant*}
+#'   \item{sonorance_alt}{*obstruant* versus *sonorant* versus *strident*.}
 #' }
-#'
-#' The complete consonant table
-#'
-#' ```{r}
-#' knitr::kable(data_features_consonants)
-#' ```
 #'
 #' Levels of the factor columns:
 #'
@@ -134,33 +147,44 @@ NULL
 #'   Filter(length, x = _)
 #' ```
 #'
-#' @section vowels:
+#' ## Considerations about consonant features
+#'
+#' The CMU alphabet does not include a glottal stop.
+#'
+#' Here /f,v/ are coded as *strident* following
+#' [Wikipedia](https://en.wikipedia.org/wiki/Sibilant) and
+#' *Sound Pattern of English*. If this feature value doesn't seem right, we
+#' should probably use an alternative feature of *sibilant* for the
+#' stridents minus /f,v/.
+#'
+#' ## Vowels
 #'
 #' `data_features_vowels` is a dataframe with 17 rows and
-#' 11 variables:
+#' 11 variables.
+#'
+#' ```{r}
+#' knitr::kable(data_features_vowels)
+#' ```
+#'
+#' Description of each column:
+#'
 #' \describe{
 #'   \item{phone}{phone in IPA}
 #'   \item{cmubet}{phone in the CMU alphabet}
 #'   \item{wiscbet}{phone in an older system used by our lab}
 #'   \item{hint}{a word containing the selected vowel}
 #'   \item{manner}{manner of articulation}
-#'   \item{manner_alt}{alternative manner coding that separates *vowels*
-#'   into *tense*, *lax*, *diphthongs* and *r-colored*}
+#'   \item{manner_alt}{alternative manner with *vowel*, *diphthong* and *r-colored*}
+#'   \item{tenseness}{*tense* versus *lax* (versus *diphthong* and *r-colored*)}
 #'   \item{height}{vowel height}
 #'   \item{height_fct}{height coded as a factor ordered *high*,
 #'   *mid*, *low*. *diphthong* is recoded to `NA`.}
 #'   \item{backness}{vowel backness}
 #'   \item{backness_fct}{backness coded as a factor ordered *front*,
 #'   *central*, *back*. *diphthong* is recoded to `NA`.}
-#'   \item{rounding}{*unrounded* versus *rounded* versus *diphthong* versus
-#'   *r-colored*}
+#'   \item{rounding}{*unrounded* versus *rounded* (versus *diphthong* and
+#'   *r-colored*)}
 #' }
-#'
-#' The complete vowel table
-#'
-#' ```{r}
-#' knitr::kable(data_features_vowels)
-#' ```
 #'
 #' Levels of the factor columns:
 #'
@@ -169,6 +193,88 @@ NULL
 #'   lapply(levels) |>
 #'   Filter(length, x = _)
 #' ```
+#'
+#' ## Considerations about vowel features
+#'
+#' I don't consider /eɪ/ and /oʊ/ to be diphthongs, but perhaps `manner_alt`
+#' could encode the difference of these vowels from the others.
+#'
+#' In the CMU alphabet and ARPAbet, vowels can include a number to indicate
+#' vowel stress, so `AH1` or `AH2` is /ʌ/ but `AH0` is /ə/.
+#'
+#' The vowel features for General American English,
+#' [according to Wikipedia](https://en.wikipedia.org/wiki/English_phonology),
+#' are as follows:
+#'
+#' <table style="text-align: center;">
+#'<tbody>
+#' <tr class="header">
+#' <th rowspan="2"></th>
+#' <th colspan="2">Front</th>
+#' <th colspan="2">Central</th>
+#' <th colspan="2">Back</th>
+#' </tr>
+#' <tr class="odd">
+#' <th>lax</th>
+#' <th>tense</th>
+#' <th>lax</th>
+#' <th>tense</th>
+#' <th>lax</th>
+#' <th>tense</th>
+#' </tr>
+#'
+#' <tr class="odd">
+#'<th>Close</th>
+#'<td>ɪ</td>
+#'<td>i</td>
+#'<td></td>
+#'<td></td>
+#'<td>ʊ</td>
+#'<td>u</td>
+#'</tr>
+#'<tr class="even">
+#'<th>Mid</th>
+#'<td>ɛ</td>
+#'<td>eɪ</td>
+#'<td>ə</td>
+#'<td>(ɜ)</td>
+#'<td></td>
+#'<td>oʊ</td>
+#'</tr>
+#'<tr class="odd">
+#'<th>Open</th>
+#'<td>æ</td>
+#'<td></td>
+#'<td>(ʌ)</td>
+#'<td>ɑ</td>
+#'<td></td>
+#'<td>(ɔ)</td>
+#'</tr>
+#'<tr class="even">
+#'<th>Diphthongs</th>
+#'<td colspan="6">aɪ ɔɪ aʊ</td>
+#'</tr>
+#'</tbody>
+#'</table>
+#'
+#' I adapted these features in this way:
+#'
+#' - *tense* and *lax* features were directly borrowed. Diphthongs and
+#'   r-colored vowels are were not assign a tenseness.
+#' - /ʌ,ɔ/ raised to *mid* (following the general IPA chart)
+#' - /ɑ/ moved to *back* (following the general IPA)
+#' - diphthongs have no backness or height
+#' - r-colored vowels were given the backness and height of the /ʌ,ə/
+#'
+#' Based on the assumption that /ʌ,ə/ are the same general vowel with
+#' differing stress, these vowels have the same features. This definition
+#' clashes with the general IPA chart which places /ʌ/ as a back vowel. However,
+#' /ʌ/ is a conventional notation. Quoting
+#' [Wikipedia](https://en.wikipedia.org/wiki/English_phonology) again:
+#' "Although the notation /ʌ/ is used for the vowel of STRUT in RP and General
+#' American, the actual pronunciation is closer to a near-open central
+#' vowel \[ɐ\] in RP and advanced back \[ʌ̟\] in General American." That is,
+#' /ʌ/ is fronted in American English (hence, *mid*) in American English.
 #'
 #' @concept datasets
 "data_features_consonants"
