@@ -71,6 +71,7 @@ Description of each column:
 \item{cmubet}{phone in the CMU alphabet}
 \item{wiscbet}{phone in an older system used by our lab}
 \item{voicing}{\emph{voiced} versus \emph{voiceless}}
+\item{voicing_alt}{\emph{spread_glottis} versus \emph{plain}}
 \item{manner}{manner of articulation}
 \item{manner_alt}{alternative manner coding that separates \emph{approximants}
 into \emph{liquids} and \emph{glides}}
@@ -101,6 +102,11 @@ Here /f,v/ are coded as \emph{strident} following
 \emph{Sound Pattern of English}. If this feature value doesn't seem right, we
 should probably use an alternative feature of \emph{sibilant} for the
 stridents minus /f,v/.
+
+The alternative voicing scheme was suggested by a colleague because of how
+the voice-voiceless phonetic contrast is achieved with different articulatory
+strategies in different languages. Note that \code{voicing_alt} does not assign
+a feature to nasals or approximants.
 }
 
 \subsection{Vowels}{

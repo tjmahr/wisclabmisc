@@ -129,6 +129,7 @@ NULL
 #'   \item{cmubet}{phone in the CMU alphabet}
 #'   \item{wiscbet}{phone in an older system used by our lab}
 #'   \item{voicing}{*voiced* versus *voiceless*}
+#'   \item{voicing_alt}{*spread_glottis* versus *plain*}
 #'   \item{manner}{manner of articulation}
 #'   \item{manner_alt}{alternative manner coding that separates *approximants*
 #'   into *liquids* and *glides*}
@@ -156,6 +157,11 @@ NULL
 #' *Sound Pattern of English*. If this feature value doesn't seem right, we
 #' should probably use an alternative feature of *sibilant* for the
 #' stridents minus /f,v/.
+#'
+#' The alternative voicing scheme was suggested by a colleague because of how
+#' the voice-voiceless phonetic contrast is achieved with different articulatory
+#' strategies in different languages. Note that `voicing_alt` does not assign
+#' a feature to nasals or approximants.
 #'
 #' ## Vowels
 #'
