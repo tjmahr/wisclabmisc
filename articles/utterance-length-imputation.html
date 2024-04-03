@@ -266,12 +266,7 @@ trials.</p>
 <code class="sourceCode R"><span><span class="va">data_imputation_1</span> <span class="op">&lt;-</span> <span class="va">data_demo</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>group <span class="op">=</span> <span class="st">"fake"</span>, visit_id <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>subject_num <span class="op">=</span> <span class="va">child</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">impute_values</span><span class="op">(</span><span class="va">sim_intelligibility</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: There was 1 warning in `mutate()`.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> In argument: `y_7 = ifelse(is.na(y_7), predict(models$m_7,</span></span>
-<span><span class="co">#&gt;   pick(everything())), y_7)`.</span></span>
-<span><span class="co">#&gt; Caused by warning in `predict.lm()`:</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> prediction from rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span></code></pre></div>
+<span>  <span class="fu">impute_values</span><span class="op">(</span><span class="va">sim_intelligibility</span><span class="op">)</span></span></code></pre></div>
 <p>And here is how we can recreate Figure 3 from the supplemental
 materials:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -341,8 +336,6 @@ of models or the variables involved are no longer hard-coded.</p>
 <span>    id_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">child</span>, <span class="va">age_months</span>, <span class="va">length_longest</span><span class="op">)</span>, </span>
 <span>    include_max_length <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(models[[y_name]], data_imputed): prediction from</span></span>
-<span><span class="co">#&gt; rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_imputation_1</span><span class="op">$</span><span class="va">imputed_sim_intelligibility</span>, </span>
@@ -361,8 +354,6 @@ the results noticeably.</p>
 <span>    id_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">child</span>, <span class="va">age_months</span>, <span class="va">length_longest</span><span class="op">)</span>, </span>
 <span>    include_max_length <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in predict.lm(models[[y_name]], data_imputed): prediction from</span></span>
-<span><span class="co">#&gt; rank-deficient fit; attr(*, "non-estim") has doubtful cases</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_imputation_2</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span>, </span>
