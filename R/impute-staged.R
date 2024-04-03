@@ -332,6 +332,19 @@ weight_lengths_with_ordinal_model <- function(
   data_x <- data_train |>
     dplyr::distinct({{ var_x }})
 
+  # Make sure we have predictions for corresponding rows in data_join
+  if (!is.null(data_join)) {
+    data_x_extra <- data_join |>
+      dplyr::distinct({{ var_x }})
+
+    data_x <- data_x |>
+      dplyr::bind_rows(data_x_extra) |>
+      dplyr::distinct({{ var_x }})
+
+    # We could still run into a problem if an x in data_join is outside the
+    # range of x in data_train because the spline would be extrapolating
+  }
+
   # Each length gets a probability so we have to reshape from a wide matrix
   # into a long dataframe
   data_probs <- stats::predict(model, data_x, type = "prob") |>
