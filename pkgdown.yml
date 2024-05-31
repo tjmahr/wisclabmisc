@@ -1,11 +1,11 @@
 pandoc: 3.1.11
-pkgdown: 2.0.7
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
-  utterance-length-imputation: utterance-length-imputation.html
   gamlss-tools: gamlss-tools.html
   roc: roc.html
-last_built: 2024-04-03T20:50Z
+  utterance-length-imputation: utterance-length-imputation.html
+last_built: 2024-05-31T20:28Z
 urls:
   reference: https://www.tjmahr.com/wisclabmisc/reference
   article: https://www.tjmahr.com/wisclabmisc/articles
