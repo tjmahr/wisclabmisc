@@ -29,7 +29,9 @@ predictor in the imputation models. Defaults to \code{FALSE}.}
 \item{data_train}{(optional) dataframe used to train the imputation models.
 For example, we might have data from a reference group of children in
 \code{data_train} but a clinical population in \code{data}. If omitted, the dataframe
-in \code{data} is used to train the models.}
+in \code{data} is used to train the models. \code{data_train} can also be a
+function. In this case, it is applied to the \code{data} argument in order
+to derive (filter) a subset of the data for training.}
 }
 \value{
 a dataframe with the additional columns \verb{\{var_y\}_imputed} (the

@@ -8,3 +8,5 @@
 ^data-raw$
 ^\.github$
 ^vignettes/articles$
+^doc$
+^Meta$

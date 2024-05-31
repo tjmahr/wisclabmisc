@@ -3,7 +3,8 @@ title: "Utterance length imputation and weighting"
 author: Tristan Mahr
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include = FALSE
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -13,7 +14,8 @@ library(tidyverse)
 
 
 
-```{r setup}
+```{r}
+#| label = "setup"
 library(wisclabmisc)
 library(tidyverse)
 ```
@@ -205,7 +207,11 @@ data_imputation_1 <- data_demo |>
 And here is how we can recreate Figure 3 from the supplemental
 materials:
 
-```{r, fig.width = 6, fig.height = 5, fig.cap = "Results of imputing multiword intelligibility using length-of-longest utterance and the average intelligibilities of shorter utterance lengths."}
+```{r}
+#| fig.width = 6,
+#| fig.height = 5,
+#| fig.cap = "Results of imputing multiword intelligibility using length-of-longest utterance and the average
+#| intelligibilities of shorter utterance lengths."
 plotting_constants <- list(
   pal = c(
     imputed = "#C7A76C", 
@@ -260,7 +266,7 @@ In comparison, here is the package version of this procedure. We have to
 specify all of the relevant variables ahead of time, but the number of
 models or the variables involved are no longer hard-coded.
 
-```{r, fig.width = 6, fig.height = 5}
+```{r}
 data_imputation_2 <- data_demo |> 
   impute_values_by_length(
     var_y = sim_intelligibility,
@@ -279,7 +285,9 @@ In the original models, the length of the longest utterance is used as a
 continuous predictor in the imputations. In the package version this behavior is
 optional and disabled by default. It does not affect the results noticeably.
 
-```{r, fig.width = 6, fig.height = 5}
+```{r}
+#| fig.width = 6,
+#| fig.height = 5
 data_imputation_3 <- data_demo |> 
   impute_values_by_length(
     var_y = sim_intelligibility,
@@ -322,6 +330,40 @@ ggplot(data_imputation_2 |> filter(tocs_level != 1)) +
   ) + 
   theme(legend.position = "bottom", legend.justification = "right")
 ```
+
+### Limit the observations used to train the imputation model
+
+The `data_train` argument allows us to specify a dataset that will train 
+the imputation model. `data_train` can also be a function that will applied 
+to the original data set undergoing imputation.
+
+```{r}
+data_imputation_trained <- data_demo |> 
+  impute_values_by_length(
+    var_y = sim_intelligibility,
+    var_length = tocs_level,
+    id_cols = c(child, age_months, length_longest), 
+    include_max_length = TRUE,
+    # suppose we wanted to impute using older participants
+    data_train = data_demo |> filter(age_months > 44)
+  )
+
+data_imputation_trained_2 <- data_demo |> 
+  impute_values_by_length(
+    var_y = sim_intelligibility,
+    var_length = tocs_level,
+    id_cols = c(child, age_months, length_longest), 
+    include_max_length = TRUE,
+    # suppose we wanted to impute using older participants
+    data_train = function(x) x |> filter(age_months > 44)
+  )
+
+all.equal(
+  data_imputation_trained$sim_intelligibility_imputed, 
+  data_imputation_trained_2$sim_intelligibility_imputed
+)
+```
+
 
 ## Utterance weighting
 
@@ -395,7 +437,9 @@ compute_longest_length_weights <- function(data, model) {
 
 Here we can apply this non-package implementation to the example data:
 
-```{r, fig.width = 6, fig.height = 3}
+```{r}
+#| fig.width = 6,
+#| fig.height = 3
 data_lol <- data_demo |> 
   filter(tocs_level != 1) |> 
   prepare_longest_length_model_data()
@@ -415,7 +459,11 @@ data_lol_weights <- data_lol |>
 And here is how we can recreate the Figure from the supplemental
 materials:
 
-```{r, fig.width = 3, fig.height = 3, out.width = "40%", fig.show = "hold"}
+```{r}
+#| fig.width = 3,
+#| fig.height = 3,
+#| out.width = "40%",
+#| fig.show = "hold"
 p1 <- ggplot(data_lol_weights) + 
   aes(x = age_months, y = prob_reach_length  ) + 
   geom_line(aes(color = ordered(tocs_level))) +
@@ -450,7 +498,11 @@ names, so it's harder to reuse, and it is complicated to use, requiring
 three functions and a join. In the package implementation, we hide
 everything behind a single function.
 
-```{r, fig.width = 3, fig.height = 3, out.width = "40%", fig.show = "hold"}
+```{r}
+#| fig.width = 3,
+#| fig.height = 3,
+#| out.width = "40%",
+#| fig.show = "hold"
 data_plot <- weight_lengths_with_ordinal_model(
   data_train = data_demo |> 
     filter(tocs_level != 1), 
@@ -589,7 +641,28 @@ ggplot(data_means_wide_2) +
   geom_point()
 ```
 
+### Using a function for `data_train`
 
+`weight_lengths_with_ordinal_model()` also supports providing a function for `data_train`. In this case, the function is applied to `data_join`. Here is how we would train the weights on the observed values in the 
+imputation dataframe.
+
+
+```{r}
+data_weighted_3 <- weight_lengths_with_ordinal_model(
+  data_train = function(x) x |> 
+    filter(sim_intelligibility_imputation == "observed"), 
+  var_length = tocs_level,
+  var_x = age_months, 
+  id_cols = c(child), 
+  spline_df = 2,
+  data_join = data_imputation_2 |> filter(tocs_level != 1)
+)
+
+all.equal(
+  data_weighted_2$tocs_level_prob_reached, 
+  data_weighted_3$tocs_level_prob_reached
+)
+```
 
 
 ## References

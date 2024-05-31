@@ -14,7 +14,9 @@
 #' @param data_train (optional) dataframe used to train the imputation models.
 #'   For example, we might have data from a reference group of children in
 #'   `data_train` but a clinical population in `data`. If omitted, the dataframe
-#'   in `data` is used to train the models.
+#'   in `data` is used to train the models. `data_train` can also be a
+#'   function. In this case, it is applied to the `data` argument in order
+#'   to derive (filter) a subset of the data for training.
 #' @return a dataframe with the additional columns `{var_y}_imputed` (the
 #'   imputed value), `.max_{var_length}` with the highest value of `var_length`
 #'   with observed data, and `{var_y}_imputation` for labeling whether
@@ -174,6 +176,10 @@ impute_values_by_length <- function(
     data_train <- data
     data_wide_train <- data_wide
   } else {
+    if (is.function(data_train)) {
+      data_train <- data_train(data)
+    }
+
     data_wide_train <- tidyr::pivot_wider_spec(
       data_train,
       spec = spec,
@@ -241,7 +247,9 @@ impute_values_by_length <- function(
 #' the predictor variable. These probabilities are then normalized to provide
 #' weights for each utterance length.
 #'
-#' @param data_train dataframe used to train the ordinal model
+#' @param data_train dataframe used to train the ordinal model. `data_train`
+#'   can also be a function. In this case, it is applied to the `data_join`
+#'   argument in order to derive (filter) a subset of the data for training.
 #' @param var_length bare name of the length variable. For example,
 #'   `tocs_level`.
 #' @param var_x bare name of the predictor variable. For example, `age_months`.
@@ -305,6 +313,10 @@ weight_lengths_with_ordinal_model <- function(
   chr_var_length_prob <- rlang::englue("{{ var_length }}_prob_reached")
   chr_var_length_weight <- rlang::englue("{{ var_length }}_weight")
   expr_x <- rlang::enexpr(var_x)
+
+  if (is.function(data_train) && !is.null(data_join)) {
+    data_train <- data_train(data_join)
+  }
 
   data_model <- data_train |>
     dplyr::group_by(dplyr::pick({{ id_cols }})) |>

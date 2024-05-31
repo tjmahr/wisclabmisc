@@ -14,7 +14,9 @@ weight_lengths_with_ordinal_model(
 )
 }
 \arguments{
-\item{data_train}{dataframe used to train the ordinal model}
+\item{data_train}{dataframe used to train the ordinal model. \code{data_train}
+can also be a function. In this case, it is applied to the \code{data_join}
+argument in order to derive (filter) a subset of the data for training.}
 
 \item{var_length}{bare name of the length variable. For example,
 \code{tocs_level}.}
