@@ -11,7 +11,8 @@
 #' @examples
 #' x <- c(
 #'   "XXv16s7T06.lab", "XXv15s5T06.TextGrid", "XXv13s3T10.WAV",
-#'   "XXv18wT11.wav", "non-matching", "s2T01"
+#'   "XXv18wT11.wav", "non-matching", "s2T01",
+#'   "XXv01s4B01.wav", "XXv01wB01.wav"
 #' )
 #' data.frame(
 #'   x = x,
@@ -42,6 +43,6 @@ tocs_type <- function(xs) {
 tocs_length <- function(xs) {
   items <- xs |> tocs_item()
   char2 <- substr(items, 2, 2)
-  char2[char2 %in% "T"] <- "1"
+  char2[char2 %in% c("T", "B")] <- "1"
   as.integer(char2)
 }

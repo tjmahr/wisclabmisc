@@ -1,4 +1,4 @@
-test_that("str_extract_tocs_item", {
+test_that("tocs_item()", {
 
   x <- c(
     "XXv17_SLOW_s4T06.TextGrid",
@@ -12,7 +12,9 @@ test_that("str_extract_tocs_item", {
     "XXv13s3T10.WAV",
     "XXv16S2T09.wav",
     "s2T01",
-    "invalid-file.txt"
+    "invalid-file.txt",
+    "XXv01s4B01.wav",
+    "XXv01wB01.wav"
   )
 
   expected <- c(
@@ -27,11 +29,36 @@ test_that("str_extract_tocs_item", {
     "S3T10",
     "S2T09",
     "S2T01",
-    NA_character_
+    NA_character_,
+    "S4B01",
+    "WB01"
   )
 
-  expect_equal(
-    tocs_item(x),
-    expected
+  expected_length <- c(
+    4,
+    5,
+    6,
+    7,
+    2,
+    1,
+    7,
+    5,
+    3,
+    2,
+    2,
+    NA_integer_,
+    4,
+    1
   )
+
+  x |>
+    tocs_item() |>
+    expect_equal(expected) |>
+    # i.e., item parsing works on standardized item names
+    tocs_item() |>
+    expect_equal(expected)
+
+  x |>
+    tocs_length() |>
+    expect_equal(expected_length)
 })
