@@ -23,7 +23,7 @@ tocs_item <- function(xs) {
   xs |>
     toupper() |>
     stringr::str_extract(
-      "(S[2-7]|W)(T)[0-4][0-9](?=([.]WAV|[.]TEXTGRID|[.]LAB|$))"
+      "(S[2-7]|W)(T|B)[0-4][0-9](?=([.]WAV|[.]TEXTGRID|[.]LAB|$))"
     )
 }
 
