@@ -18,7 +18,8 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/gamlss-tools.html">Tools for GAMLSS models</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/brms.html">A Workflow for brms</a></li>
+    <li><a class="dropdown-item" href="../articles/gamlss-tools.html">Tools for GAMLSS models</a></li>
     <li><a class="dropdown-item" href="../articles/roc.html">Tools for ROC curves</a></li>
     <li><a class="dropdown-item" href="../articles/utterance-length-imputation.html">Utterance length imputation and weighting</a></li>
   </ul></li>
@@ -71,7 +72,8 @@ words).</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="st">"XXv16s7T06.lab"</span>, <span class="st">"XXv15s5T06.TextGrid"</span>, <span class="st">"XXv13s3T10.WAV"</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"XXv18wT11.wav"</span>, <span class="st">"non-matching"</span>, <span class="st">"s2T01"</span></span></span>
+<span class="r-in"><span>  <span class="st">"XXv18wT11.wav"</span>, <span class="st">"non-matching"</span>, <span class="st">"s2T01"</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"XXv01s4B01.wav"</span>, <span class="st">"XXv01wB01.wav"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  x <span class="op">=</span> <span class="va">x</span>,</span></span>
@@ -86,6 +88,8 @@ words).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4       XXv18wT11.wav  WT11 single-word      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5        non-matching  &lt;NA&gt;        &lt;NA&gt;     NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6               s2T01 S2T01   multiword      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7      XXv01s4B01.wav S4B01   multiword      4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       XXv01wB01.wav  WB01 single-word      1</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -24,7 +24,8 @@ mem_gamlss() wrapper function."></head><body>
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/gamlss-tools.html">Tools for GAMLSS models</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/brms.html">A Workflow for brms</a></li>
+    <li><a class="dropdown-item" href="../articles/gamlss-tools.html">Tools for GAMLSS models</a></li>
     <li><a class="dropdown-item" href="../articles/roc.html">Tools for ROC curves</a></li>
     <li><a class="dropdown-item" href="../articles/utterance-length-imputation.html">Utterance length imputation and weighting</a></li>
   </ul></li>
@@ -203,7 +204,7 @@ mean probability \(\mu\) and some other parameter that represents the
 spread around that mean. In GAMLSS (<code><a href="https://rdrr.io/pkg/gamlss.dist/man/BE.html" class="external-link">gamlss.dist::BE()</a></code>), they use a scale
 parameter \(\sigma\) (larger values mean more spread around mean).
 Everywhere else—<code>betareg::betareg()</code> and <code><a href="https://mc-stan.org/rstanarm/reference/stan_betareg.html" class="external-link">rstanarm::stan_betareg()</a></code> in
-<code>vignette("betareg", "betareg")</code>, <code>brms::Beta()</code> in
+<code>vignette("betareg", "betareg")</code>, <code><a href="https://paulbuerkner.com/brms/reference/brmsfamily.html" class="external-link">brms::Beta()</a></code> in
 <code><a href="https://paulbuerkner.com/brms/articles/brms_families.html" class="external-link">vignette("brms_families", "brms")</a></code>, <code><a href="https://rdrr.io/pkg/mgcv/man/Beta.html" class="external-link">mgcv::betar()</a></code>—it's a precision
 parameter \(\phi\) (larger values mean more precision, less spread around
 mean). Here is a comparison:</p>
