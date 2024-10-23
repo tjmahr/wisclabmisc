@@ -1,0 +1,359 @@
+---
+title: "A Workflow for brms"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+dir.create("models", showWarnings = FALSE)
+library(brms)
+```
+
+```{r setup}
+library(brms)
+```
+
+[brms](https://paulbuerkner.com/brms/) is the premier Bayesian regression package in R, and we use it in many of 
+our projects. In this article, I describe the workflow for using brms that I have 
+<strike>stumbled upon</strike> iterated over our last few analysis projects.
+
+## Context: A set of models
+
+Suppose that we have a dataset of age and intelligibility.
+
+```{r}
+data <- wisclabmisc::data_fake_intelligibility
+data
+```
+
+We want to fit a *set of related models*. For example, we want to
+compare models with different kinds of age trends using splines:
+
+```{r}
+library(brms)
+library(splines)
+f1 <- bf(
+  intelligibility ~ age_months, 
+  phi ~ age_months, 
+  family = Beta
+)
+f2 <- bf(
+  intelligibility ~ ns(age_months, 2), 
+  phi ~ ns(age_months, 2),
+  family = Beta
+)
+f3 <- bf(
+  intelligibility ~ ns(age_months, 2), 
+  phi ~ ns(age_months, 2),
+  family = Beta
+)
+```
+
+We could then write a `brm()` for each of these formulas, but that's not a good
+plan. More models could arise as we start to analyze and critique the results.
+We might need to set `adapt_delta` to a higher value for all the models. Aside
+from the formulas, and possibly the priors, everything about the
+model-fitting should be the same from model to model.
+
+A solution for this problem to 
+**make a function for fitting models from the set**. A function provides two wins:
+
+1.  We can standardize the model fitting across models.
+2.  We can indicate the similarity of the model through the organization
+    of the code. A function tell us "this is where we define possible age models".
+
+Here is what the workflow looks like at a very high level. We have a
+helper function for retrieving priors, a helper function for the
+default/shared arguments to `brm()`, a helper function for computing LOO
+scores, and the main function for fitting models from the set.
+
+```{r, eval = FALSE}
+lookup_prior <- function(prior_slug) {
+  # ...
+} 
+
+brm_args <- wisclabmisc::brms_args_create()
+
+fit_age_model <- function(
+    data,
+    model_slug,
+    prior_slug = "default",
+    seed = NA,
+    use_reloo = FALSE,
+    ...
+) {
+  # 1. [looking up priors]
+
+  # 2. [mapping from model_slug to formula]
+  
+  # 3. [creating a filename]
+  
+  # 4. [fitting model]
+  
+  # 5. [adding LOO score]
+}
+```
+
+## Priors
+
+We look up priors by using a helper function. Right now, we don't have
+any different set of priors we want to compare, so there are just two
+options: use some weak priors for the logit-scale mu and the log-scale
+phi, or use the brms defaults.
+
+```{r}
+lookup_prior <- function(prior_slug) {
+  l <- list(
+    default = c(
+      prior(normal(0, 1), class = b),
+      prior(normal(0, 2), class = Intercept),
+      prior(normal(0, 2), class = Intercept, dpar = phi),
+      prior(normal(0, 2), class = b, dpar = phi)
+    ),
+    brms_default = NULL
+  )
+  l[[prior_slug]]
+}
+```
+
+## Model-fitting defaults
+
+We usually want knobs and dials of model fitting---number of chains,
+number of iterations, Stan backend---to be the same from model-to-model.
+So we create a function called `brm_args()` the prints out a list of
+default arguments to `brm()`. We create this function using 
+`wisclabmisc::brms_args_create()`.
+
+Here are the package-provided defaults. (These defaults are just my preferred 
+settings.) 
+
+```{r}
+brm_args <- wisclabmisc::brms_args_create()
+brm_args()
+```
+
+But we can generate a new `brm_args()` function with different defaults. 
+
+```{r}
+brm_args <- wisclabmisc::brms_args_create(iter = 5000, chains = 1)
+brm_args()
+```
+
+These `brm_args()` function lets us set default `brm()` argument values. 
+Importantly, we can deviate from these defaults if we need to. Here we can
+overwrite the number of chains and set a value for `adapt_delta`.
+
+```{r}
+brm_args(chains = 2, adapt_delta = .98)
+```
+
+## Another helper function for LOO computation
+
+I also like to compute the LOO score by default. This operation can be 
+time-consuming but it fortunately gets cached in the model `file`. The 
+`reloo` argument gets forwarded to `brms::loo()`. If `use_reloo = TRUE`, brms 
+refits the model to compute exact leave-one-out scores for problematic 
+observations. 
+
+```{r}
+add_loo_criterion <- function(x, ..., use_reloo = FALSE) {
+  if (use_reloo) {
+    brms::add_criterion(
+      x,
+      criterion = "loo",
+      reloo = TRUE,
+      recompile = FALSE,
+      ...
+    )
+  } else {
+    brms::add_criterion(
+      x,
+      criterion = "loo",
+      ...
+    )
+  }
+}
+```
+
+
+## Model fitting function
+
+Now, we can fit a model. Each of the steps in the function are pretty simple. 
+We are generating a call to `brm()` but have to look up the prior and formula 
+to use, and create a filename for the `file` argument. 
+
+```{r}
+brm_args <- wisclabmisc::brms_args_create()
+
+fit_age_model <- function(
+    data,
+    model_slug,
+    prior_slug = "default",
+    seed = NA,
+    use_reloo = FALSE, 
+    ...
+) {
+  # 1. [looking up priors]
+  prior <- lookup_prior(prior_slug)
+
+  # 2. [mapping from model_slug to formula]
+  ns <- splines::ns
+  
+  formulas <- list(
+    linear = bf(
+      intelligibility ~ age_months, 
+      phi ~ age_months, 
+      family = Beta
+    ),
+    spline_2df = bf(
+      intelligibility ~ ns(age_months, 2), 
+      phi ~ ns(age_months, 2),
+      family = Beta
+    ),
+    spline_3df = bf(
+      intelligibility ~ ns(age_months, 3), 
+      phi ~ ns(age_months, 3),
+      family = Beta
+    )
+  )
+  
+  formula <- formulas[[model_slug]]
+  
+  # 3. [creating a filename]
+  loo_slug <- ifelse(use_reloo, "_reloo", "")
+  file <- file.path(
+    "models", paste0(model_slug, "_", prior_slug, loo_slug)
+  )
+  
+  # 4. [fitting model]
+  args <- brm_args(
+    formula = formula,
+    data = data,
+    prior = prior,
+    file = file,
+    seed = seed,
+    ...
+  )
+  model <- do.call(brm, args)
+
+  # 5. [adding LOO score]
+  add_loo_criterion(model, use_reloo)
+}
+```
+
+Now let's fit the models and compare them.
+
+```{r, include = FALSE}
+m1 <- fit_age_model(data, "linear", seed = 20241023)
+m2 <- fit_age_model(data, "spline_2df", seed = 20241023)
+m3 <- fit_age_model(data, "spline_3df", seed = 20241023)
+```
+
+```{r}
+m1 <- fit_age_model(data, "linear", seed = 20241023)
+m2 <- fit_age_model(data, "spline_2df", seed = 20241023)
+m3 <- fit_age_model(data, "spline_3df", seed = 20241023)
+
+loo_compare(m1, m2, m3) |> 
+  print(simplify = FALSE)
+```
+
+
+## The full workflow
+
+Here is the full workflow from above, for easy copy-pasting as boilerplate 
+for new projects. Putting this code chunk in a easy to grab place is my 
+motivation for writing this article. 🤓
+
+```{r}
+lookup_prior <- function(prior_slug) {
+  l <- list(
+    default = c(
+      prior(normal(0, 1), class = b),
+      prior(normal(0, 2), class = Intercept),
+      prior(normal(0, 2), class = Intercept, dpar = phi),
+      prior(normal(0, 2), class = b, dpar = phi)
+    ),
+    brms_default = NULL
+  )
+  l[[prior_slug]]
+}
+
+add_loo_criterion <- function(x, ..., use_reloo = FALSE) {
+  if (use_reloo) {
+    brms::add_criterion(
+      x,
+      criterion = "loo",
+      reloo = TRUE,
+      recompile = FALSE,
+      ...
+    )
+  } else {
+    brms::add_criterion(
+      x,
+      criterion = "loo",
+      ...
+    )
+  }
+}
+
+brm_args <- wisclabmisc::brms_args_create()
+
+fit_age_model <- function(
+    data,
+    model_slug,
+    prior_slug = "default",
+    seed = NA,
+    use_reloo = FALSE, 
+    ...
+) {
+  # 1. [looking up priors]
+  prior <- lookup_prior(prior_slug)
+
+  # 2. [mapping from model_slug to formula]
+  ns <- splines::ns
+  
+  formulas <- list(
+    linear = bf(
+      intelligibility ~ age_months, 
+      phi ~ age_months, 
+      family = Beta
+    ),
+    spline_2df = bf(
+      intelligibility ~ ns(age_months, 2), 
+      phi ~ ns(age_months, 2),
+      family = Beta
+    ),
+    spline_3df = bf(
+      intelligibility ~ ns(age_months, 3), 
+      phi ~ ns(age_months, 3),
+      family = Beta
+    )
+  )
+  
+  formula <- formulas[[model_slug]]
+  
+  # 3. [creating a filename]
+  loo_slug <- ifelse(use_reloo, "_reloo", "")
+  file <- file.path(
+    "models", paste0(model_slug, "_", prior_slug, loo_slug)
+  )
+  
+  # 4. [fitting model]
+  args <- brm_args(
+    formula = formula,
+    data = data,
+    prior = prior,
+    file = file,
+    seed = seed,
+    ...
+  )
+  model <- do.call(brm, args)
+
+  # 5. [adding LOO score]
+  add_loo_criterion(model, use_reloo)
+}
+```
+

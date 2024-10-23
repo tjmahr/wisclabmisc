@@ -27,7 +27,8 @@ Extract the TOCS details from a string (usually a filename)
 \examples{
 x <- c(
   "XXv16s7T06.lab", "XXv15s5T06.TextGrid", "XXv13s3T10.WAV",
-  "XXv18wT11.wav", "non-matching", "s2T01"
+  "XXv18wT11.wav", "non-matching", "s2T01",
+  "XXv01s4B01.wav", "XXv01wB01.wav"
 )
 data.frame(
   x = x,
