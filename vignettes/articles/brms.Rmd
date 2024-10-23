@@ -185,7 +185,8 @@ We are generating a call to `brm()` but have to look up the prior and formula
 to use, and create a filename for the `file` argument. 
 
 ```{r}
-brm_args <- wisclabmisc::brms_args_create()
+# Use rstan for the article page
+brm_args <- wisclabmisc::brms_args_create(backend = "rstan")
 
 fit_age_model <- function(
     data,
