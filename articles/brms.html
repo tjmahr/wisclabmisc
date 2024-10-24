@@ -95,8 +95,11 @@ projects.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>         33           0.446</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>         33           0.592</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 190 more rows</span></span></span></code></pre></div>
-<p>We want to fit a <em>set of related models</em>. For example, we want
-to compare models with different kinds of age trends using splines:</p>
+<p>We want to fit a <em>set of related models</em>. By “related”, I
+loosely mean that the models have the same outcome variable and the same
+modeling family. What can vary from model to model are the formulas or
+the priors. For example, suppose we want to compare models with
+different kinds of age trends using splines:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/paul-buerkner/brms" class="external-link">brms</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">splines</span><span class="op">)</span></span>
@@ -115,29 +118,33 @@ to compare models with different kinds of age trends using splines:</p>
 <span>  <span class="va">phi</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">age_months</span>, <span class="fl">2</span><span class="op">)</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">Beta</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>We could then write a <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brm()</a></code> for each of these formulas,
-but that’s not a good plan. More models could arise as we start to
-analyze and critique the results. We might need to set
+<p>Given these model formulas, we could then write a <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brm()</a></code>
+for each one, but that’s not a good plan. More models could arise as we
+start to analyze and critique the results. We might need to set
 <code>adapt_delta</code> to a higher value for all the models. Aside
-from the formulas, and possibly the priors, everything about the
-model-fitting should be the same from model to model.</p>
+from the formulas, and sometimes the priors, everything about the
+model-fitting should generally be the same from model to model.</p>
 <p>A solution for this problem to <strong>make a function for fitting
 models from the set</strong>. A function provides two wins:</p>
 <ol style="list-style-type: decimal">
 <li>We can standardize the model fitting across models.</li>
-<li>We can indicate the similarity of the model through the organization
-of the code. A function tell us “this is where we define possible age
-models”.</li>
+<li>We can indicate the similarity of the models through the
+organization of the code. A function tells us “this is where we define
+possible age models”.</li>
 </ol>
 <p>Here is what the workflow looks like at a very high level. We have a
-helper function for retrieving priors, a helper function for the
-default/shared arguments to <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brm()</a></code>, a helper function for
-computing LOO scores, and the main function for fitting models from the
+helper function for retrieving priors, a helper function for computing
+LOO scores, a helper function for the default/shared arguments to
+<code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brm()</a></code>, and the main function for fitting models from the
 set.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lookup_prior</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">prior_slug</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># ...</span></span>
 <span><span class="op">}</span> </span>
+<span></span>
+<span><span class="va">add_loo_criterion</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, <span class="va">use_reloo</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> </span>
+<span>  <span class="co"># ...</span></span>
+<span><span class="op">}</span></span>
 <span></span>
 <span><span class="va">brm_args</span> <span class="op">&lt;-</span> <span class="fu">wisclabmisc</span><span class="fu">::</span><span class="fu"><a href="../reference/brms_args_create.html">brms_args_create</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -180,76 +187,78 @@ log-scale phi, or use the brms defaults.</p>
 <span>  <span class="op">)</span></span>
 <span>  <span class="va">l</span><span class="op">[[</span><span class="va">prior_slug</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="model-fitting-defaults">Model-fitting defaults<a class="anchor" aria-label="anchor" href="#model-fitting-defaults"></a>
-</h2>
-<p>We usually want knobs and dials of model fitting—number of chains,
-number of iterations, Stan backend—to be the same from model-to-model.
-So we create a function called <code>brm_args()</code> the prints out a
-list of default arguments to <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brm()</a></code>. We create this function
-using <code><a href="../reference/brms_args_create.html">wisclabmisc::brms_args_create()</a></code>.</p>
-<p>Here are the package-provided defaults. (These defaults are just my
-preferred settings.)</p>
+<p>Priors are strict (in a good way): I can’t set a prior for a
+parameter that doesn’t exist in the model formula. For example, I can’t
+set a prior on the random effect variance when the formula doesn’t
+include random effects:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">brm_args</span> <span class="op">&lt;-</span> <span class="fu">wisclabmisc</span><span class="fu">::</span><span class="fu"><a href="../reference/brms_args_create.html">brms_args_create</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu">brm_args</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 9</span></span>
-<span><span class="co">#&gt;  $ backend   : chr "cmdstanr"</span></span>
-<span><span class="co">#&gt;  $ threads   : num 2</span></span>
-<span><span class="co">#&gt;  $ chains    : num 4</span></span>
-<span><span class="co">#&gt;  $ cores     : num 4</span></span>
-<span><span class="co">#&gt;  $ iter      : num 2000</span></span>
-<span><span class="co">#&gt;  $ silent    : num 0</span></span>
-<span><span class="co">#&gt;  $ file_refit: chr "on_change"</span></span>
-<span><span class="co">#&gt;  $ refresh   : num 25</span></span>
-<span><span class="co">#&gt;  $ control   : list()</span></span>
-<span><span class="co">#&gt;  - attr(*, "class")= chr [1:2] "brm_args" "list"</span></span></code></pre></div>
-<p>But we can generate a new <code>brm_args()</code> function with
-different defaults.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://paulbuerkner.com/brms/reference/validate_prior.html" class="external-link">validate_prior</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">lookup_prior</span><span class="op">(</span><span class="st">"default"</span><span class="op">)</span>, <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"sd"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  formula <span class="op">=</span> <span class="va">f1</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">data</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error: The following priors do not correspond to any model parameter: </span></span>
+<span><span class="co">#&gt; sd ~ normal(0, 1)</span></span>
+<span><span class="co">#&gt; Function 'default_prior' might be helpful to you.</span></span></code></pre></div>
+<p>The flipside of this strictness is that I will need to toggle between
+priors, for example, when fitting a random-intercept model and a
+random-slope model, or when fitting a model with regression splines
+<code><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns()</a></code> and a model with a smoothing spline <code><a href="https://paulbuerkner.com/brms/reference/s.html" class="external-link">s()</a></code>.
+In my most recent project, I had the following lookup function:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">brm_args</span> <span class="op">&lt;-</span> <span class="fu">wisclabmisc</span><span class="fu">::</span><span class="fu"><a href="../reference/brms_args_create.html">brms_args_create</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">5000</span>, chains <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu">brm_args</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 9</span></span>
-<span><span class="co">#&gt;  $ backend   : chr "cmdstanr"</span></span>
-<span><span class="co">#&gt;  $ threads   : num 2</span></span>
-<span><span class="co">#&gt;  $ chains    : num 1</span></span>
-<span><span class="co">#&gt;  $ cores     : num 4</span></span>
-<span><span class="co">#&gt;  $ iter      : num 5000</span></span>
-<span><span class="co">#&gt;  $ silent    : num 0</span></span>
-<span><span class="co">#&gt;  $ file_refit: chr "on_change"</span></span>
-<span><span class="co">#&gt;  $ refresh   : num 25</span></span>
-<span><span class="co">#&gt;  $ control   : list()</span></span>
-<span><span class="co">#&gt;  - attr(*, "class")= chr [1:2] "brm_args" "list"</span></span></code></pre></div>
-<p>These <code>brm_args()</code> function lets us set default
-<code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brm()</a></code> argument values. Importantly, we can deviate from
-these defaults if we need to. Here we can overwrite the number of chains
-and set a value for <code>adapt_delta</code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">brm_args</span><span class="op">(</span>chains <span class="op">=</span> <span class="fl">2</span>, adapt_delta <span class="op">=</span> <span class="fl">.98</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 9</span></span>
-<span><span class="co">#&gt;  $ backend   : chr "cmdstanr"</span></span>
-<span><span class="co">#&gt;  $ threads   : num 2</span></span>
-<span><span class="co">#&gt;  $ chains    : num 2</span></span>
-<span><span class="co">#&gt;  $ cores     : num 4</span></span>
-<span><span class="co">#&gt;  $ iter      : num 5000</span></span>
-<span><span class="co">#&gt;  $ silent    : num 0</span></span>
-<span><span class="co">#&gt;  $ file_refit: chr "on_change"</span></span>
-<span><span class="co">#&gt;  $ refresh   : num 25</span></span>
-<span><span class="co">#&gt;  $ control   :List of 1</span></span>
-<span><span class="co">#&gt;   ..$ adapt_delta: num 0.98</span></span>
-<span><span class="co">#&gt;  - attr(*, "class")= chr [1:2] "brm_args" "list"</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">lookup_brms_priors</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">prior_slug</span> <span class="op">=</span> <span class="st">"logit_ri"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    logit_ri <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">b</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">sds</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">Intercept</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">sd</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    logit_rs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">b</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">sd</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">sds</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">Intercept</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">lkj</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">cor</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    logit_phi_ri <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">b</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">sds</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">Intercept</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">sd</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">b</span>, dpar <span class="op">=</span> <span class="va">phi</span><span class="op">)</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    logit_phi_rs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">b</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">sds</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">Intercept</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">sd</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">lkj</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">cor</span><span class="op">)</span>,</span>
+<span>      <span class="fu"><a href="https://paulbuerkner.com/brms/reference/set_prior.html" class="external-link">prior</a></span><span class="op">(</span><span class="fu">normal</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, class <span class="op">=</span> <span class="va">b</span>, dpar <span class="op">=</span> <span class="va">phi</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="va">l</span><span class="op">[[</span><span class="va">prior_slug</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>In this case, there were two sets of models: one with a binomial
+outcome that used <code>logit_ri</code> and <code>logit_rs</code> and
+one with a beta outcome that needed additional priors on the precision
+parameter phi via <code>logit_phi_ri</code> and
+<code>logit_phi_rs</code>. The <code>_ri</code> and <code>_rs</code>
+different in whether they include a prior on the correlation of random
+effects.</p>
 </div>
 <div class="section level2">
-<h2 id="another-helper-function-for-loo-computation">Another helper function for LOO computation<a class="anchor" aria-label="anchor" href="#another-helper-function-for-loo-computation"></a>
+<h2 id="a-helper-function-for-loo-computation">A helper function for LOO computation<a class="anchor" aria-label="anchor" href="#a-helper-function-for-loo-computation"></a>
 </h2>
-<p>I also like to compute the LOO score by default. This operation can
-be time-consuming but it fortunately gets cached in the model
-<code>file</code>. The <code>reloo</code> argument gets forwarded to
-<code><a href="https://mc-stan.org/loo/reference/loo.html" class="external-link">brms::loo()</a></code>. If <code>use_reloo = TRUE</code>, brms refits
-the model to compute exact leave-one-out scores for problematic
-observations.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p>I like to compute the LOO score by default. This operation can be
+time-consuming, but it fortunately gets cached in the model
+<code>file</code> so I just make it part of the model fitting. My
+function doesn’t do anything noteworthy other than making it easy to
+toggle on exact LOO scores if needed. The <code>reloo</code> argument
+gets forwarded to <code><a href="https://mc-stan.org/loo/reference/loo.html" class="external-link">brms::loo()</a></code>. If
+<code>use_reloo = TRUE</code>, brms refits the model to compute exact
+leave-one-out scores for problematic observations.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">add_loo_criterion</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, <span class="va">use_reloo</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="va">use_reloo</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu">brms</span><span class="fu">::</span><span class="fu"><a href="https://paulbuerkner.com/brms/reference/add_criterion.html" class="external-link">add_criterion</a></span><span class="op">(</span></span>
@@ -267,15 +276,89 @@ observations.</p>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span></span></code></pre></div>
+<p>One thing I would like to figure out for my workflow is a smart way
+to describe and fit LOGO (leave one group out) models for
+repeated-measures models.</p>
+</div>
+<div class="section level2">
+<h2 id="model-fitting-defaults">Model-fitting defaults<a class="anchor" aria-label="anchor" href="#model-fitting-defaults"></a>
+</h2>
+<p>We usually want knobs and dials of model fitting—number of chains,
+number of iterations, Stan backend—to be the same from model-to-model.
+So we create a function called <code>brm_args()</code> the prints out a
+list of default arguments to <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brm()</a></code>. We create this function
+using <code><a href="../reference/brms_args_create.html">wisclabmisc::brms_args_create()</a></code>.</p>
+<p>Here are the package-provided defaults. (These defaults are just my
+preferred settings.)</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">brm_args</span> <span class="op">&lt;-</span> <span class="fu">wisclabmisc</span><span class="fu">::</span><span class="fu"><a href="../reference/brms_args_create.html">brms_args_create</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">brm_args</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 9</span></span>
+<span><span class="co">#&gt;  $ backend   : chr "cmdstanr"</span></span>
+<span><span class="co">#&gt;  $ threads   : num 2</span></span>
+<span><span class="co">#&gt;  $ chains    : num 4</span></span>
+<span><span class="co">#&gt;  $ cores     : num 4</span></span>
+<span><span class="co">#&gt;  $ iter      : num 2000</span></span>
+<span><span class="co">#&gt;  $ silent    : num 0</span></span>
+<span><span class="co">#&gt;  $ file_refit: chr "on_change"</span></span>
+<span><span class="co">#&gt;  $ refresh   : num 25</span></span>
+<span><span class="co">#&gt;  $ control   : list()</span></span>
+<span><span class="co">#&gt;  - attr(*, "class")= chr [1:2] "brm_args" "list"</span></span></code></pre></div>
+<p>The interesting ones might be <code>file_refit</code>,
+<code>threads</code> and <code>backend</code>. If you provide
+<code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brm()</a></code> with a <code>file</code> like <code>"my-model"</code>
+it will save the fitted model into <code>my-model.rds</code>.
+<code>file_refit = "on_change"</code> tells brms to refit this model if
+the model’s Stan code or data change. By default
+<code>file_refit = "never"</code>, meaning that it never refits the
+model. I set <code>threads</code> and <code>backend</code> to try to
+make the model sample or compile more quickly. I do set
+<code>refresh</code> to a small number because I like to see the MCMC
+chains sampling.</p>
+<p>If these defaults are troublesome (<code>refresh</code>), we can
+generate a new <code>brm_args()</code> function with different
+defaults.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">brm_args</span> <span class="op">&lt;-</span> <span class="fu">wisclabmisc</span><span class="fu">::</span><span class="fu"><a href="../reference/brms_args_create.html">brms_args_create</a></span><span class="op">(</span>iter <span class="op">=</span> <span class="fl">5000</span>, refresh <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span><span class="fu">brm_args</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 9</span></span>
+<span><span class="co">#&gt;  $ backend   : chr "cmdstanr"</span></span>
+<span><span class="co">#&gt;  $ threads   : num 2</span></span>
+<span><span class="co">#&gt;  $ chains    : num 4</span></span>
+<span><span class="co">#&gt;  $ cores     : num 4</span></span>
+<span><span class="co">#&gt;  $ iter      : num 5000</span></span>
+<span><span class="co">#&gt;  $ silent    : num 0</span></span>
+<span><span class="co">#&gt;  $ file_refit: chr "on_change"</span></span>
+<span><span class="co">#&gt;  $ refresh   : num 100</span></span>
+<span><span class="co">#&gt;  $ control   : list()</span></span>
+<span><span class="co">#&gt;  - attr(*, "class")= chr [1:2] "brm_args" "list"</span></span></code></pre></div>
+<p>These <code>brm_args()</code> function lets us set default
+<code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brm()</a></code> argument values. Importantly, we can deviate from
+these defaults if we need to. Here we can overwrite the number of chains
+and set a value for <code>adapt_delta</code>.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">brm_args</span><span class="op">(</span>chains <span class="op">=</span> <span class="fl">2</span>, adapt_delta <span class="op">=</span> <span class="fl">.98</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 9</span></span>
+<span><span class="co">#&gt;  $ backend   : chr "cmdstanr"</span></span>
+<span><span class="co">#&gt;  $ threads   : num 2</span></span>
+<span><span class="co">#&gt;  $ chains    : num 2</span></span>
+<span><span class="co">#&gt;  $ cores     : num 4</span></span>
+<span><span class="co">#&gt;  $ iter      : num 5000</span></span>
+<span><span class="co">#&gt;  $ silent    : num 0</span></span>
+<span><span class="co">#&gt;  $ file_refit: chr "on_change"</span></span>
+<span><span class="co">#&gt;  $ refresh   : num 100</span></span>
+<span><span class="co">#&gt;  $ control   :List of 1</span></span>
+<span><span class="co">#&gt;   ..$ adapt_delta: num 0.98</span></span>
+<span><span class="co">#&gt;  - attr(*, "class")= chr [1:2] "brm_args" "list"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="model-fitting-function">Model fitting function<a class="anchor" aria-label="anchor" href="#model-fitting-function"></a>
 </h2>
 <p>Now, we can fit a model. Each of the steps in the function are pretty
-simple. We are generating a call to <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brm()</a></code> but have to look
-up the prior and formula to use, and create a filename for the
-<code>file</code> argument.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+simple. We are generating and executing a call to <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brm()</a></code>
+(via <code><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call()</a></code>) but have to look up the prior and formula
+to use, and create a filename for the <code>file</code> argument.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Use rstan for the article page</span></span>
 <span><span class="va">brm_args</span> <span class="op">&lt;-</span> <span class="fu">wisclabmisc</span><span class="fu">::</span><span class="fu"><a href="../reference/brms_args_create.html">brms_args_create</a></span><span class="op">(</span>backend <span class="op">=</span> <span class="st">"rstan"</span><span class="op">)</span></span>
 <span></span>
@@ -333,9 +416,21 @@ up the prior and formula to use, and create a filename for the
 <span>  <span class="co"># 5. [adding LOO score]</span></span>
 <span>  <span class="fu">add_loo_criterion</span><span class="op">(</span><span class="va">model</span>, <span class="va">use_reloo</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Now let’s fit the models and compare them.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu">fit_age_model</span><span class="op">(</span><span class="va">data</span>, <span class="st">"linear"</span>, seed <span class="op">=</span> <span class="fl">20241023</span><span class="op">)</span></span>
+<p>Let’s fit the models and compare them.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># I'm only using rstan to get the demo to work on GitHub pages</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/rstan/" class="external-link">rstan</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: StanHeaders</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; rstan version 2.32.6 (Stan version 2.32.2)</span></span>
+<span><span class="co">#&gt; For execution on a local, multicore CPU with excess RAM we recommend calling</span></span>
+<span><span class="co">#&gt; options(mc.cores = parallel::detectCores()).</span></span>
+<span><span class="co">#&gt; To avoid recompilation of unchanged Stan programs, we recommend calling</span></span>
+<span><span class="co">#&gt; rstan_options(auto_write = TRUE)</span></span>
+<span><span class="co">#&gt; For within-chain threading using `reduce_sum()` or `map_rect()` Stan functions,</span></span>
+<span><span class="co">#&gt; change `threads_per_chain` option:</span></span>
+<span><span class="co">#&gt; rstan_options(threads_per_chain = 1)</span></span>
+<span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu">fit_age_model</span><span class="op">(</span><span class="va">data</span>, <span class="st">"linear"</span>, seed <span class="op">=</span> <span class="fl">20241023</span><span class="op">)</span></span>
 <span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu">fit_age_model</span><span class="op">(</span><span class="va">data</span>, <span class="st">"spline_2df"</span>, seed <span class="op">=</span> <span class="fl">20241023</span><span class="op">)</span></span>
 <span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu">fit_age_model</span><span class="op">(</span><span class="va">data</span>, <span class="st">"spline_3df"</span>, seed <span class="op">=</span> <span class="fl">20241023</span><span class="op">)</span></span>
 <span></span>
@@ -352,7 +447,7 @@ up the prior and formula to use, and create a filename for the
 <p>Here is the full workflow from above, for easy copy-pasting as
 boilerplate for new projects. Putting this code chunk in a easy to grab
 place is my motivation for writing this article. 🤓</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lookup_prior</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">prior_slug</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    default <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
