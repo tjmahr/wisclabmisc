@@ -50,8 +50,8 @@ f2 <- bf(
   family = Beta
 )
 f3 <- bf(
-  intelligibility ~ ns(age_months, 2), 
-  phi ~ ns(age_months, 2),
+  intelligibility ~ ns(age_months, 3), 
+  phi ~ ns(age_months, 3),
   family = Beta
 )
 ```
