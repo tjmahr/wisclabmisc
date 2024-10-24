@@ -15,9 +15,11 @@ library(brms)
 library(brms)
 ```
 
-[brms](https://paulbuerkner.com/brms/) is the premier Bayesian regression package in R, and we use it in many of 
-our projects. In this article, I describe the workflow for using brms that I have 
-<strike>stumbled upon</strike> iterated over our last few analysis projects.
+[brms](https://paulbuerkner.com/brms/) is the premier Bayesian
+regression package in R, and we use it in many of our projects. In this
+article, I describe the workflow for using brms that I have
+<strike>stumbled upon</strike> iterated over our last few analysis
+projects.
 
 ## Context: A set of models
 
@@ -28,8 +30,11 @@ data <- wisclabmisc::data_fake_intelligibility
 data
 ```
 
-We want to fit a *set of related models*. For example, we want to
-compare models with different kinds of age trends using splines:
+We want to fit a *set of related models*. By "related", I loosely mean
+that the models have the same outcome variable and the same modeling
+family. What can vary from model to model are the formulas or the
+priors. For example, suppose we want to compare models with different
+kinds of age trends using splines:
 
 ```{r}
 library(brms)
@@ -51,28 +56,33 @@ f3 <- bf(
 )
 ```
 
-We could then write a `brm()` for each of these formulas, but that's not a good
-plan. More models could arise as we start to analyze and critique the results.
-We might need to set `adapt_delta` to a higher value for all the models. Aside
-from the formulas, and possibly the priors, everything about the
-model-fitting should be the same from model to model.
+Given these model formulas, we could then write a `brm()` for each one,
+but that's not a good plan. More models could arise as we start to
+analyze and critique the results. We might need to set `adapt_delta` to
+a higher value for all the models. Aside from the formulas, and
+sometimes the priors, everything about the model-fitting should generally be the
+same from model to model. 
 
 A solution for this problem to 
 **make a function for fitting models from the set**. A function provides two wins:
 
 1.  We can standardize the model fitting across models.
-2.  We can indicate the similarity of the model through the organization
-    of the code. A function tell us "this is where we define possible age models".
+2.  We can indicate the similarity of the models through the organization
+    of the code. A function tells us "this is where we define possible age models".
 
 Here is what the workflow looks like at a very high level. We have a
-helper function for retrieving priors, a helper function for the
-default/shared arguments to `brm()`, a helper function for computing LOO
-scores, and the main function for fitting models from the set.
+helper function for retrieving priors, a helper function for computing
+LOO scores, a helper function for the default/shared arguments to
+`brm()`, and the main function for fitting models from the set.
 
 ```{r, eval = FALSE}
 lookup_prior <- function(prior_slug) {
   # ...
 } 
+
+add_loo_criterion <- function(x, ..., use_reloo = FALSE) { 
+  # ...
+}
 
 brm_args <- wisclabmisc::brms_args_create()
 
@@ -118,44 +128,75 @@ lookup_prior <- function(prior_slug) {
 }
 ```
 
-## Model-fitting defaults
+Priors are strict (in a good way): I can't set a prior for a parameter that 
+doesn't exist in the model formula. For example, I can't set a prior on the 
+random effect variance when the formula doesn't include random effects:
 
-We usually want knobs and dials of model fitting---number of chains,
-number of iterations, Stan backend---to be the same from model-to-model.
-So we create a function called `brm_args()` the prints out a list of
-default arguments to `brm()`. We create this function using 
-`wisclabmisc::brms_args_create()`.
-
-Here are the package-provided defaults. (These defaults are just my preferred 
-settings.) 
-
-```{r}
-brm_args <- wisclabmisc::brms_args_create()
-brm_args()
+```{r, error = TRUE}
+validate_prior(
+  c(lookup_prior("default"), prior(normal(0, 1), class = "sd")),
+  formula = f1,
+  data = data
+)
 ```
 
-But we can generate a new `brm_args()` function with different defaults. 
+The flipside of this strictness is that I will need to toggle between priors, 
+for example, when fitting a random-intercept model and a random-slope model, or 
+when fitting a model with regression splines `ns()` and a model with a smoothing 
+spline `s()`. In my most recent project, I had the following lookup function:
 
 ```{r}
-brm_args <- wisclabmisc::brms_args_create(iter = 5000, chains = 1)
-brm_args()
+lookup_brms_priors <- function(prior_slug = "logit_ri") {
+  l <- list(
+    logit_ri = c(
+      prior(normal(0, 1), class = b),
+      prior(normal(0, 2), class = sds),
+      prior(normal(0, 2), class = Intercept),
+      prior(normal(0, 1), class = sd)
+    ),
+    logit_rs = c(
+      prior(normal(0, 1), class = b),
+      prior(normal(0, 1), class = sd),
+      prior(normal(0, 2), class = sds),
+      prior(normal(0, 2), class = Intercept),
+      prior(lkj(2), class = cor)
+    ),
+    logit_phi_ri = c(
+      prior(normal(0, 1), class = b),
+      prior(normal(0, 2), class = sds),
+      prior(normal(0, 2), class = Intercept),
+      prior(normal(0, 1), class = sd),
+      prior(normal(0, 2), class = b, dpar = phi)
+    ),
+    logit_phi_rs = c(
+      prior(normal(0, 1), class = b),
+      prior(normal(0, 2), class = sds),
+      prior(normal(0, 2), class = Intercept),
+      prior(normal(0, 1), class = sd),
+      prior(lkj(2), class = cor),
+      prior(normal(0, 2), class = b, dpar = phi)
+    )
+  )
+  l[[prior_slug]]
+}
 ```
 
-These `brm_args()` function lets us set default `brm()` argument values. 
-Importantly, we can deviate from these defaults if we need to. Here we can
-overwrite the number of chains and set a value for `adapt_delta`.
+In this case, there were two sets of models: one with a binomial outcome
+that used `logit_ri` and `logit_rs` and one with a beta outcome that
+needed additional priors on the precision parameter phi via
+`logit_phi_ri` and `logit_phi_rs`. The `_ri` and `_rs` different in
+whether they include a prior on the correlation of random effects.
 
-```{r}
-brm_args(chains = 2, adapt_delta = .98)
-```
 
-## Another helper function for LOO computation
+## A helper function for LOO computation
 
-I also like to compute the LOO score by default. This operation can be 
-time-consuming but it fortunately gets cached in the model `file`. The 
-`reloo` argument gets forwarded to `brms::loo()`. If `use_reloo = TRUE`, brms 
-refits the model to compute exact leave-one-out scores for problematic 
-observations. 
+I like to compute the LOO score by default. This operation can be
+time-consuming, but it fortunately gets cached in the model `file` so I
+just make it part of the model fitting. My function doesn't do anything
+noteworthy other than making it easy to toggle on exact LOO scores if
+needed. The `reloo` argument gets forwarded to `brms::loo()`. If
+`use_reloo = TRUE`, brms refits the model to compute exact leave-one-out
+scores for problematic observations. 
 
 ```{r}
 add_loo_criterion <- function(x, ..., use_reloo = FALSE) {
@@ -177,12 +218,58 @@ add_loo_criterion <- function(x, ..., use_reloo = FALSE) {
 }
 ```
 
+One thing I would like to figure out for my workflow is a smart way to
+describe and fit LOGO (leave one group out) models for repeated-measures
+models.
+
+## Model-fitting defaults
+
+We usually want knobs and dials of model fitting---number of chains,
+number of iterations, Stan backend---to be the same from model-to-model.
+So we create a function called `brm_args()` the prints out a list of
+default arguments to `brm()`. We create this function using 
+`wisclabmisc::brms_args_create()`.
+
+Here are the package-provided defaults. (These defaults are just my preferred 
+settings.) 
+
+```{r}
+brm_args <- wisclabmisc::brms_args_create()
+brm_args()
+```
+
+The interesting ones might be `file_refit`, `threads` and `backend`. If you provide
+`brm()` with a `file` like `"my-model"` it will save the fitted model into
+`my-model.rds`. `file_refit = "on_change"` tells brms to refit this model if the
+model's Stan code or data change. By default `file_refit = "never"`, meaning
+that it never refits the model. I set `threads` and `backend` to try to make 
+the model sample or compile more quickly. I do set `refresh` to a small number 
+because I like to see the MCMC chains sampling.
+
+If these defaults are troublesome (`refresh`), we can generate a new 
+`brm_args()` function with different defaults. 
+
+```{r}
+brm_args <- wisclabmisc::brms_args_create(iter = 5000, refresh = 100)
+brm_args()
+```
+
+These `brm_args()` function lets us set default `brm()` argument values. 
+Importantly, we can deviate from these defaults if we need to. Here we can
+overwrite the number of chains and set a value for `adapt_delta`.
+
+```{r}
+brm_args(chains = 2, adapt_delta = .98)
+```
+
+
 
 ## Model fitting function
 
-Now, we can fit a model. Each of the steps in the function are pretty simple. 
-We are generating a call to `brm()` but have to look up the prior and formula 
-to use, and create a filename for the `file` argument. 
+Now, we can fit a model. Each of the steps in the function are pretty simple. We
+are generating and executing a call to `brm()` (via `do.call()`) but have to
+look up the prior and formula to use, and create a filename for the `file`
+argument.
 
 ```{r}
 # Use rstan for the article page
@@ -244,15 +331,18 @@ fit_age_model <- function(
 }
 ```
 
-Now let's fit the models and compare them.
+Let's fit the models and compare them.
 
 ```{r, include = FALSE}
 m1 <- fit_age_model(data, "linear", seed = 20241023)
 m2 <- fit_age_model(data, "spline_2df", seed = 20241023)
 m3 <- fit_age_model(data, "spline_3df", seed = 20241023)
+m2$criteria$loo
 ```
 
 ```{r}
+# I'm only using rstan to get the demo to work on GitHub pages
+library(rstan)
 m1 <- fit_age_model(data, "linear", seed = 20241023)
 m2 <- fit_age_model(data, "spline_2df", seed = 20241023)
 m3 <- fit_age_model(data, "spline_3df", seed = 20241023)
