@@ -114,8 +114,8 @@ different kinds of age trends using splines:</p>
 <span>  family <span class="op">=</span> <span class="va">Beta</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">f3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://paulbuerkner.com/brms/reference/brmsformula.html" class="external-link">bf</a></span><span class="op">(</span></span>
-<span>  <span class="va">intelligibility</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">age_months</span>, <span class="fl">2</span><span class="op">)</span>, </span>
-<span>  <span class="va">phi</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">age_months</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  <span class="va">intelligibility</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">age_months</span>, <span class="fl">3</span><span class="op">)</span>, </span>
+<span>  <span class="va">phi</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">age_months</span>, <span class="fl">3</span><span class="op">)</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">Beta</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Given these model formulas, we could then write a <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brm()</a></code>
