@@ -58,7 +58,8 @@ logitnorm_mean <- function(mu, sigma) {
 #' Compute entropy and related measures
 #'
 #' @param x a vector of probabilities
-#' @param p a probability distribution (vector of probabilities that sum to 1)
+#' @param p,q a probability distribution (vector of probabilities that sum to 1)
+#' @param base the base of the logarithm. Defaults to *e* (`exp(1)`).
 #' @param mat a matrix where each row is a probability distribution
 #' @return the entropy
 #' @rdname information
@@ -74,9 +75,9 @@ logitnorm_mean <- function(mu, sigma) {
 #' Because of how division works with logarithms, `log(1 / x)` simplifies so
 #' that `info_surprisal(x)` is the negative log probability,`-log(x)`. The units
 #' of the information content depends on the base of the logarithm. Our
-#' functions use the natural `log()` which provides information in *nats*, but
-#' it is also common to see `log2()`-based surprisals which provide information
-#' in *bits*.
+#' functions by default use the natural `log()` which provides information in
+#' *nats*, but it is also common to see `log2()`-based surprisals which provide
+#' information in *bits*.
 #'
 #' Given a probability distribution `p`---a vector of probabilities that
 #' sum to 1---the **entropy** of the distribution is the
@@ -119,41 +120,52 @@ logitnorm_mean <- function(mu, sigma) {
 #' )
 #'
 #' info_kl_divergence_matrix(wikipedia_example)
-info_surprisal <- function(p) {
-  -log(p)
+info_surprisal <- function(x, base = NULL) {
+  stopifnot("Values must be probabilities" = all(is_probability(x)))
+  if (is.null(base)) base <- exp(1)
+  -log(x, base)
 }
 
 #' @rdname information
 #' @export
-info_cross_entropy <- function(p, q) {
+info_entropy <- function(p, base = NULL) {
+  info_cross_entropy(p, p, base)
+}
+
+is_probability <- function(xs) {
+  is.na(xs) | (0 <= xs & xs <= 1)
+}
+
+#' @rdname information
+#' @export
+info_cross_entropy <- function(p, q, base = NULL) {
   stopifnot(
+    "Values must be probabilities" = all(is_probability(p)),
+    "Values must be probabilities" = all(is_probability(q)),
     "Probabilities must sum to 1" = all.equal(sum(p), 1),
     "Probabilities must sum to 1" = all.equal(sum(q), 1)
   )
-  sum(p * info_surprisal(q))
+  sum(p * info_surprisal(q, base))
 }
 
 #' @rdname information
 #' @export
-info_entropy <- function(p) {
-  info_cross_entropy(p, p)
-}
-
-#' @rdname information
-#' @export
-info_kl_divergence <- function(p, q) {
+info_kl_divergence <- function(p, q, base = NULL) {
+  if (is.null(base)) base <- exp(1)
   stopifnot(
+    "Values must be probabilities" = all(is_probability(p)),
+    "Values must be probabilities" = all(is_probability(q)),
     "Probabilities must sum to 1" = all.equal(sum(p), 1),
     "Probabilities must sum to 1" = all.equal(sum(q), 1)
   )
-  sum(p * log(p / q))
+  sum(p * log(p / q, base))
 }
 
 #' @rdname information
 #' @export
-info_kl_divergence_matrix <- function(mat) {
+info_kl_divergence_matrix <- function(mat, base = NULL) {
   kl_row <- Vectorize(
-    function(i, j) info_kl_divergence(mat[i, ], mat[j, ])
+    function(i, j) info_kl_divergence(mat[i, ], mat[j, ], base)
   )
   m <- outer(1:nrow(mat), 1:nrow(mat), kl_row)
   new_names <- dimnames(mat)

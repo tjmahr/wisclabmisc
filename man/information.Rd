@@ -2,28 +2,30 @@
 % Please edit documentation in R/utils-stats.R
 \name{info_surprisal}
 \alias{info_surprisal}
-\alias{info_cross_entropy}
 \alias{info_entropy}
+\alias{info_cross_entropy}
 \alias{info_kl_divergence}
 \alias{info_kl_divergence_matrix}
 \title{Compute entropy and related measures}
 \usage{
-info_surprisal(p)
+info_surprisal(x, base = NULL)
 
-info_cross_entropy(p, q)
+info_entropy(p, base = NULL)
 
-info_entropy(p)
+info_cross_entropy(p, q, base = NULL)
 
-info_kl_divergence(p, q)
+info_kl_divergence(p, q, base = NULL)
 
-info_kl_divergence_matrix(mat)
+info_kl_divergence_matrix(mat, base = NULL)
 }
 \arguments{
-\item{p}{a probability distribution (vector of probabilities that sum to 1)}
+\item{x}{a vector of probabilities}
+
+\item{base}{the base of the logarithm. Defaults to \emph{e} (\code{exp(1)}).}
+
+\item{p, q}{a probability distribution (vector of probabilities that sum to 1)}
 
 \item{mat}{a matrix where each row is a probability distribution}
-
-\item{x}{a vector of probabilities}
 }
 \value{
 the entropy
@@ -43,9 +45,9 @@ intuition that there isn't much to be learned from predictable events.)
 Because of how division works with logarithms, \code{log(1 / x)} simplifies so
 that \code{info_surprisal(x)} is the negative log probability,\code{-log(x)}. The units
 of the information content depends on the base of the logarithm. Our
-functions use the natural \code{log()} which provides information in \emph{nats}, but
-it is also common to see \code{log2()}-based surprisals which provide information
-in \emph{bits}.
+functions by default use the natural \code{log()} which provides information in
+\emph{nats}, but it is also common to see \code{log2()}-based surprisals which provide
+information in \emph{bits}.
 
 Given a probability distribution \code{p}---a vector of probabilities that
 sum to 1---the \strong{entropy} of the distribution is the
