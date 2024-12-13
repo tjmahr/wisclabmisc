@@ -45,31 +45,35 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">info_surprisal</span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">info_surprisal</span><span class="op">(</span><span class="va">x</span>, base <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">info_cross_entropy</span><span class="op">(</span><span class="va">p</span>, <span class="va">q</span><span class="op">)</span></span>
+<span><span class="fu">info_entropy</span><span class="op">(</span><span class="va">p</span>, base <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">info_entropy</span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
+<span><span class="fu">info_cross_entropy</span><span class="op">(</span><span class="va">p</span>, <span class="va">q</span>, base <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">info_kl_divergence</span><span class="op">(</span><span class="va">p</span>, <span class="va">q</span><span class="op">)</span></span>
+<span><span class="fu">info_kl_divergence</span><span class="op">(</span><span class="va">p</span>, <span class="va">q</span>, base <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">info_kl_divergence_matrix</span><span class="op">(</span><span class="va">mat</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">info_kl_divergence_matrix</span><span class="op">(</span><span class="va">mat</span>, base <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-p">p<a class="anchor" aria-label="anchor" href="#arg-p"></a></dt>
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+<dd><p>a vector of probabilities</p></dd>
+
+
+<dt id="arg-base">base<a class="anchor" aria-label="anchor" href="#arg-base"></a></dt>
+<dd><p>the base of the logarithm. Defaults to <em>e</em> (<code>exp(1)</code>).</p></dd>
+
+
+<dt id="arg-p-q">p, q<a class="anchor" aria-label="anchor" href="#arg-p-q"></a></dt>
 <dd><p>a probability distribution (vector of probabilities that sum to 1)</p></dd>
 
 
 <dt id="arg-mat">mat<a class="anchor" aria-label="anchor" href="#arg-mat"></a></dt>
 <dd><p>a matrix where each row is a probability distribution</p></dd>
-
-
-<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a vector of probabilities</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -90,9 +94,9 @@ intuition that there isn't much to be learned from predictable events.)
 Because of how division works with logarithms, <code>log(1 / x)</code> simplifies so
 that <code>info_surprisal(x)</code> is the negative log probability,<code>-log(x)</code>. The units
 of the information content depends on the base of the logarithm. Our
-functions use the natural <code><a href="https://rdrr.io/r/base/Log.html" class="external-link">log()</a></code> which provides information in <em>nats</em>, but
-it is also common to see <code><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2()</a></code>-based surprisals which provide information
-in <em>bits</em>.</p>
+functions by default use the natural <code><a href="https://rdrr.io/r/base/Log.html" class="external-link">log()</a></code> which provides information in
+<em>nats</em>, but it is also common to see <code><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2()</a></code>-based surprisals which provide
+information in <em>bits</em>.</p>
 <p>Given a probability distribution <code>p</code>—a vector of probabilities that
 sum to 1—the <strong>entropy</strong> of the distribution is the
 probability-weighted average of the surprisal values. A weighted average
