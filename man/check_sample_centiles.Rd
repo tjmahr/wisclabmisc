@@ -2,7 +2,7 @@
 % Please edit documentation in R/gamlss-centiles.R
 \name{check_sample_centiles}
 \alias{check_sample_centiles}
-\title{Compute the percentage of points under each centile line}
+\title{(Deprecated) Compute the percentage of points under each centile line}
 \usage{
 check_sample_centiles(
   data,
@@ -12,21 +12,11 @@ check_sample_centiles(
   centiles = c(5, 10, 25, 50, 75, 90, 95)
 )
 }
-\arguments{
-\item{data}{a dataset used to fit a model. If the dataframe is grouped with
-\code{dplyr::group_by()}, sample centiles are computed for each group.}
-
-\item{model}{a gamlss model prepared by \code{mem_gamlss()}}
-
-\item{var_x, var_y}{bare column names of the predictor and outcome variables}
-
-\item{centiles}{centiles to use for prediction. Defaults to \code{c(5, 10, 25, 50, 75, 90, 95)}.}
-}
-\value{
-a tibble the number of points and the percentage of points less than
-or equal to each quantile value.
-}
 \description{
-Compute the percentage of points under each centile line
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+}
+\details{
+\code{check_sample_centiles()} was renamed to \code{check_model_centiles()}.
 }
 \concept{gamlss}
+\keyword{internal}

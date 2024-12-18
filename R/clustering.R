@@ -22,6 +22,7 @@
 #'   of cluster indices are a `factor()` so that they can be plotted as
 #'   discrete variables.
 #' @export
+#' @concept other-stats
 #' @details Note that each variable is `scaled()` before clustering
 #' and then cluster means are unscaled to match the original data scale.
 #'

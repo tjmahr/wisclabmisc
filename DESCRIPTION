@@ -1,7 +1,7 @@
 Type: Package
 Package: wisclabmisc
 Title: Tools to Support the 'WiscLab'
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
     person("Tristan", "Mahr", , "tristan.mahr@wisc.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8890-5116"))
@@ -17,6 +17,7 @@ Depends:
 Imports: 
     dplyr,
     gamlss (>= 5.2.0),
+    lifecycle,
     magrittr,
     ordinal,
     pROC,

@@ -26,3 +26,4 @@ x
 set.seed(100)
 rnorm(1000, 2, 1) |> plogis() |> mean()
 }
+\concept{other-stats}

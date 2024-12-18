@@ -3,6 +3,8 @@
 S3method(print,brm_args)
 export("%>%")
 export(brms_args_create)
+export(check_computed_centiles)
+export(check_model_centiles)
 export(check_sample_centiles)
 export(chrono_age)
 export(compute_empirical_roc)
