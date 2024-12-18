@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">wisclabmisc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,6 +23,7 @@
     <li><a class="dropdown-item" href="../articles/roc.html">Tools for ROC curves</a></li>
     <li><a class="dropdown-item" href="../articles/utterance-length-imputation.html">Utterance length imputation and weighting</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/tjmahr/wisclabmisc/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -79,7 +80,7 @@
         <dd>Fit a gamlss model but store user data</dd>
       </dl><dl><dt>
 
-          <code><a href="check_sample_centiles.html">check_sample_centiles()</a></code>
+          <code><a href="check_model_centiles.html">check_model_centiles()</a></code> <code><a href="check_model_centiles.html">check_computed_centiles()</a></code>
 
         </dt>
         <dd>Compute the percentage of points under each centile line</dd>
@@ -125,7 +126,7 @@
         </dt>
         <dd>Compute AUCs using the trapezoid method</dd>
       </dl></div><div class="section level2">
-      <h2 id="data-cleaning-">Data cleaning 🧹<a class="anchor" aria-label="anchor" href="#data-cleaning-"></a></h2>
+      <h2 id="other-statistics-">Other statistics 🔦<a class="anchor" aria-label="anchor" href="#other-statistics-"></a></h2>
 
 
 
@@ -137,12 +138,30 @@
 
       <dl><dt>
 
-          <code><a href="tocs_item.html">tocs_item()</a></code> <code><a href="tocs_item.html">tocs_type()</a></code> <code><a href="tocs_item.html">tocs_length()</a></code>
+          <code><a href="fit_kmeans.html">fit_kmeans()</a></code>
 
         </dt>
-        <dd>Extract the TOCS details from a string (usually a filename)</dd>
+        <dd>Run (scaled) k-means on a dataset.</dd>
+      </dl><dl><dt>
+
+          <code><a href="information.html">info_surprisal()</a></code> <code><a href="information.html">info_entropy()</a></code> <code><a href="information.html">info_cross_entropy()</a></code> <code><a href="information.html">info_kl_divergence()</a></code> <code><a href="information.html">info_kl_divergence_matrix()</a></code>
+
+        </dt>
+        <dd>Compute entropy and related measures</dd>
+      </dl><dl><dt>
+
+          <code><a href="logitnorm_mean.html">logitnorm_mean()</a></code>
+
+        </dt>
+        <dd>Compute the mean of logit-normal distribution(s)</dd>
+      </dl><dl><dt>
+
+          <code><a href="check_model_centiles.html">check_model_centiles()</a></code> <code><a href="check_model_centiles.html">check_computed_centiles()</a></code>
+
+        </dt>
+        <dd>Compute the percentage of points under each centile line</dd>
       </dl></div><div class="section level2">
-      <h2 id="other-functions-">Other functions 📌<a class="anchor" aria-label="anchor" href="#other-functions-"></a></h2>
+      <h2 id="wisclab-data-prepartion-">WiscLab data prepartion 🧹<a class="anchor" aria-label="anchor" href="#wisclab-data-prepartion-"></a></h2>
 
 
 
@@ -160,46 +179,16 @@
         <dd>Convert age in months to years;months</dd>
       </dl><dl><dt>
 
-          <code><a href="brms_args_create.html">brms_args_create()</a></code>
-
-        </dt>
-        <dd>Set default arguments for brms model fitting</dd>
-      </dl><dl><dt>
-
           <code><a href="chrono_age.html">chrono_age()</a></code>
 
         </dt>
         <dd>Compute chronological age in months</dd>
       </dl><dl><dt>
 
-          <code><a href="fit_kmeans.html">fit_kmeans()</a></code>
-
-        </dt>
-        <dd>Run (scaled) k-means on a dataset.</dd>
-      </dl><dl><dt>
-
           <code><a href="impute_values_by_length.html">impute_values_by_length()</a></code>
 
         </dt>
         <dd>Staged imputation</dd>
-      </dl><dl><dt>
-
-          <code><a href="information.html">info_surprisal()</a></code> <code><a href="information.html">info_entropy()</a></code> <code><a href="information.html">info_cross_entropy()</a></code> <code><a href="information.html">info_kl_divergence()</a></code> <code><a href="information.html">info_kl_divergence_matrix()</a></code>
-
-        </dt>
-        <dd>Compute entropy and related measures</dd>
-      </dl><dl><dt>
-
-          <code><a href="join_to_split.html">join_to_split()</a></code>
-
-        </dt>
-        <dd>Join data onto resampled IDs</dd>
-      </dl><dl><dt>
-
-          <code><a href="logitnorm_mean.html">logitnorm_mean()</a></code>
-
-        </dt>
-        <dd>Compute the mean of logit-normal distribution(s)</dd>
       </dl><dl><dt>
 
           <code><a href="tocs_item.html">tocs_item()</a></code> <code><a href="tocs_item.html">tocs_type()</a></code> <code><a href="tocs_item.html">tocs_length()</a></code>
@@ -212,6 +201,29 @@
 
         </dt>
         <dd>Weight utterance lengths by using an ordinal regression model</dd>
+      </dl></div><div class="section level2">
+      <h2 id="other-functions-">Other functions 📌<a class="anchor" aria-label="anchor" href="#other-functions-"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="brms_args_create.html">brms_args_create()</a></code>
+
+        </dt>
+        <dd>Set default arguments for brms model fitting</dd>
+      </dl><dl><dt>
+
+          <code><a href="join_to_split.html">join_to_split()</a></code>
+
+        </dt>
+        <dd>Join data onto resampled IDs</dd>
       </dl></div><div class="section level2">
       <h2 id="datasets-">Datasets 🗺️<a class="anchor" aria-label="anchor" href="#datasets-"></a></h2>
 
