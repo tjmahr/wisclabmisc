@@ -40,3 +40,32 @@ test_that("Chronological age in months", {
   expect_equal(chrono_age("2007-05-08", "1999-08-02"),  (7 * 12) + 9)
   expect_equal(chrono_age("2007-08-13", "1985-11-24"), (21 * 12) + 8)
 })
+
+test_that("File renaming functions", {
+
+  dir <- tempfile()
+  dir.create(dir)
+  dir |>
+    file.path(
+      c("report_1.csv", "report_2.csv", "report-1.csv", "skipped.csv")
+    ) |>
+    file.create()
+
+  path <- list.files(dir, full.names = TRUE)
+
+  path |>
+    file_replace_name("report_", "report-") |>
+    expect_error(regexp = "would be overwritten")
+
+  path |>
+    file_replace_name("report_", "report-", .dry_run = TRUE) |>
+    expect_message(regexp = "overwrites an existing file")
+
+  updated <- file_replace_name(path, "report_", "report-", .overwrite = TRUE)
+  new_path <- list.files(dir, full.names = TRUE)
+
+  new_path |>
+    basename() |>
+    expect_equal(c("report-1.csv", "report-2.csv", "skipped.csv"))
+})
+

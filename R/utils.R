@@ -126,3 +126,102 @@ as_date_list <- function(date) {
 
   list(y = y, m = m, d = d)
 }
+
+
+
+
+
+#' Rename file basenames using functions
+#'
+#' `file_replace_name()` uses [stringr::str_replace()] to rename files.
+#' `file_rename_with()` allows you to rename files with a generic
+#' string-transforming function.
+#'
+#' @export
+#' @param path vector of paths for files to rename
+#' @param pattern,replacement arguments forwarded to [stringr::str_replace()]
+#' @param .fn function to call file paths
+#' @param ... arguments passed onto `.fn`
+#' @param .dry_run when `FALSE` (the default), files are renamed. When `TRUE`,
+#' no files are renamed but the affected files are printed out.
+#' @param .overwrite Whether to overwrite files. Defaults to `FALSE` so that
+#' overwriting files is opt-in.
+#' @return the contents of `paths` with updated file names. Duplicated elements
+#' are removed.
+#' @rdname file_rename_with
+#' @details Only the basename of the file (returned by [basename()]
+#' undergoes string replacement).
+#'
+#' @examples
+#' # With .dry_run = TRUE, we can make up some file paths.
+#' dir <- "//some-fake-location/"
+#' path <- fs::path(
+#'   dir,
+#'   c("report_1.csv", "report_2.csv", "report-1.csv", "skipped.csv")
+#' )
+#'
+#' updated <- file_replace_name(path, "report_", "report-", .dry_run = TRUE)
+file_replace_name <- function(
+    path,
+    pattern,
+    replacement,
+    .dry_run = FALSE,
+    .overwrite = FALSE
+) {
+  file_rename_with(
+    path = path,
+    .fn = stringr::str_replace,
+    pattern,
+    replacement,
+    .dry_run = .dry_run,
+    .overwrite = .overwrite
+  )
+}
+
+#' @rdname file_rename_with
+#' @export
+file_rename_with <- function(
+    path,
+    .fn,
+    ...,
+    .dry_run = FALSE,
+    .overwrite = FALSE
+) {
+  path_old <- fs::path_norm(path)
+  basename_old <- basename(path_old)
+  # basename_new <- stringr::str_replace(basename_old, pattern, replacement)
+  basename_new <- .fn(basename_old, ...)
+  path_new <- fs::path(fs::path_dir(path_old), basename_new)
+
+  changed <- path_old != path_new
+  name_already_found <- path_new %in% path_old
+  is_an_overwrite <- changed & name_already_found
+
+  if (!.overwrite & !.dry_run) {
+    cli::cli_abort(
+      message = c(
+        "{sum(is_an_overwrite)} file{?s} would be overwritten",
+        "*" = "Set {.code .overwrite = TRUE} to deliberately overwrite files",
+        "*" = "Set {.code .dry_run = TRUE} to see affected files"
+      ),
+      call = NULL
+    )
+  }
+
+  if (.dry_run) {
+    over_msgs <- rep(" {.emph (overwrites an existing file)}", length(path_new))
+    over_msgs[!is_an_overwrite] <- ""
+    changes <- sprintf(
+      "%s -> %s%s",
+      basename(path_old)[changed],
+      basename(path_new)[changed],
+      over_msgs[changed]
+    )
+    names(changes) <- rep(" ", length(changes))
+    cli::cli_inform(c("Planned changes:", changes))
+    invisible(path_old)
+  } else {
+    fs::file_move(path_old[changed], path_new[changed])
+    invisible(unique(path_new))
+  }
+}

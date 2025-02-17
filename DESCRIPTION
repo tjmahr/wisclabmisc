@@ -15,7 +15,9 @@ BugReports: https://github.com/tjmahr/wisclabmisc/issues
 Depends:
     R (>= 4.1)
 Imports: 
+    cli,
     dplyr,
+    fs,
     gamlss (>= 5.2.0),
     magrittr,
     ordinal,
