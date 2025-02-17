@@ -15,7 +15,7 @@
 #' @examples
 #' ages <- c(26, 58, 25, 67, 21, 59, 36, 43, 27, 49)
 #' format_year_month_age(ages)
-#' @concept etc
+#' @concept data-utils
 format_year_month_age <- function(x) {
   years <- x %/% 12L
   months <- x %% 12L
@@ -34,6 +34,7 @@ format_year_month_age <- function(x) {
 #' @return the chronological ages in months. NA is returned if the age cannot be
 #'   computed.
 #' @export
+#' @concept data-utils
 #' @examples
 #' # Two years exactly
 #' chrono_age("2014-01-20", "2012-01-20")
@@ -225,3 +226,52 @@ file_rename_with <- function(
     invisible(unique(path_new))
   }
 }
+
+#' Extract the TOCS details from a string (usually a filename)
+#' @param xs a character vector
+#' @return `tocs_item()` returns the substring with the TOCS item, `tocs_type()`
+#'   returns whether the item is `"single-word"` or `"multiword"`, and
+#'   `tocs_length()` returns the length of the TOCS item (i.e., the number of
+#'   words).
+#' @rdname tocs_item
+#' @concept data-utils
+#' @export
+#' @examples
+#' x <- c(
+#'   "XXv16s7T06.lab", "XXv15s5T06.TextGrid", "XXv13s3T10.WAV",
+#'   "XXv18wT11.wav", "non-matching", "s2T01",
+#'   "XXv01s4B01.wav", "XXv01wB01.wav"
+#' )
+#' data.frame(
+#'   x = x,
+#'   item = tocs_item(x),
+#'   type = tocs_type(x),
+#'   length = tocs_length(x)
+#' )
+tocs_item <- function(xs) {
+  xs |>
+    toupper() |>
+    stringr::str_extract(
+      "(S[2-7]|W)(T|B)[0-4][0-9](?=([.]WAV|[.]TEXTGRID|[.]LAB|$))"
+    )
+}
+
+#' @rdname tocs_item
+#' @export
+tocs_type <- function(xs) {
+  starts <- xs |> tocs_item() |> substr(1, 1)
+  types <- rep_len(NA_character_, length(starts))
+  types[starts == "W"] <- "single-word"
+  types[starts == "S"] <- "multiword"
+  types
+}
+
+#' @rdname tocs_item
+#' @export
+tocs_length <- function(xs) {
+  items <- xs |> tocs_item()
+  char2 <- substr(items, 2, 2)
+  char2[char2 %in% c("T", "B")] <- "1"
+  as.integer(char2)
+}
+

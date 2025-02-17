@@ -113,6 +113,10 @@ pivot_centiles_longer <- function(data) {
 
 #' Compute the percentage of points under each centile line
 #'
+#' `check_model_centiles()` computes centiles from a model and computes the
+#' calibration of each centile. `check_computed_centiles()` works on a dataframe
+#' with precomputed `c[XX]` columns of centiles.
+#'
 #' @param data a dataset used to fit a model. If the dataframe is grouped with
 #'   `dplyr::group_by()`, sample centiles are computed for each group.
 #' @param model a gamlss model prepared by `mem_gamlss()`
@@ -123,7 +127,7 @@ pivot_centiles_longer <- function(data) {
 #'   or equal to each quantile value.
 #' @export
 #' @concept gamlss
-check_sample_centiles <- function(
+check_model_centiles <- function(
     data,
     model,
     var_x,
@@ -144,6 +148,55 @@ check_sample_centiles <- function(
   data %>%
     left_join(d_quantiles, by = rlang::as_name(quo_x)) %>%
     pivot_centiles_longer() %>%
+    mutate(.centile = as.numeric(.data$.centile)) %>%
+    group_by(.data$.centile, .add = TRUE) %>%
+    summarise(
+      n = n(),
+      n_under_centile = sum(!! quo_y <= .data$.value),
+      percent_under_centile = (mean((!! quo_y) <= .data$.value) * 100),
+      .groups = "drop_last"
+    ) %>%
+    ungroup() %>%
+    arrange(!!! groups(data), .data$.centile) %>%
+    tibble::as_tibble()
+}
+
+
+#' (Deprecated) Compute the percentage of points under each centile line
+#'
+#' `r lifecycle::badge("deprecated")`
+#'
+#' `check_sample_centiles()` was renamed to `check_model_centiles()`.
+#'
+#' @export
+#' @concept gamlss
+#' @keywords internal
+check_sample_centiles <- function(
+    data,
+    model,
+    var_x,
+    var_y,
+    centiles = c(5, 10, 25, 50, 75, 90, 95)
+) {
+  lifecycle::deprecate_stop(
+    "0.1.1",
+    "check_sample_centiles()",
+    "check_model_centiles()"
+  )
+}
+
+
+#' @export
+#' @concept gamlss
+#' @rdname check_model_centiles
+check_computed_centiles <- function(
+    data,
+    var_y
+) {
+  quo_y <- enquo(var_y)
+
+  data |>
+    pivot_centiles_longer() |>
     mutate(.centile = as.numeric(.data$.centile)) %>%
     group_by(.data$.centile, .add = TRUE) %>%
     summarise(

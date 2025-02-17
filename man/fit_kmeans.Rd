@@ -85,3 +85,4 @@ ggplot(data_boots) +
   geom_point(aes(color = .kmeans_sort)) +
   labs(title = "k-means centers on 10 bootstraps")
 }
+\concept{other-stats}

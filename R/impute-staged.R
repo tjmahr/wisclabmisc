@@ -22,6 +22,7 @@
 #'   with observed data, and `{var_y}_imputation` for labeling whether
 #'   observations were `"imputed"` or `"observed"`.
 #' @export
+#' @concept data-utils
 #' @details
 #'
 #' # Background
@@ -264,6 +265,7 @@ impute_values_by_length <- function(
 #'   value of `var_x`. These are in the added columns
 #'   `{var_length}_prob_reached` and `{var_length}_weight`, respectively.
 #' @export
+#' @concept data-utils
 #' @references Hustad, K. C., Mahr, T., Natzke, P. E. M., & Rathouz, P. J.
 #'   (2020). Development of Speech Intelligibility Between 30 and 47 Months in
 #'   Typically Developing Children: A Cross-Sectional Study of Growth. *Journal

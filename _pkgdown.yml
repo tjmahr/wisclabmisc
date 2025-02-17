@@ -29,12 +29,18 @@ reference:
     - compute_smooth_density_roc
     - compute_empirical_roc
     - has_concept("roc")
-  - title: Data cleaning 🧹
+  - title: Other statistics 🔦
     contents:
-    - has_concept("data-cleaning")
+    - has_concept("other-stats")
+    - check_computed_centiles
+  - title: WiscLab data prepartion 🧹
+    contents:
+    - has_concept("data-utils")
+    - impute_values_by_length
+    - weight_lengths_with_ordinal_model
   - title: Other functions 📌
     contents:
-    - lacks_concepts(c("datasets", "roc", "models", "gamlss"))
+    - lacks_concepts(c("datasets", "roc", "models", "gamlss", "data-utils", "other-stats"))
   - title: Datasets 🗺️
     contents:
     - has_concept("datasets")

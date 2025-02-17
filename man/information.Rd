@@ -90,3 +90,4 @@ wikipedia_example <- rbind(
 
 info_kl_divergence_matrix(wikipedia_example)
 }
+\concept{other-stats}

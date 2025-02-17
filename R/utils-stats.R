@@ -37,6 +37,7 @@ try_uniroot <- function(...) {
 #' @param sigma standard deviation(s) on the logit scale
 #' @return the means of the distributions
 #' @export
+#' @concept other-stats
 #' @examples
 #' \donttest{
 #' x <- logitnorm_mean(2, 1)
@@ -63,6 +64,7 @@ logitnorm_mean <- function(mu, sigma) {
 #' @param mat a matrix where each row is a probability distribution
 #' @return the entropy
 #' @rdname information
+#' @concept other-stats
 #' @export
 #' @section Information theory basics:
 #'
