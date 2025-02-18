@@ -96,7 +96,8 @@ overwriting files is opt-in.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>the contents of <code>paths</code> with updated file names. Duplicated elements
-are removed.</p>
+are removed. This function throws an error if a name collision is detected
+(where two files are both renamed into the same target path).</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -108,15 +109,20 @@ undergoes string replacement).</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># With .dry_run = TRUE, we can make up some file paths.</span></span></span>
 <span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="st">"//some-fake-location/"</span></span></span>
-<span class="r-in"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path.html" class="external-link">path</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">dir</span>,</span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"report_1.csv"</span>, <span class="st">"report_2.csv"</span>, <span class="st">"report-1.csv"</span>, <span class="st">"skipped.csv"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">updated</span> <span class="op">&lt;-</span> <span class="fu">file_replace_name</span><span class="op">(</span><span class="va">path</span>, <span class="st">"report_"</span>, <span class="st">"report-"</span>, .dry_run <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Planned changes:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   report_1.csv -&gt; report-1.csv <span style="font-style: italic;">(overwrites an existing file)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> report_1.csv -&gt; report-1.csv <span style="font-style: italic;">(overwrites an existing file)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   report_2.csv -&gt; report-2.csv</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Collisions are detected</span></span></span>
+<span class="r-in"><span><span class="va">updated</span> <span class="op">&lt;-</span> <span class="fu">file_replace_name</span><span class="op">(</span><span class="va">path</span>, <span class="st">"report_\\d"</span>, <span class="st">"report-1"</span>, .dry_run <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Planned changes:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> (report_1.csv, report_2.csv) -&gt; report-1.csv <span style="font-style: italic;">(naming collision)</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
