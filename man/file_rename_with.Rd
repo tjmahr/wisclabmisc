@@ -32,7 +32,8 @@ overwriting files is opt-in.}
 }
 \value{
 the contents of \code{paths} with updated file names. Duplicated elements
-are removed.
+are removed. This function throws an error if a name collision is detected
+(where two files are both renamed into the same target path).
 }
 \description{
 \code{file_replace_name()} uses \code{\link[stringr:str_replace]{stringr::str_replace()}} to rename files.
@@ -46,10 +47,13 @@ undergoes string replacement).
 \examples{
 # With .dry_run = TRUE, we can make up some file paths.
 dir <- "//some-fake-location/"
-path <- fs::path(
+path <- file.path(
   dir,
   c("report_1.csv", "report_2.csv", "report-1.csv", "skipped.csv")
 )
 
 updated <- file_replace_name(path, "report_", "report-", .dry_run = TRUE)
+
+# Collisions are detected
+updated <- file_replace_name(path, "report_\\\\d", "report-1", .dry_run = TRUE)
 }

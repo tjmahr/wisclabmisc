@@ -148,7 +148,8 @@ as_date_list <- function(date) {
 #' @param .overwrite Whether to overwrite files. Defaults to `FALSE` so that
 #' overwriting files is opt-in.
 #' @return the contents of `paths` with updated file names. Duplicated elements
-#' are removed.
+#' are removed. This function throws an error if a name collision is detected
+#' (where two files are both renamed into the same target path).
 #' @rdname file_rename_with
 #' @details Only the basename of the file (returned by [basename()]
 #' undergoes string replacement).
@@ -156,12 +157,15 @@ as_date_list <- function(date) {
 #' @examples
 #' # With .dry_run = TRUE, we can make up some file paths.
 #' dir <- "//some-fake-location/"
-#' path <- fs::path(
+#' path <- file.path(
 #'   dir,
 #'   c("report_1.csv", "report_2.csv", "report-1.csv", "skipped.csv")
 #' )
 #'
 #' updated <- file_replace_name(path, "report_", "report-", .dry_run = TRUE)
+#'
+#' # Collisions are detected
+#' updated <- file_replace_name(path, "report_\\d", "report-1", .dry_run = TRUE)
 file_replace_name <- function(
     path,
     pattern,
@@ -190,42 +194,123 @@ file_rename_with <- function(
 ) {
   path_old <- fs::path_norm(path)
   basename_old <- basename(path_old)
-  # basename_new <- stringr::str_replace(basename_old, pattern, replacement)
   basename_new <- .fn(basename_old, ...)
+  # basename_new <- stringr::str_replace(basename_old, pattern, replacement)
   path_new <- fs::path(fs::path_dir(path_old), basename_new)
 
-  changed <- path_old != path_new
-  name_already_found <- path_new %in% path_old
-  is_an_overwrite <- changed & name_already_found
+  rename_plan <- analyze_rename_plan(path_old, path_new)
 
-  if (!.overwrite & !.dry_run) {
+  # Dry run: Show planned changes
+  if (.dry_run) {
+    cli::cli_inform(prepare_rename_plan_bullets(rename_plan))
+    return(invisible(path_old))
+  }
+
+  # Collisions always fail
+  if (any(rename_plan$has_name_collision)) {
     cli::cli_abort(
       message = c(
-        "{sum(is_an_overwrite)} file{?s} would be overwritten",
-        "*" = "Set {.code .overwrite = TRUE} to deliberately overwrite files",
-        "*" = "Set {.code .dry_run = TRUE} to see affected files"
+        "{sum(rename_plan$has_name_collision)} file{?s} have naming collisions",
+        "*" = "Ensure that files do not rename to the same destination",
+        "",
+        prepare_rename_plan_bullets(rename_plan)
       ),
       call = NULL
     )
   }
 
-  if (.dry_run) {
-    over_msgs <- rep(" {.emph (overwrites an existing file)}", length(path_new))
-    over_msgs[!is_an_overwrite] <- ""
-    changes <- sprintf(
-      "%s -> %s%s",
-      basename(path_old)[changed],
-      basename(path_new)[changed],
-      over_msgs[changed]
+  if (any(rename_plan$is_overwrite) & !.overwrite & !.dry_run) {
+    cli::cli_abort(
+      message = c(
+        "{sum(rename_plan$is_overwrite)} file{?s} would be overwritten",
+        "*" = "Set {.code .overwrite = TRUE} to deliberately overwrite files",
+        "",
+        prepare_rename_plan_bullets(rename_plan)
+      ),
+      call = NULL
     )
-    names(changes) <- rep(" ", length(changes))
-    cli::cli_inform(c("Planned changes:", changes))
-    invisible(path_old)
-  } else {
-    fs::file_move(path_old[changed], path_new[changed])
-    invisible(unique(path_new))
   }
+
+  if (any(rename_plan$is_changed)) {
+    fs::file_move(
+      rename_plan[rename_plan$is_changed, "path_old"],
+      rename_plan[rename_plan$is_changed, "path_new"]
+    )
+  } else {
+    cli::cli_inform("No files were renamed.")
+  }
+
+  invisible(unique(rename_plan$path_new))
 }
+
+analyze_rename_plan <- function(path_old, path_new) {
+  is_duplicated <- function(x) duplicated(x) | duplicated(x, fromLast = TRUE)
+
+  is_changed <- path_old != path_new
+  is_overwrite <- is_changed & (path_new %in% path_old)
+  is_unchanged <- !is_changed & !is_duplicated(path_new)
+
+  # A collision occurs when multiple source files rename to the same target
+  is_changed_with_collision <- is_duplicated(path_new[is_changed])
+  has_name_collision <- rep(FALSE, length(is_changed))
+  has_name_collision[is_changed] <- is_changed_with_collision
+
+  data.frame(
+    path_old = path_old,
+    path_new = path_new,
+    is_changed = is_changed,
+    has_name_collision = has_name_collision,
+    is_overwrite = is_overwrite,
+    is_unchanged = is_unchanged
+  )
+}
+
+
+# Prepare bullet points for dry-run output
+prepare_rename_plan_bullets <- function(rename_plan) {
+  changed <- rename_plan$is_changed
+  if (!any(changed)) {
+    return(c(
+      "Planned changes:",
+      " " = "No files would be renamed."
+    ))
+  }
+
+  changes <- rename_plan |>
+    split(~path_new) |>
+    lapply(function(df) {
+      if (all(df$is_unchanged)) return(character(0))
+      old_names <- basename(df[df$is_changed, "path_old"])
+
+      if (length(old_names) > 1) {
+        old_part <- paste0(old_names, collapse = ", ") |> sprintf(fmt = "(%s)")
+        note <- " {.emph (naming collision)}"
+        bullet <- "x"
+      } else {
+        old_part <- old_names
+        note <- ifelse(
+          any(df$is_overwrite),
+          " {.emph (overwrites an existing file)}",
+          ""
+        )
+        bullet <- ifelse(any(df$is_overwrite), "!",  " ")
+      }
+      new_part <- unique(basename(df$path_new))
+      change <- sprintf("%s -> %s%s", old_part, new_part, note)
+      names(change) <- bullet
+      change
+    }) |>
+    unname() |>
+    unlist()
+
+
+  c("Planned changes:", changes)
+}
+
+
+
+
+
 
 #' Extract the TOCS details from a string (usually a filename)
 #' @param xs a character vector

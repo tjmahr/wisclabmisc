@@ -43,15 +43,43 @@ test_that("Chronological age in months", {
 
 
 test_that("File renaming functions", {
+  files <- c(
+    # easy cases
+    "report_0.csv", "skipped.csv", "skipped2.csv",
+    # would overwrite
+    "report_1.csv", "report-1.csv",
+    # would collide
+    "report_2.csv", "report__2.csv",
+    # would overwrite and collide
+    "report_3.csv", "report__3.csv", "report-3.csv"
+  )
 
   dir <- tempfile()
   dir.create(dir)
-  dir |>
-    file.path(
-      c("report_1.csv", "report_2.csv", "report-1.csv", "skipped.csv")
-    ) |>
-    file.create()
 
+  # no files
+  path <- list.files(dir, full.names = TRUE)
+
+  path |>
+    file_replace_name("report_", "report-") |>
+    expect_message("No files")
+  path |>
+    file_replace_name("report_", "report-", .dry_run = TRUE) |>
+    expect_message("No files")
+
+  # no applicable files
+  dir |> file.path("skipped.csv") |> file.create()
+  path <- list.files(dir, full.names = TRUE)
+
+  path |>
+    file_replace_name("report_", "report-") |>
+    expect_message("No files")
+  path |>
+    file_replace_name("report_", "report-", .dry_run = TRUE) |>
+    expect_message("No files")
+
+  # applicable files
+  dir |> file.path(files) |> file.create()
   path <- list.files(dir, full.names = TRUE)
 
   path |>
@@ -62,12 +90,24 @@ test_that("File renaming functions", {
     file_replace_name("report_", "report-", .dry_run = TRUE) |>
     expect_message(regexp = "overwrites an existing file")
 
+  path |>
+    file_replace_name("report_+", "report-") |>
+    expect_error(regexp = "naming collision")
+
+  path |>
+    file_replace_name("report_+", "report-", .dry_run = TRUE) |>
+    expect_message(regexp = "naming collision")
+
   updated <- file_replace_name(path, "report_", "report-", .overwrite = TRUE)
   new_path <- list.files(dir, full.names = TRUE)
 
   new_path |>
     basename() |>
-    expect_equal(c("report-1.csv", "report-2.csv", "skipped.csv"))
+    expect_equal(c(
+      "report-0.csv", "report-1.csv", "report-2.csv", "report-3.csv",
+      "report-_2.csv", "report-_3.csv",
+      "skipped.csv", "skipped2.csv"
+    ))
 })
 
 
