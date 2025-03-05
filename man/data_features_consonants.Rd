@@ -20,8 +20,71 @@ These are two dataframes that contain conventional phonetic features of
 the consonants and vowels used by CMU phonetic alphabet.
 }
 \details{
-Most of the features are self-evident and definitional. For example, /p/ is
-\emph{the} bilabial voiceless stop. For fuzzier features, I consulted the general
+\subsection{What are phonetic features?}{
+
+We produce most speech sounds by manipulating airflow from the lungs through
+the larynx and through the oral or nasal cavities. We need a system for
+describing how that airflow is shaped and filtered to make sounds, and phonetic
+features are the conventional system for describing sounds. First, let's take
+for granted that there is a basic distinction between vowels and consonants. For vowels,
+the airflow is almost-always resonant (voicing from the larynx) and largely
+unobstructed but tweaked by the position of the tongue.  For
+consonants, there is some constriction along the vocal tract.
+
+We describe the consonants by using phonetic features that specify the
+constriction in the vocal tract along with the state of larynx:
+\itemize{
+\item \strong{place of articulation}: where the constriction occurs. If both lips are
+used, the place is \emph{bilabial}. When the tongue is involved, the place
+describes where the tongue creates the constriction: dental (with the
+teeth), alveolar (ridge), velar (velum). And so on.
+\item \strong{manner of articulation}: how much constriction occurs and whether anything
+else special is going on. Sounds that barely constrict are \emph{approximants}
+(or semivowels). Sounds that fully close are \emph{stops}. Sounds
+that constrict enough to produce turbulent airflow are \emph{fricatives}.
+\emph{Nasal} stops are stops that allow airflow through the nasal cavity.
+And so on.
+\item \strong{voicing}: whether or not the larynx is closed (and vibrating) to
+produce voicing. /s/ and /z/ are two sounds that the same place and
+manner of articulation, but differ in their voicing. /s/ is \emph{voiceless},
+/z/ is \emph{voiced}.
+}
+
+The chart of the \href{https://en.wikipedia.org/wiki/International_Phonetic_Alphabet_chart}{International Phonetic Alphabet}
+arranges consonant sounds according to the above three features of place of
+articulation (columns), manner of articulation (rows) and voicing (left and
+right position in a cell).
+
+Note that all of these features reflect degrees of some tendency. That is,
+there is some coherent way in which can order the individual features in a
+set of phonetic feature. Place of articulation can be ordered from front
+(lips and teeth) to back (tongue root and larynx). Manner can be ordered by
+degree of constriction from stops (closure) to fricatives (near closure) to
+approximants (much less constructions), but there are secondary manner
+features (nasal or lateral airflow, for example) that complicate a
+single-dimensional ordering.
+
+I want to point out that phonetic features are descriptive and
+classificatory. The features are descriptive: /p/ is \emph{the} voiceless,
+bilabial stop. Every Wikipedia article of an individual speech sound(like
+\href{https://en.wikipedia.org/wiki/Voiceless_bilabial_plosive}{/p/}) begins by
+enumerating its features. On the flipside, the features define natural
+classes or classifications/categories of sounds: The "stops" are the
+consonants that are made using a complete constriction of airflow at some
+point along the vocal tract.
+
+Vowels are described along three
+
+Phonologists (who study how systems of speech sound work) will tack on other
+superset features or carve up place and manner into different sets of
+distinctions.
+
+(Every statement, I make here is reductive and English centric, so assume there are exception for every tendency I mention. For example, voiceless vowels exist as do sounds that get their airflow without using the lungs.)
+
+Notes on the features chosen:
+
+Most of the features are self-evident and definitional. For example, as I
+said above, /p/ is \emph{the} bilabial voiceless stop. For fuzzier features, I consulted the general
 IPA chart and the Wikipedia page on English phonology. These issues included
 things like: \emph{what are the lax vowels again?} or \emph{the last two rows of the
 consonant tables are approximants, so /r,l,j/ are approximants.}
@@ -29,7 +92,9 @@ consonant tables are approximants, so /r,l,j/ are approximants.}
 Some features have alternative feature sets in order to accommodate degrees
 of aggregation. For example, /r,l,j,w/ are \emph{approximant} in \code{manner}
 but divided into \emph{liquid} and \emph{glide} in \code{manner_alt}.
-\subsection{Consonants}{
+}
+
+\subsection{Consonant features}{
 
 \code{data_features_consonants} is a dataframe with 24 rows and
 10 variables.
