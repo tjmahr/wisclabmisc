@@ -177,12 +177,13 @@ NULL
 #'   in "bought") is a low back *rounded* vowel, but there is a tendency
 #'   for these two vowels to [merge into one sound](https://en.wikipedia.org/wiki/Cot%E2%80%93caught_merger).
 #'
-#'
 #' The chart of the [International Phonetic
 #' Alphabet](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet_chart)
 #' for vowels arranges the sounds into the so-called vowel quadrilateral and
 #' within each height-backness combination, differentiates between an unrounded
 #' and rounded vowel in that position.
+#'
+#' In English, these three sets of features cannot differentiate /i/ and // (beet versus bit) or /u/ and // (boot versus book)
 #'
 #' Phonologists (who study how systems of speech sound work) will tack on other
 #' superset features or carve up place and manner into different sets of
