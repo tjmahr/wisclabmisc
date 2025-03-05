@@ -20,6 +20,7 @@ These are two dataframes that contain conventional phonetic features of
 the consonants and vowels used by CMU phonetic alphabet.
 }
 \details{
+d
 \subsection{What are phonetic features?}{
 
 We produce most speech sounds by manipulating airflow from the lungs through
@@ -32,18 +33,21 @@ unobstructed but tweaked by the position of the tongue.  For
 consonants, there is some constriction along the vocal tract.
 
 We describe the consonants by using phonetic features that specify the
-constriction in the vocal tract along with the state of larynx:
+constriction in the vocal tract along with the state of larynx.
 \itemize{
-\item \strong{place of articulation}: where the constriction occurs. If both lips are
+\item \strong{place of articulation}: where the constriction occurs. For example,
+if both lips are
 used, the place is \emph{bilabial}. When the tongue is involved, the place
-describes where the tongue creates the constriction: dental (with the
-teeth), alveolar (ridge), velar (velum). And so on.
-\item \strong{manner of articulation}: how much constriction occurs and whether anything
-else special is going on. Sounds that barely constrict are \emph{approximants}
-(or semivowels). Sounds that fully close are \emph{stops}. Sounds
-that constrict enough to produce turbulent airflow are \emph{fricatives}.
-\emph{Nasal} stops are stops that allow airflow through the nasal cavity.
-And so on.
+describes where the tongue creates the constriction: \emph{dental} (with the
+teeth), \emph{alveolar} (ridge), \emph{velar} (velum), among others.
+\item \strong{manner of articulation}: how much constriction occurs and whether
+anything else special is going on. We consider three main degrees of
+constriction. Sounds that barely constrict are \emph{approximants}
+(or semivowels). Sounds where the constriction fully stop airflow are
+\emph{stops} (or plosives). Sounds that constrict enough to produce turbulent
+airflow are \emph{fricatives}. Other manners of articulation are variations
+on these three levels of constriction. For example, \emph{nasal} stops are
+stops that allow airflow through the nasal cavity.
 \item \strong{voicing}: whether or not the larynx is closed (and vibrating) to
 produce voicing. /s/ and /z/ are two sounds that the same place and
 manner of articulation, but differ in their voicing. /s/ is \emph{voiceless},
@@ -55,15 +59,6 @@ arranges consonant sounds according to the above three features of place of
 articulation (columns), manner of articulation (rows) and voicing (left and
 right position in a cell).
 
-Note that all of these features reflect degrees of some tendency. That is,
-there is some coherent way in which can order the individual features in a
-set of phonetic feature. Place of articulation can be ordered from front
-(lips and teeth) to back (tongue root and larynx). Manner can be ordered by
-degree of constriction from stops (closure) to fricatives (near closure) to
-approximants (much less constructions), but there are secondary manner
-features (nasal or lateral airflow, for example) that complicate a
-single-dimensional ordering.
-
 I want to point out that phonetic features are descriptive and
 classificatory. The features are descriptive: /p/ is \emph{the} voiceless,
 bilabial stop. Every Wikipedia article of an individual speech sound(like
@@ -72,6 +67,16 @@ enumerating its features. On the flipside, the features define natural
 classes or classifications/categories of sounds: The "stops" are the
 consonants that are made using a complete constriction of airflow at some
 point along the vocal tract.
+
+Note that all of these features reflect degrees of some tendency. That is,
+there is some coherent way in which can order the individual features in a
+set of phonetic feature. Place of articulation can be ordered from front
+(lips and teeth) to back (tongue root and larynx). Manner can be ordered by
+degree of constriction from stops (closure) to fricatives (near closure) to
+approximants (much less constrictions), but there are secondary manner
+features (nasal or lateral airflow, for example) that complicate a
+single-dimensional ordering. Voicing is generally a binary category (voiced
+versus voiceless), but that is a simplification.
 
 Vowels are described along three
 
