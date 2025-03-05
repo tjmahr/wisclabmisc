@@ -102,6 +102,7 @@ NULL
 #' the consonants and vowels used by CMU phonetic alphabet.
 #'
 #' @details
+#' d
 #'
 #' ## What are phonetic features?
 #'
@@ -115,18 +116,21 @@ NULL
 #' consonants, there is some constriction along the vocal tract.
 #'
 #' We describe the consonants by using phonetic features that specify the
-#' constriction in the vocal tract along with the state of larynx:
+#' constriction in the vocal tract along with the state of larynx.
 #'
-#' * **place of articulation**: where the constriction occurs. If both lips are
+#' * **place of articulation**: where the constriction occurs. For example,
+#'   if both lips are
 #'   used, the place is *bilabial*. When the tongue is involved, the place
-#'   describes where the tongue creates the constriction: dental (with the
-#'   teeth), alveolar (ridge), velar (velum). And so on.
-#' * **manner of articulation**: how much constriction occurs and whether anything
-#'   else special is going on. Sounds that barely constrict are *approximants*
-#'   (or semivowels). Sounds that fully close are *stops*. Sounds
-#'   that constrict enough to produce turbulent airflow are *fricatives*.
-#'   *Nasal* stops are stops that allow airflow through the nasal cavity.
-#'   And so on.
+#'   describes where the tongue creates the constriction: *dental* (with the
+#'   teeth), *alveolar* (ridge), *velar* (velum), among others.
+#' * **manner of articulation**: how much constriction occurs and whether
+#'   anything else special is going on. We consider three main degrees of
+#'   constriction. Sounds that barely constrict are *approximants*
+#'   (or semivowels). Sounds where the constriction fully stop airflow are
+#'   *stops* (or plosives). Sounds that constrict enough to produce turbulent
+#'   airflow are *fricatives*. Other manners of articulation are variations
+#'   on these three levels of constriction. For example, *nasal* stops are
+#'   stops that allow airflow through the nasal cavity.
 #' * **voicing**: whether or not the larynx is closed (and vibrating) to
 #'   produce voicing. /s/ and /z/ are two sounds that the same place and
 #'   manner of articulation, but differ in their voicing. /s/ is *voiceless*,
@@ -138,28 +142,47 @@ NULL
 #' articulation (columns), manner of articulation (rows) and voicing (left and
 #' right position in a cell).
 #'
-#' Note that all of these features reflect degrees of some tendency. That is,
-#' there is some coherent way in which can order the individual features in a
-#' set of phonetic feature. Place of articulation can be ordered from front
-#' (lips and teeth) to back (tongue root and larynx). Manner can be ordered by
-#' degree of constriction from stops (closure) to fricatives (near closure) to
-#' approximants (much less constructions), but there are secondary manner
-#' features (nasal or lateral airflow, for example) that complicate a
-#' single-dimensional ordering.
-#'
-#' I want to point out that phonetic features are descriptive and
-#' classificatory. The features are descriptive: /p/ is *the* voiceless,
-#' bilabial stop. Every Wikipedia article of an individual speech sound(like
+#' I want to point out that phonetic features are **descriptive** and
+#' **classificatory**. The features are descriptive: /p/ is *the* voiceless,
+#' bilabial stop. Every Wikipedia article of an individual speech sound (like
 #' [/p/](https://en.wikipedia.org/wiki/Voiceless_bilabial_plosive)) begins by
 #' enumerating its features. On the flipside, the features define natural
 #' classes or classifications/categories of sounds: The "stops" are the
 #' consonants that are made using a complete constriction of airflow at some
 #' point along the vocal tract.
 #'
+#' Note that all of these features reflect degrees of some tendency. That is,
+#' there is some coherent way in which can order the individual features in a
+#' set of phonetic feature. Place of articulation can be ordered from front
+#' (lips and teeth) to back (tongue root and larynx). Manner can be ordered by
+#' degree of constriction from stops (closure) to fricatives (near closure) to
+#' approximants (much less constrictions), but there are secondary manner
+#' features (nasal or lateral airflow, for example) that complicate a
+#' single-dimensional ordering. Voicing is generally a binary category (voiced
+#' versus voiceless), but that is a simplification and we might consider
+#' degrees of airflow or vibration.
 #'
 #'
-#' Vowels are described along three
+#' Vowels are trickier. First they are described along three main axes:
 #'
+#' * **height** of the tongue body. /i/ (as in "beet") is a *high* vowel,
+#'   /ɛ/ (as in "bet") is a *mid* vowel, and /æ/ (as in "bat") is a *low*
+#'   vowel.
+#' * **backness** of the tongue body. /i/ (as in "beet") is a *front* vowel,
+#'   /ʌ/ (as in "butt") is a *central* vowel, and /u/ (as in "but") is a
+#'   *back* vowel.
+#' * **rounding** of the lips. Rounding or protrusion of the lips lengthens
+#'   the vocal tract which affects the resonances of the vowels. In American
+#'   English, /ɑ/ (as in "bot") is a low back *unrounded* vowel and /ɔ/ (as
+#'   in "bought") is a low back *rounded* vowel, but there is a tendency
+#'   for these two vowels to [merge into one sound](https://en.wikipedia.org/wiki/Cot%E2%80%93caught_merger).
+#'
+#'
+#' The chart of the [International Phonetic
+#' Alphabet](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet_chart)
+#' for vowels arranges the sounds into the so-called vowel quadrilateral and
+#' within each height-backness combination, differentiates between an unrounded
+#' and rounded vowel in that position.
 #'
 #' Phonologists (who study how systems of speech sound work) will tack on other
 #' superset features or carve up place and manner into different sets of
@@ -167,7 +190,6 @@ NULL
 #'
 #' (Every statement, I make here is reductive and English centric, so assume there are exception for every tendency I mention. For example, voiceless vowels exist as do sounds that get their airflow without using the lungs.)
 #'
-#' ***
 #'
 #' Notes on the features chosen:
 #'
