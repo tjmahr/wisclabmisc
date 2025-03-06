@@ -1,0 +1,219 @@
+## What is the purpose of these features?
+
+The features provided by this package are meant to provide a standard
+set of phonetic features for the American English speech samples that we
+study in our lab. But why? 
+
+When we are modeling something, at the phoneme level, like articulation
+accuracy or phoneme probabilities from acoustic models, we would like to
+**incorporate and evaluate our domain knowledge** about phonemes (speech
+sounds) into our work. There are many speech sounds but the differences
+among them are not arbitrary. We can use **phonetic features** to group
+speech sounds together and make group comparisons: consonants versus
+vowels, voiced versus voiceless consonants, and so on. We can also use
+phonetic features to identify an articulatory "distance" between
+phonemes: Phonemes with more features in common are more similar than
+those with fewer features in common.
+
+
+
+
+
+
+
+<!-- Our descriptions of child speech are often descriptions of phonetic features: *fronting* is the systematic production of back consonants like /k/ with a frontal place of articulation like /t/. An early advantage for  -->
+
+
+
+
+## What are phonetic features, like philosophically?
+
+We produce most speech sounds by manipulating airflow from the lungs
+through the larynx and through the oral or nasal cavities. We need a
+system for describing how that airflow is shaped and filtered to make
+sounds, and phonetic features are the conventional system for describing
+sounds. I based the phonetic features in this package on the dimensions
+used by the International Phonetic Association to organize the
+International Phonetic Alphabet chart. 
+
+First, let's make a few assumptions:
+  
+1.  There are discrete speech sounds.
+2.  Each sound is an attempt at a particular configuration of speech
+    articulators.
+3.  Vowels and consonants are different kinds of things.
+
+Assumptions 1 and 2 are stated by the IPA handbook: "Phonetic analysis
+is based on the crucial premise that it is possible to describe speech
+sounds in terms of a sequence of segments, and on the further crucial
+assumption that each segment can be characterized by an articulatory
+target." I read this in two ways. The first is that although speech is a
+continuous and highly coordinated sequence of movements, we can break it 
+down into more discrete states (speech sound segments) and we
+can describe those states in terms of a particular configuration of the
+speaker's jaw, lips, tongue, and so on (articulatory target). My second
+reading emphasizes the word *target*. The target is a broad description
+of an ideal or canonical position, but speakers can make small
+adjustments as long they hit the general articulatory targets. So, we
+are working at a usefully broad level of description when we list off
+the sounds of a language and their phonetic features.
+
+Assumption 3, is that there is a basic distinction between vowels and
+consonants. There is some difference in articulation between vowels and
+consonants. For vowels, the airflow is almost-always resonant (voicing
+from the larynx) and largely unobstructed but tweaked by the position of
+the tongue. For consonants, there is some constriction along the vocal
+tract. But the primary conventional difference between consonants and
+vowels is that vowels can be the "nucleus" (center) of a syllable, and
+consonants generally cannot be the occupy the center of a syllable.
+
+Putting this all together: phonetic features describe consonants and
+vowels in terms of the articulatory states or gestures needed to make
+those sounds.
+
+### Features of consonants
+
+We describe the consonants by using phonetic features that specify the
+constriction in the vocal tract along with the state of larynx.
+
+  - **place of articulation**: where the constriction occurs. When the
+    lips create the closure, the place of articulation can be *bilabial*
+    (both lips) and *labiodental* (bottom lip and top teeth). The tongue
+    creates the closure, the place of articulation can be *dental*
+    (tongue touches top teeth or goes between the top and bottom teeth),
+    *alveolar* (at the alveolar ridge), *post-alveolar* (towards the
+    "back" of the alveolar ridge), *palatal* (at the hard palate),
+    *velar* (at the velum or front of the soft palate). The larynx may
+    create a closure in a *glottal* consonant. Finally, both the lips
+    and back of the tongue constrict in English's *labiovelar* consonant
+    /w/.
+
+  - **manner of articulation**: how much constriction occurs and whether
+    anything else special is going on. We consider three main degrees of
+    constriction. Sounds that barely constrict are *approximants*. Two
+    approximants (/j,w/) are called *semivowels*; if you prolong
+    them, they resemble vowels (/i,u/). Sounds where the constriction
+    fully stops airflow are *stops*. When the stop is released, there is
+    a burst of airflow and acoustic energy, so stops are also called
+    *plosives*. Sounds that constrict enough to produce
+    turbulent airflow are *fricatives*. Other manners of articulation
+    are variations on these three levels of constriction. *Nasal* stops
+    are stops that allow airflow through the nasal cavity. *Affricates*
+    are a combination of a stop and fricative: The stop portion blocks
+    airflow but the flow is released gradually into a fricative. In
+    terms of articulation, /l/ and /r/ are both approximants but they
+    are sometimes lumped under the fake umbrella term of *liquids*. 
+  
+  - **voicing**: whether the vocal folds in the larynx are closed and
+    vibrating to produce voicing. /s/ and /z/ are two sounds that share
+    the same place and manner of articulation (alveolar fricatives), but
+    differ in their voicing. /s/ is *voiceless*, /z/ is *voiced*.
+
+
+The chart of the [International Phonetic
+Alphabet](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet_chart)
+arranges consonant sounds according to the above three features of place of
+articulation (columns), manner of articulation (rows) and voicing (left and
+right position in a cell).
+
+### Features of vowels
+
+Vowels are trickier. First, they are described along three main axes:
+
+  - **height** of the tongue body. /i/ (as in "beet") is a *high* vowel,
+    /ɛ/ (as in "bet") is a *mid* vowel, and /æ/ (as in "bat") is a *low*
+    vowel. An alternate set of terms for high-mid-low is close-mid-open, where "close" describes the tongue being *close* to the roof of the mouth.
+  
+  - **backness** of the tongue body. /i/ (as in "beet") is a *front*
+    vowel, /ʌ/ (as in "butt") is a *central* vowel, and /u/ (as in
+    "boot") is a *back* vowel.
+  
+  - **rounding** of the lips. Rounding or protrusion of the lips
+    lengthens the vocal tract which lowers the formant frequencies (resonances) of the vowel. In American English, /ɑ/ (as in "bot") is a low back
+    *unrounded* vowel and /ɔ/ (as in "bought") is a low back *rounded*
+    vowel, but there is a tendency for these two vowels to [merge into
+    one sound](https://en.wikipedia.org/wiki/Cot%E2%80%93caught_merger).
+
+The chart of the [International Phonetic
+Alphabet](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet_chart)
+for vowels uses the height and backness features to arrange the sounds
+into the "vowel quadrilateral". Within each height-backness combination,
+the chart further differentiates between an unrounded and rounded vowel
+in that position. The
+vowels at the most extreme height (high, low) and backness (front, back)
+values make up the "corner" vowels /i, æ, u, ɑ/.
+
+
+But these articulatory features are not sufficient to differentiate the vowels of English. 
+We need to add a fake feature to describe basic English vowels. 
+
+
+  - **tenseness** of the vowel articulation. Both /i/ (as in "beet") and
+    /ɪ/ as in "bit" are high front vowels, so we conventionally differentiate these two vowels by
+    stipulating that /i/ is "tense" and /ɪ/ is lax. Other tense-lax
+    pairs are /u,ʊ/ ("boot" and "book") and /eɪ,ɛ/ ("bait"). 
+
+It's unclear what differentiates these tense and lax sounds in terms of
+speech articulation. Adjustments in vowel height seem plausible (Johnson, Ladefoged and Lindau, 1993), and the IPA chart differentiates the high front vowels by placing /ɪ/ just a smidge lower than /i/ (near-close as instead of close).
+    in vowel height. 
+
+
+. Chomsky and Halle (1968) appealed to a vague articulatory 
+difference in effort:
+
+> Phonetically the difference between tense and lax vowels sounds can best be characterized a difference in the manner in which the articulatory gesture is executed. A tense sound is executed deliberately so that the articulating organs actually attain their various target configurations; in producing a lax sound, the gesture is executed rapidly and with reduced amplitude. Tense vowels are, therefore, distinguished from the corresponding lax vowels by being more intense, of longer duration, and articulated with a greater deviation of the vocal cavity from its neutral (rest) position. These facts have led to the description of lax vowels as being the "lazy" variances of the corresponding tense vowels. (SPE, Chapter 3.)
+
+
+Johnson, Ladefoged and Lindau (1993) found that some speakers differentiated the tense and lax vowels by adjusting the height
+
+
+
+
+
+
+
+
+
+### More big-idea remarks
+
+I want to point out that phonetic features are **descriptive** and
+**classificatory**. The features are descriptive: /p/ is *the* voiceless,
+bilabial stop. Every Wikipedia article of an individual speech sound (like
+[/p/](https://en.wikipedia.org/wiki/Voiceless_bilabial_plosive)) begins by
+enumerating its features. On the flipside, the features define natural
+classes or classifications/categories of sounds: The "stops" are the
+consonants that are made using a complete constriction of airflow at some
+point along the vocal tract.
+
+Note that all of these features reflect degrees of some tendency. That is,
+there is some coherent way in which can order the individual features in a
+set of phonetic feature. Place of articulation can be ordered from front
+(lips and teeth) to back (tongue root and larynx). Manner can be ordered by
+degree of constriction from stops (closure) to fricatives (near closure) to
+approximants (much less constrictions), but there are secondary manner
+features (nasal or lateral airflow, for example) that complicate a
+single-dimensional ordering. Voicing is generally a binary category (voiced
+versus voiceless), but that is a simplification and we might consider
+degrees of airflow or vibration.
+
+
+
+
+but we can break that sequence into a series of discrete states if we think of the speaker as trying to hit various articulatory targets.
+
+we can still break that sequence down into a sequence of discrete states (segments) where 
+work around that continuous nature by thinking of speech as moving to and from speech 
+
+speech is made up of individual sounds called "segments", those segments are an attempt at a particular articulatory target. Although speech is continuous, We talk by moving from target position to target position.
+
+
+
+
+
+
+
+
+
+
+
+(If you stretch out the consonants /w/ and /j/, you get the vowels /u/ and /i/.)
