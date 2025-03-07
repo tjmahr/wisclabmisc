@@ -1,10 +1,10 @@
-## What is the purpose of these features?
+## What is the purpose of these phonetic features?
 
 The features provided by this package are meant to provide a standard
 set of phonetic features for the American English speech samples that we
 study in our lab. But why? 
 
-When we are modeling something, at the phoneme level, like articulation
+When we are modeling something at the phoneme level, like articulation
 accuracy or phoneme probabilities from acoustic models, we would like to
 **incorporate and evaluate our domain knowledge** about phonemes (speech
 sounds) into our work. There are many speech sounds but the differences
@@ -26,7 +26,7 @@ those with fewer features in common.
 
 
 
-## What are phonetic features, like philosophically?
+## What are phonetic features, like, philosophically?
 
 We produce most speech sounds by manipulating airflow from the lungs
 through the larynx and through the oral or nasal cavities. We need a
@@ -34,7 +34,7 @@ system for describing how that airflow is shaped and filtered to make
 sounds, and phonetic features are the conventional system for describing
 sounds. I based the phonetic features in this package on the dimensions
 used by the International Phonetic Association to organize the
-International Phonetic Alphabet chart. 
+International Phonetic Alphabet (IPA) chart. 
 
 First, let's make a few assumptions:
   
@@ -43,11 +43,11 @@ First, let's make a few assumptions:
     articulators.
 3.  Vowels and consonants are different kinds of things.
 
-Assumptions 1 and 2 are stated by the IPA handbook: "Phonetic analysis
+Assumptions 1 and 2 are stated by the IPA handbook (1999): "Phonetic analysis
 is based on the crucial premise that it is possible to describe speech
 sounds in terms of a sequence of segments, and on the further crucial
 assumption that each segment can be characterized by an articulatory
-target." I read this in two ways. The first is that although speech is a
+target"  I read this in two ways. The first is that although speech is a
 continuous and highly coordinated sequence of movements, we can break it 
 down into more discrete states (speech sound segments) and we
 can describe those states in terms of a particular configuration of the
@@ -134,14 +134,13 @@ Vowels are trickier. First, they are described along three main axes:
     vowel, but there is a tendency for these two vowels to [merge into
     one sound](https://en.wikipedia.org/wiki/Cot%E2%80%93caught_merger).
 
-The chart of the [International Phonetic
-Alphabet](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet_chart)
+The [IPA chart](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet_chart)
 for vowels uses the height and backness features to arrange the sounds
 into the "vowel quadrilateral". Within each height-backness combination,
 the chart further differentiates between an unrounded and rounded vowel
 in that position. The
 vowels at the most extreme height (high, low) and backness (front, back)
-values make up the "corner" vowels /i, æ, u, ɑ/.
+values make up the *corner* vowels /i, æ, u, ɑ/.
 
 
 But these articulatory features are not sufficient to differentiate the vowels of English. 
@@ -149,27 +148,109 @@ We need to add a fake feature to describe basic English vowels.
 
 
   - **tenseness** of the vowel articulation. Both /i/ (as in "beet") and
-    /ɪ/ as in "bit" are high front vowels, so we conventionally differentiate these two vowels by
+    /ɪ/ (as in "bit") are high front vowels, so we conventionally differentiate these two vowels by
     stipulating that /i/ is "tense" and /ɪ/ is lax. Other tense-lax
-    pairs are /u,ʊ/ ("boot" and "book") and /eɪ,ɛ/ ("bait"). 
+    pairs are /u,ʊ/ ("boot" and "book") and /eɪ,ɛ/ ("bait" and "bet"). 
 
 It's unclear what differentiates these tense and lax sounds in terms of
-speech articulation. Adjustments in vowel height seem plausible (Johnson, Ladefoged and Lindau, 1993), and the IPA chart differentiates the high front vowels by placing /ɪ/ just a smidge lower than /i/ (near-close as instead of close).
-    in vowel height. 
-
-
-. Chomsky and Halle (1968) appealed to a vague articulatory 
+speech articulation. Chomsky and Halle (1991) appealed to a vague articulatory 
 difference in effort:
 
-> Phonetically the difference between tense and lax vowels sounds can best be characterized a difference in the manner in which the articulatory gesture is executed. A tense sound is executed deliberately so that the articulating organs actually attain their various target configurations; in producing a lax sound, the gesture is executed rapidly and with reduced amplitude. Tense vowels are, therefore, distinguished from the corresponding lax vowels by being more intense, of longer duration, and articulated with a greater deviation of the vocal cavity from its neutral (rest) position. These facts have led to the description of lax vowels as being the "lazy" variances of the corresponding tense vowels. (SPE, Chapter 3.)
+> Phonetically the difference between tense and lax vowels sounds can best be characterized a difference in the manner in which the articulatory gesture is executed. A tense sound is executed deliberately so that the articulating organs actually attain their various target configurations; in producing a lax sound, the gesture is executed rapidly and with reduced amplitude. Tense vowels are, therefore, distinguished from the corresponding lax vowels by being more intense, of longer duration, and articulated with a greater deviation of the vocal cavity from its neutral (rest) position. These facts have led to the description of lax vowels as being the "lazy" variances of the corresponding tense vowels.
 
+But I take this description with a grain of salt because they were doing
+a very theoretical and computational description of English sounds.
+Still, adjustments in vowel height seem plausible (Johnson, Ladefoged, &
+Lindau, 1993), and the IPA chart differentiates the high front vowels by
+placing /ɪ/ just a smidge lower than /i/ (*near-close* as instead of
+*close*).
 
-Johnson, Ladefoged and Lindau (1993) found that some speakers differentiated the tense and lax vowels by adjusting the height
+The features described above specify the basic English vowels. When I assign these vowels a manner of articulation feature, I used the feature *vowel*. There are two other kinds of vowel manners in English:
 
+ - **diphthongs** are "double vowels". They are characterized by movement from an initial height-backness location to another height-backness location. The three classic diphthongs of English are /aɪ/ (as in "bite"), /ɔɪ/ ("boy"), and /aʊ/ ("bout"). We also conventionally transcribe /eɪ/ ("bait") and /oʊ/ ("boat") using two vowel characters but these are classified as regular single vowels (monophthongs).
 
+I don't consider /eɪ/ and /oʊ/ to be diphthongs, but perhaps `manner_alt`
+could encode the difference of these vowels from the others.
 
+In the CMU alphabet and ARPAbet, vowels can include a number to indicate
+vowel stress, so `AH1` or `AH2` is /ʌ/ but `AH0` is /ə/.
 
+The vowel features for General American English,
+[according to Wikipedia](https://en.wikipedia.org/wiki/English_phonology),
+are as follows:
 
+<table style="text-align: center;">
+<tbody>
+<tr class="header">
+<th rowspan="2"></th>
+<th colspan="2">Front</th>
+<th colspan="2">Central</th>
+<th colspan="2">Back</th>
+</tr>
+<tr class="odd">
+<th>lax</th>
+<th>tense</th>
+<th>lax</th>
+<th>tense</th>
+<th>lax</th>
+<th>tense</th>
+</tr>
+
+<tr class="odd">
+<th>Close</th>
+<td>ɪ</td>
+<td>i</td>
+<td></td>
+<td></td>
+<td>ʊ</td>
+<td>u</td>
+</tr>
+<tr class="even">
+<th>Mid</th>
+<td>ɛ</td>
+<td>eɪ</td>
+<td>ʌ (stressed)<br/>ə (unstressed)</td>
+<td></td>
+<td></td>
+<td>oʊ</td>
+</tr>
+<tr class="odd">
+<th>Open</th>
+<td>æ</td>
+<td></td>
+<td>(ʌ)</td>
+<td>ɑ</td>
+<td></td>
+<td>(ɔ)</td>
+</tr>
+<tr class="even">
+<th>Diphthongs</th>
+<td colspan="6">aɪ ɔɪ aʊ</td>
+</tr>
+<th>/r/-colored</th>
+<td colspan="6">ɝ ɚ</td>
+</tr>
+</tbody>
+</table>
+
+I adapted these features in this way:
+
+- *tense* and *lax* features were directly borrowed. Diphthongs and
+  r-colored vowels are were not assign a tenseness.
+- /ʌ,ɔ/ raised to *mid* (following the general IPA chart)
+- /ɑ/ moved to *back* (following the general IPA)
+- diphthongs have no backness or height
+- r-colored vowels were given the backness and height of the /ʌ,ə/
+
+Based on the assumption that /ʌ,ə/ are the same general vowel with
+differing stress, these vowels have the same features. This definition
+clashes with the general IPA chart which places /ʌ/ as a back vowel. However,
+/ʌ/ is a conventional notation. Quoting
+[Wikipedia](https://en.wikipedia.org/wiki/English_phonology) again:
+"Although the notation /ʌ/ is used for the vowel of STRUT in RP and General
+American, the actual pronunciation is closer to a near-open central
+vowel \[ɐ\] in RP and advanced back \[ʌ̟\] in General American." That is,
+/ʌ/ is fronted in American English (hence, *mid*) in American English.
 
 
 
@@ -208,6 +289,7 @@ speech is made up of individual sounds called "segments", those segments are an 
 
 
 
+International Phonetic Association. (1999). *Handbook of the International Phonetic Association: A guide to the use of the International Phonetic Alphabet*. Cambridge University Press.
 
 
 
