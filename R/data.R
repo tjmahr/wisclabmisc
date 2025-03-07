@@ -182,9 +182,10 @@ NULL
 #'   \item{manner}{manner of articulation}
 #'   \item{manner_alt}{alternative manner with *vowel*, *diphthong* and *r-colored*}
 #'   \item{tenseness}{*tense* versus *lax* (versus *diphthong* and *r-colored*)}
-#'   \item{height}{vowel height}
+#'   \item{height}{vowel height on a four-level scale}
 #'   \item{height_fct}{height coded as a factor ordered *high*,
-#'   *mid*, *low*. *diphthong* is recoded to `NA`.}
+#'   *mid-high*, *mid-low*, *low*. *diphthong* is recoded to `NA`.}
+#'   \item{height_alt}{vowel height on a three-level scale}
 #'   \item{backness}{vowel backness}
 #'   \item{backness_fct}{backness coded as a factor ordered *front*,
 #'   *central*, *back*. *diphthong* is recoded to `NA`.}
@@ -267,7 +268,6 @@ NULL
 #'
 #' - *tense* and *lax* features were directly borrowed. Diphthongs and
 #'   r-colored vowels are were not assign a tenseness.
-#' - /ʌ,ɔ/ raised to *mid* (following the general IPA chart)
 #' - /ɑ/ moved to *back* (following the general IPA)
 #' - diphthongs have no backness or height
 #' - r-colored vowels were given the backness and height of the /ʌ,ə/

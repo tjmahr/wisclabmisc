@@ -5,7 +5,7 @@ data_features_vowels <- readr::read_csv(
   tibble::as_tibble() |>
   dplyr::mutate(
     backness_fct = factor(backness, c("front", "central", "back")),
-    height_fct = factor(height, c("high", "mid", "low"))
+    height_fct = factor(height, c("high", "mid-high", "mid-low", "low"))
   ) |>
   dplyr::relocate(backness_fct, .after = backness) |>
   dplyr::relocate(height_fct, .after = height)

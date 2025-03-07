@@ -6,9 +6,9 @@
 \alias{data_features_vowels}
 \title{Phonetic features of consonants and vowels}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 24 rows and 10 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 24 rows and 11 columns.
 
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 17 rows and 12 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 17 rows and 13 columns.
 }
 \usage{
 data_features_consonants
@@ -35,32 +35,32 @@ but divided into \emph{liquid} and \emph{glide} in \code{manner_alt}.
 10 variables.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_features_consonants)
-}\if{html}{\out{</div>}}\tabular{llllllllll}{
-   phone \tab cmubet \tab wiscbet \tab voicing \tab manner \tab manner_alt \tab place \tab place_fct \tab sonorance \tab sonorance_alt \cr
-   p \tab P \tab p \tab voiceless \tab stop \tab stop \tab labial \tab labial \tab obstruent \tab obstruent \cr
-   b \tab B \tab b \tab voiced \tab stop \tab stop \tab labial \tab labial \tab obstruent \tab obstruent \cr
-   t \tab T \tab t \tab voiceless \tab stop \tab stop \tab alveolar \tab alveolar \tab obstruent \tab obstruent \cr
-   d \tab D \tab d \tab voiced \tab stop \tab stop \tab alveolar \tab alveolar \tab obstruent \tab obstruent \cr
-   k \tab K \tab k \tab voiceless \tab stop \tab stop \tab velar \tab velar \tab obstruent \tab obstruent \cr
-   g \tab G \tab g \tab voiced \tab stop \tab stop \tab velar \tab velar \tab obstruent \tab obstruent \cr
-   tʃ \tab CH \tab tsh \tab voiceless \tab affricate \tab affricate \tab postalveolar \tab postalveolar \tab obstruent \tab strident \cr
-   dʒ \tab JH \tab dzh \tab voiced \tab affricate \tab affricate \tab postalveolar \tab postalveolar \tab obstruent \tab strident \cr
-   m \tab M \tab m \tab voiced \tab nasal \tab nasal \tab labial \tab labial \tab sonorant \tab sonorant \cr
-   n \tab N \tab n \tab voiced \tab nasal \tab nasal \tab alveolar \tab alveolar \tab sonorant \tab sonorant \cr
-   ŋ \tab NG \tab ng \tab voiced \tab nasal \tab nasal \tab velar \tab velar \tab sonorant \tab sonorant \cr
-   f \tab F \tab f \tab voiceless \tab fricative \tab fricative \tab labiodental \tab labiodental \tab obstruent \tab strident \cr
-   v \tab V \tab v \tab voiced \tab fricative \tab fricative \tab labiodental \tab labiodental \tab obstruent \tab strident \cr
-   θ \tab TH \tab th \tab voiceless \tab fricative \tab fricative \tab dental \tab dental \tab obstruent \tab obstruent \cr
-   ð \tab DH \tab dh \tab voiced \tab fricative \tab fricative \tab dental \tab dental \tab obstruent \tab obstruent \cr
-   s \tab S \tab s \tab voiceless \tab fricative \tab fricative \tab alveolar \tab alveolar \tab obstruent \tab strident \cr
-   z \tab Z \tab z \tab voiced \tab fricative \tab fricative \tab alveolar \tab alveolar \tab obstruent \tab strident \cr
-   ʃ \tab SH \tab sh \tab voiceless \tab fricative \tab fricative \tab postalveolar \tab postalveolar \tab obstruent \tab strident \cr
-   ʒ \tab ZH \tab zh \tab voiced \tab fricative \tab fricative \tab postalveolar \tab postalveolar \tab obstruent \tab strident \cr
-   h \tab HH \tab h \tab voiceless \tab fricative \tab fricative \tab glottal \tab glottal \tab obstruent \tab obstruent \cr
-   l \tab L \tab l \tab voiced \tab approximant \tab liquid \tab alveolar \tab alveolar \tab sonorant \tab sonorant \cr
-   r \tab R \tab r \tab voiced \tab approximant \tab liquid \tab postalveolar \tab postalveolar \tab sonorant \tab sonorant \cr
-   w \tab W \tab w \tab voiced \tab approximant \tab glide \tab labiovelar \tab NA \tab sonorant \tab sonorant \cr
-   j \tab Y \tab j \tab voiced \tab approximant \tab glide \tab palatal \tab palatal \tab sonorant \tab sonorant \cr
+}\if{html}{\out{</div>}}\tabular{lllllllllll}{
+   phone \tab cmubet \tab wiscbet \tab voicing \tab voicing_alt \tab manner \tab manner_alt \tab place \tab place_fct \tab sonorance \tab sonorance_alt \cr
+   p \tab P \tab p \tab voiceless \tab spread_glottis \tab stop \tab stop \tab labial \tab labial \tab obstruent \tab obstruent \cr
+   b \tab B \tab b \tab voiced \tab plain \tab stop \tab stop \tab labial \tab labial \tab obstruent \tab obstruent \cr
+   t \tab T \tab t \tab voiceless \tab spread_glottis \tab stop \tab stop \tab alveolar \tab alveolar \tab obstruent \tab obstruent \cr
+   d \tab D \tab d \tab voiced \tab plain \tab stop \tab stop \tab alveolar \tab alveolar \tab obstruent \tab obstruent \cr
+   k \tab K \tab k \tab voiceless \tab spread_glottis \tab stop \tab stop \tab velar \tab velar \tab obstruent \tab obstruent \cr
+   g \tab G \tab g \tab voiced \tab plain \tab stop \tab stop \tab velar \tab velar \tab obstruent \tab obstruent \cr
+   tʃ \tab CH \tab tsh \tab voiceless \tab spread_glottis \tab affricate \tab affricate \tab postalveolar \tab postalveolar \tab obstruent \tab strident \cr
+   dʒ \tab JH \tab dzh \tab voiced \tab plain \tab affricate \tab affricate \tab postalveolar \tab postalveolar \tab obstruent \tab strident \cr
+   m \tab M \tab m \tab voiced \tab NA \tab nasal \tab nasal \tab labial \tab labial \tab sonorant \tab sonorant \cr
+   n \tab N \tab n \tab voiced \tab NA \tab nasal \tab nasal \tab alveolar \tab alveolar \tab sonorant \tab sonorant \cr
+   ŋ \tab NG \tab ng \tab voiced \tab NA \tab nasal \tab nasal \tab velar \tab velar \tab sonorant \tab sonorant \cr
+   f \tab F \tab f \tab voiceless \tab spread_glottis \tab fricative \tab fricative \tab labiodental \tab labiodental \tab obstruent \tab strident \cr
+   v \tab V \tab v \tab voiced \tab plain \tab fricative \tab fricative \tab labiodental \tab labiodental \tab obstruent \tab strident \cr
+   θ \tab TH \tab th \tab voiceless \tab spread_glottis \tab fricative \tab fricative \tab dental \tab dental \tab obstruent \tab obstruent \cr
+   ð \tab DH \tab dh \tab voiced \tab plain \tab fricative \tab fricative \tab dental \tab dental \tab obstruent \tab obstruent \cr
+   s \tab S \tab s \tab voiceless \tab spread_glottis \tab fricative \tab fricative \tab alveolar \tab alveolar \tab obstruent \tab strident \cr
+   z \tab Z \tab z \tab voiced \tab plain \tab fricative \tab fricative \tab alveolar \tab alveolar \tab obstruent \tab strident \cr
+   ʃ \tab SH \tab sh \tab voiceless \tab spread_glottis \tab fricative \tab fricative \tab postalveolar \tab postalveolar \tab obstruent \tab strident \cr
+   ʒ \tab ZH \tab zh \tab voiced \tab plain \tab fricative \tab fricative \tab postalveolar \tab postalveolar \tab obstruent \tab strident \cr
+   h \tab HH \tab h \tab voiceless \tab spread_glottis \tab fricative \tab fricative \tab glottal \tab glottal \tab obstruent \tab obstruent \cr
+   l \tab L \tab l \tab voiced \tab NA \tab approximant \tab liquid \tab alveolar \tab alveolar \tab sonorant \tab sonorant \cr
+   r \tab R \tab r \tab voiced \tab NA \tab approximant \tab liquid \tab postalveolar \tab postalveolar \tab sonorant \tab sonorant \cr
+   w \tab W \tab w \tab voiced \tab NA \tab approximant \tab glide \tab labiovelar \tab NA \tab sonorant \tab sonorant \cr
+   j \tab Y \tab j \tab voiced \tab NA \tab approximant \tab glide \tab palatal \tab palatal \tab sonorant \tab sonorant \cr
 }
 
 
@@ -115,25 +115,25 @@ a feature to nasals or approximants.
 11 variables.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_features_vowels)
-}\if{html}{\out{</div>}}\tabular{llllllllllll}{
-   phone \tab cmubet \tab wiscbet \tab hint \tab manner \tab manner_alt \tab tenseness \tab height \tab height_fct \tab backness \tab backness_fct \tab rounding \cr
-   i \tab IY \tab i \tab beat \tab vowel \tab vowel \tab tense \tab high \tab high \tab front \tab front \tab unrounded \cr
-   ɪ \tab IH \tab I \tab bit \tab vowel \tab vowel \tab lax \tab high \tab high \tab front \tab front \tab unrounded \cr
-   eɪ \tab EY \tab eI \tab bait \tab vowel \tab vowel \tab tense \tab mid \tab mid \tab front \tab front \tab unrounded \cr
-   ɛ \tab EH \tab E \tab bet \tab vowel \tab vowel \tab lax \tab mid \tab mid \tab front \tab front \tab unrounded \cr
-   æ \tab AE \tab ae \tab bat \tab vowel \tab vowel \tab lax \tab low \tab low \tab front \tab front \tab unrounded \cr
-   ʌ \tab AH \tab ^ \tab but \tab vowel \tab vowel \tab lax \tab mid \tab mid \tab central \tab central \tab unrounded \cr
-   ə \tab AH \tab 4 \tab comma \tab vowel \tab vowel \tab lax \tab mid \tab mid \tab central \tab central \tab unrounded \cr
-   u \tab UW \tab u \tab boot \tab vowel \tab vowel \tab tense \tab high \tab high \tab back \tab back \tab rounded \cr
-   ʊ \tab UH \tab U \tab book \tab vowel \tab vowel \tab lax \tab high \tab high \tab back \tab back \tab rounded \cr
-   oʊ \tab OW \tab oU \tab boat \tab vowel \tab vowel \tab tense \tab mid \tab mid \tab back \tab back \tab rounded \cr
-   ɔ \tab AO \tab c \tab bought \tab vowel \tab vowel \tab tense \tab mid \tab mid \tab back \tab back \tab rounded \cr
-   ɑ \tab AA \tab @ \tab bot \tab vowel \tab vowel \tab tense \tab low \tab low \tab back \tab back \tab unrounded \cr
-   aʊ \tab AW \tab @U \tab bout \tab vowel \tab diphthong \tab diphthong \tab diphthong \tab NA \tab diphthong \tab NA \tab diphthong \cr
-   aɪ \tab AY \tab @I \tab bite \tab vowel \tab diphthong \tab diphthong \tab diphthong \tab NA \tab diphthong \tab NA \tab diphthong \cr
-   ɔɪ \tab OY \tab cI \tab boy \tab vowel \tab diphthong \tab diphthong \tab diphthong \tab NA \tab diphthong \tab NA \tab diphthong \cr
-   ɝ \tab ER \tab 3^ \tab letter \tab vowel \tab r-colored \tab r-colored \tab mid \tab mid \tab central \tab central \tab r-colored \cr
-   ɚ \tab ER \tab 4^ \tab burt \tab vowel \tab r-colored \tab r-colored \tab mid \tab mid \tab central \tab central \tab r-colored \cr
+}\if{html}{\out{</div>}}\tabular{lllllllllllll}{
+   phone \tab cmubet \tab wiscbet \tab hint \tab manner \tab manner_alt \tab tenseness \tab height \tab height_fct \tab height_alt \tab backness \tab backness_fct \tab rounding \cr
+   i \tab IY \tab i \tab beat \tab vowel \tab vowel \tab tense \tab high \tab high \tab high \tab front \tab front \tab unrounded \cr
+   ɪ \tab IH \tab I \tab bit \tab vowel \tab vowel \tab lax \tab mid-high \tab mid-high \tab high \tab front \tab front \tab unrounded \cr
+   eɪ \tab EY \tab eI \tab bait \tab vowel \tab vowel \tab tense \tab mid-high \tab mid-high \tab mid \tab front \tab front \tab unrounded \cr
+   ɛ \tab EH \tab E \tab bet \tab vowel \tab vowel \tab lax \tab mid-low \tab mid-low \tab mid \tab front \tab front \tab unrounded \cr
+   æ \tab AE \tab ae \tab bat \tab vowel \tab vowel \tab lax \tab low \tab low \tab low \tab front \tab front \tab unrounded \cr
+   ʌ \tab AH \tab ^ \tab but \tab vowel \tab vowel \tab lax \tab mid-low \tab mid-low \tab mid \tab central \tab central \tab unrounded \cr
+   ə \tab AH \tab 4 \tab comma \tab vowel \tab vowel \tab lax \tab mid-low \tab mid-low \tab mid \tab central \tab central \tab unrounded \cr
+   u \tab UW \tab u \tab boot \tab vowel \tab vowel \tab tense \tab high \tab high \tab high \tab back \tab back \tab rounded \cr
+   ʊ \tab UH \tab U \tab book \tab vowel \tab vowel \tab lax \tab mid-high \tab mid-high \tab high \tab back \tab back \tab rounded \cr
+   oʊ \tab OW \tab oU \tab boat \tab vowel \tab vowel \tab tense \tab mid-high \tab mid-high \tab mid \tab back \tab back \tab rounded \cr
+   ɔ \tab AO \tab c \tab bought \tab vowel \tab vowel \tab tense \tab mid-low \tab mid-low \tab low \tab back \tab back \tab rounded \cr
+   ɑ \tab AA \tab @ \tab bot \tab vowel \tab vowel \tab tense \tab low \tab low \tab low \tab back \tab back \tab unrounded \cr
+   aʊ \tab AW \tab @U \tab bout \tab vowel \tab diphthong \tab diphthong \tab diphthong \tab NA \tab diphthong \tab diphthong \tab NA \tab diphthong \cr
+   aɪ \tab AY \tab @I \tab bite \tab vowel \tab diphthong \tab diphthong \tab diphthong \tab NA \tab diphthong \tab diphthong \tab NA \tab diphthong \cr
+   ɔɪ \tab OY \tab cI \tab boy \tab vowel \tab diphthong \tab diphthong \tab diphthong \tab NA \tab diphthong \tab diphthong \tab NA \tab diphthong \cr
+   ɝ \tab ER \tab 3^ \tab letter \tab vowel \tab r-colored \tab r-colored \tab mid-low \tab mid-low \tab mid \tab central \tab central \tab r-colored \cr
+   ɚ \tab ER \tab 4^ \tab burt \tab vowel \tab r-colored \tab r-colored \tab mid-low \tab mid-low \tab mid \tab central \tab central \tab r-colored \cr
 }
 
 
@@ -147,9 +147,10 @@ Description of each column:
 \item{manner}{manner of articulation}
 \item{manner_alt}{alternative manner with \emph{vowel}, \emph{diphthong} and \emph{r-colored}}
 \item{tenseness}{\emph{tense} versus \emph{lax} (versus \emph{diphthong} and \emph{r-colored})}
-\item{height}{vowel height}
+\item{height}{vowel height on a four-level scale}
 \item{height_fct}{height coded as a factor ordered \emph{high},
-\emph{mid}, \emph{low}. \emph{diphthong} is recoded to \code{NA}.}
+\emph{mid-high}, \emph{mid-low}, \emph{low}. \emph{diphthong} is recoded to \code{NA}.}
+\item{height_alt}{vowel height on a three-level scale}
 \item{backness}{vowel backness}
 \item{backness_fct}{backness coded as a factor ordered \emph{front},
 \emph{central}, \emph{back}. \emph{diphthong} is recoded to \code{NA}.}
@@ -163,7 +164,7 @@ Levels of the factor columns:
   lapply(levels) |>
   Filter(length, x = _)
 #> $height_fct
-#> [1] "high" "mid"  "low" 
+#> [1] "high"     "mid-high" "mid-low"  "low"     
 #> 
 #> $backness_fct
 #> [1] "front"   "central" "back"
@@ -239,7 +240,6 @@ I adapted these features in this way:
 \itemize{
 \item \emph{tense} and \emph{lax} features were directly borrowed. Diphthongs and
 r-colored vowels are were not assign a tenseness.
-\item /ʌ,ɔ/ raised to \emph{mid} (following the general IPA chart)
 \item /ɑ/ moved to \emph{back} (following the general IPA)
 \item diphthongs have no backness or height
 \item r-colored vowels were given the backness and height of the /ʌ,ə/
