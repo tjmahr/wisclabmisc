@@ -118,56 +118,122 @@ right position in a cell).
 
 ### Features of vowels
 
-Vowels are trickier. First, they are described along three main axes:
+Vowels are much trickier. First, they are described along three main
+axes:
 
-  - **height** of the tongue body. /i/ (as in "beet") is a *high* vowel,
-    /ɛ/ (as in "bet") is a *mid* vowel, and /æ/ (as in "bat") is a *low*
-    vowel. An alternate set of terms for high-mid-low is close-mid-open, where "close" describes the tongue being *close* to the roof of the mouth.
+  - **height** of the tongue body. Conventions vary for how many height
+    levels we should use to describe English vowels. I originally had
+    three levels (*high*, *mid*, *low*) but now I have four levels of
+    vowel height: *high* (e.g., /i/ in "beet"), *mid-high* (/ɪ/, "bit"),
+    *mid-low* (/ɛ/, "bet"), and *low* (/æ/ as in "bat"). An alternate
+    set of terms for high/low is close/open, where "close" describes the
+    tongue being *close* to the roof of the mouth.
   
   - **backness** of the tongue body. /i/ (as in "beet") is a *front*
     vowel, /ʌ/ (as in "butt") is a *central* vowel, and /u/ (as in
     "boot") is a *back* vowel.
   
   - **rounding** of the lips. Rounding or protrusion of the lips
-    lengthens the vocal tract which lowers the formant frequencies (resonances) of the vowel. In American English, /ɑ/ (as in "bot") is a low back
-    *unrounded* vowel and /ɔ/ (as in "bought") is a low back *rounded*
-    vowel, but there is a tendency for these two vowels to [merge into
-    one sound](https://en.wikipedia.org/wiki/Cot%E2%80%93caught_merger).
+    lengthens the vocal tract which lowers the formant frequencies
+    (resonances) of the vowel. In American English, rounding does not
+    differentiate vowels from each other, except arguably in one case:
+    /ɑ/ (as in "bot") is a low back *unrounded* vowel and /ɔ/ (as in
+    "bought") is a mid-low back *rounded* vowel. There is a tendency for
+    these two vowels to [merge into one
+    sound](https://en.wikipedia.org/wiki/Cot%E2%80%93caught_merger).
 
-The [IPA chart](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet_chart)
+The [IPA
+chart](https://en.wikipedia.org/wiki/International_Phonetic_Alphabet_chart)
 for vowels uses the height and backness features to arrange the sounds
 into the "vowel quadrilateral". Within each height-backness combination,
 the chart further differentiates between an unrounded and rounded vowel
-in that position. The
-vowels at the most extreme height (high, low) and backness (front, back)
-values make up the *corner* vowels /i, æ, u, ɑ/.
+in that position. The vowels at the most extreme height (high, low) and
+backness (front, back) values make up the *corner* vowels /i, æ, u, ɑ/.
 
 
-But these articulatory features are not sufficient to differentiate the vowels of English. 
-We need to add a fake feature to describe basic English vowels. 
-
+When we only use three levels of height (high-mid-low), the articulatory
+features above are not sufficient to differentiate the vowels of
+English. By convention, we include a fake feature to further describe
+basic English vowels:
 
   - **tenseness** of the vowel articulation. Both /i/ (as in "beet") and
-    /ɪ/ (as in "bit") are high front vowels, so we conventionally differentiate these two vowels by
-    stipulating that /i/ is "tense" and /ɪ/ is lax. Other tense-lax
-    pairs are /u,ʊ/ ("boot" and "book") and /eɪ,ɛ/ ("bait" and "bet"). 
+    /ɪ/ (as in "bit") are relatively high front vowels, so we
+    conventionally differentiate these two vowels by stipulating that
+    /i/ is *tense* and /ɪ/ is *lax*. Other tense-lax pairs are /u,ʊ/
+    ("boot" and "book") and /eɪ,ɛ/ ("bait" and "bet").
 
 It's unclear what differentiates these tense and lax sounds in terms of
-speech articulation. Chomsky and Halle (1991) appealed to a vague articulatory 
-difference in effort:
+speech articulation. Chomsky and Halle (1991) appealed to a vague
+articulatory difference in effort:
 
-> Phonetically the difference between tense and lax vowels sounds can best be characterized a difference in the manner in which the articulatory gesture is executed. A tense sound is executed deliberately so that the articulating organs actually attain their various target configurations; in producing a lax sound, the gesture is executed rapidly and with reduced amplitude. Tense vowels are, therefore, distinguished from the corresponding lax vowels by being more intense, of longer duration, and articulated with a greater deviation of the vocal cavity from its neutral (rest) position. These facts have led to the description of lax vowels as being the "lazy" variances of the corresponding tense vowels.
+> Phonetically the difference between tense and lax vowels sounds can
+> best be characterized a difference in the manner in which the
+> articulatory gesture is executed. A tense sound is executed
+> deliberately so that the articulating organs actually attain their
+> various target configurations; in producing a lax sound, the gesture
+> is executed rapidly and with reduced amplitude. Tense vowels are,
+> therefore, distinguished from the corresponding lax vowels by being
+> more intense, of longer duration, and articulated with a greater
+> deviation of the vocal cavity from its neutral (rest) position. These
+> facts have led to the description of lax vowels as being the "lazy"
+> variances of the corresponding tense vowels.
 
 But I take this description with a grain of salt because they were doing
 a very theoretical and computational description of English sounds.
-Still, adjustments in vowel height seem plausible (Johnson, Ladefoged, &
-Lindau, 1993), and the IPA chart differentiates the high front vowels by
-placing /ɪ/ just a smidge lower than /i/ (*near-close* as instead of
-*close*).
+Ladefoged and Johnson (2010) instead claim that the difference is
+largely distributional:
 
-The features described above specify the basic English vowels. When I assign these vowels a manner of articulation feature, I used the feature *vowel*. There are two other kinds of vowel manners in English:
+> These terms [*tense*, *lax*] are really just labels used to
+> designate two groups of vowels that behave differently in English
+> words. There are phonetic differences between the two groups, but they
+> are not simply a matter of muscular tenseness versus laxness. [...]
+> The difference between the two sets can be discussed in terms of the
+> different kinds of syllables in which they can occur.
 
- - **diphthongs** are "double vowels". They are characterized by movement from an initial height-backness location to another height-backness location. The three classic diphthongs of English are /aɪ/ (as in "bite"), /ɔɪ/ ("boy"), and /aʊ/ ("bout"). We also conventionally transcribe /eɪ/ ("bait") and /oʊ/ ("boat") using two vowel characters but these are classified as regular single vowels (monophthongs).
+They go on to describe how lax vowels don't occur in open syllables
+(i.e., syllables that end in a vowel) and how tense-lax pairs are not
+differentiated in syllables before /r/ or /ŋ/. When speakers don't have
+to differentiate tense-lax vowels in a certain context, they get looser
+with their production: "In a syllable closed by /r/, there is no
+contrast in quality between a tense vowel and the lax vowel nearest to
+it. Consequently, as often happens in contexts in which there is no
+opposition between two sounds, the actual sound produced is somewhere
+between the two" (Ladefoged & Johnson, 2010).
+
+So, tenseness is a standard feature of English vowels, but it is not
+clear what it means in terms of an articulatory configuration. It is
+plausible that tense and lax vowels differ in height (Johnson,
+Ladefoged, & Lindau, 1993), and the IPA chart differentiates the high
+front vowels by placing /ɪ/ just a smidge lower than /i/ (*near-close*
+as instead of *close*). For this reason, I encode the tense-lax pairs as
+differing in height too: /i/-/ɪ/ (high, mid-high), /u/-/ʊ/ (high,
+mid-high), /eɪ/-/ɛ/ (mid-high, mid-low). But in a high-mid-low system,
+the only difference with these pairs would their tenseness feature.
+
+The features described so far specify the basic English vowels. When I
+assign these vowels a manner of articulation feature, I used the feature
+*vowel*. There are two other kinds of vowel manners in English:
+
+  - **diphthongs** are "double vowels". They are characterized by
+    movement from an initial height-backness location to another
+    height-backness location. The three classic diphthongs of English
+    are /aɪ/ (as in "bite"), /ɔɪ/ ("boy"), and /aʊ/ ("bout"). We also
+    conventionally transcribe /eɪ/ ("bait") and /oʊ/ ("boat") using two
+    vowel characters but these are classified as regular single vowels
+    (or *monophthongs*).
+
+  - **r-colored vowels** are produced with a /r/-like quality to them,
+    either by bunching the tongue or raising the tongue tip.
+
+Before putting everything together, I need to highlight a final
+convention in English vowels. We typically represent the neutral vowel
+sound (central, low-mid, unrounded) sound in two different ways: /V/ for
+stressed vowels (as in "butt") and /UH/ for unstressed vowels (second
+syllable of "comma"). This convention also carries over to the r-colored
+vowels with stressed /ER/ ("burt") and unstressed /er/ (second syllable
+of "letter").
+
+***
 
 I don't consider /eɪ/ and /oʊ/ to be diphthongs, but perhaps `manner_alt`
 could encode the difference of these vowels from the others.
