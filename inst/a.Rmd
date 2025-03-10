@@ -365,3 +365,118 @@ International Phonetic Association. (1999). *Handbook of the International Phone
 
 
 (If you stretch out the consonants /w/ and /j/, you get the vowels /u/ and /i/.)
+
+
+
+
+
+## Developmental features
+
+### Early, middle and late 8 (Shriberg, 1993)
+
+The English consonants are often broken down into three developmental classes, based on Shriberg (1993):
+
+- Early 8:
+- Middle 8:
+- Late 8:
+
+From these names alone, we might interpret these classes such that sounds in the Early 8 would be acquired before the ones in the Middle 8, and the sounds in the Late 8. But these classes were not created by examining patterns of typical consonant acquisition. 
+
+> The values for this trend, which is a profile of consonant mastery, were taken from a group of 64 3- to 6-year-old speech-delayed children (Shriberg, Kwiatkowski, & Gruber, 1992). Severity of involvement of the 24 English consonants is represented as the percentage correct for each consonant sorted in decreasing order
+from left to right. Notice that the most obvious breaks in this
+function allow for a division of the 24 consonants into three
+groups of eight sounds termed the Early-8, averaging over
+75% correct, the Middle-8, averaging 25%-75% correct, and
+the Late-8, including consonants averaging less than 25%
+correct in continuous conversational speech (/3/ is infrequently represented in young, speech-delayed children's
+spontaneous conversational speech). 
+
+There were 64 3--6-year-old children with speech delays, and consonant sounds were
+divided into three classes based on how often *these children* produced the sounds correctly on average. This classification is not so much a measure of the relative ordering of speech sound development as it is the relative difficulty of these sounds for children with a speech delay of unknown origin. The authors compare their grouping to the rankings of sounds by acquisition order. Their figure is hard to interpret, so I provide a different version.
+
+
+
+```{r}
+ipa <- c(
+  "m", "b", "j", "n", "w", "d", "p",   "h", 
+  "t", "ŋ", "k", "g", "f", "v", "tʃ", "dʒ", 
+  "ʃ", "θ", "s", "z", "ð", "l",  "r",  "ʒ" 
+)
+
+shriberg <- c(1:24)
+sander <- c(
+  1,  2, 6, 1,  1,  4, 1,  1,
+  5,  5, 3, 4,  6, 10, 8, 10,
+  8, 10, 7, 8, 10,  7, 7,  9
+)
+prather <- c(
+   2, 7, 9,  1,  5, 10,  2,  2,  
+   3, 4, 6,  7,  4, 13, 12, 12,   
+  12,15, 8, 14, 15, 11, 11, 14
+  )
+
+df <- data.frame(
+  ipa, shriberg, sander, prather
+)
+library(ggplot2)
+
+df_rect <- data.frame(
+  xmin = c(0, 8.5, 16.5),
+  xmax = c(8.5, 16.5, 24.5),
+  ymin = c(0, 8.5, 16.5),
+  ymax = c(8.5, 16.5, 24.5),
+  group = factor(1:3)  
+)
+
+ggplot(df) + 
+  aes(x = shriberg, y = round(rank(sander))) +
+  # geom_point() +
+  geom_text(aes(label = ipa)) +
+  geom_abline() +
+  coord_cartesian(c(0, 24), c(0, 24))  + 
+   geom_rect(
+    data = df_rect,
+    aes(
+      y = NULL, x = NULL,
+      xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, group = group),
+    fill = NA, color = "black"
+  )
+ggplot(df) + 
+  aes(x = shriberg, y = round(rank(prather))) +
+  # geom_point() +
+  geom_text(aes(label = ipa)) +
+  geom_abline() +
+  coord_cartesian(c(0, 24), c(0, 24))  + 
+   geom_rect(
+    data = df_rect,
+    aes(
+      y = NULL, x = NULL,
+      xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, group = group),
+    fill = NA, color = "black"
+  )
+
+
+# Proportion of ranks that fall within first-8, middle-8 or late-8 buckets
+check_rank_overlap <- function(rank_vector) {
+  stopifnot(length(rank_vector) == 24)
+  offsets <- rep(c(0, 8, 16), each = 8)
+  rv2 <- rank_vector - offsets
+  mean(1 <= rv2 & rv2 <= 8)
+}
+
+check_rank_overlap_detailed <- function(rank_vector) {
+  stopifnot(length(rank_vector) == 24)
+  offsets <- rep(c(0, 8, 16), each = 8)
+  rv2 <- rank_vector - offsets
+  in_range <- 1 <= rv2 & rv2 <= 8
+  tapply(in_range, rep(1:3, each = 8), mean)
+}
+
+check_rank_overlap(round(rank(df$sander)))
+check_rank_overlap(round(rank(df$prather)))
+
+check_rank_overlap_detailed(round(rank(df$sander)))
+check_rank_overlap_detailed(round(rank(df$prather)))
+
+```
+
