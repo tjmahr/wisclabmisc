@@ -47,7 +47,7 @@ Suggests:
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3
-Config/Needs/website: brms, rstan
+Config/Needs/website: brms, rstan, rmarkdown
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

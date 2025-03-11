@@ -44,3 +44,18 @@ reference:
   - title: Datasets 🗺️
     contents:
     - has_concept("datasets")
+
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - gamlss-tools
+  - roc
+  - articles/utterance-length-imputation
+  - articles/brms
+
+- title: Analysis code for publications
+  desc: Mirrors of the Supplemental Materials documents for our publications
+  contents:
+  - articles/sm-mahr-2024-intel-rate
