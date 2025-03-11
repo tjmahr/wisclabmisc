@@ -1,0 +1,18 @@
+---
+title: "Analysis code for 'Longitudinal change in speech classification between 4 and 10 years in children with cerebral palsy'"
+author: "Tristan Mahr"
+date: "2022"
+---
+
+
+The following is a reproduction of the Supplemental Material (analysis
+code) for Mahr, Rathouz, & Hustad (2025).
+
+- Publication DOI: [10.1111/dmcn.15198](https://doi.org/10.1111/dmcn.15198)
+- Analysis notes: Bayesian mixed effects ordinal regression; marginal means; brms
+
+***
+
+```{r, child="sm-2022-long-vss.md"}
+```
+

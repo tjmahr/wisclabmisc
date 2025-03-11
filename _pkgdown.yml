@@ -58,4 +58,4 @@ articles:
 - title: Analysis code for publications
   desc: Mirrors of the Supplemental Materials documents for our publications
   contents:
-  - articles/sm-mahr-2024-intel-rate
+  - starts_with("articles/sm")
