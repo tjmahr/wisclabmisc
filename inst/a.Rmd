@@ -376,50 +376,86 @@ International Phonetic Association. (1999). *Handbook of the International Phone
 
 The English consonants are often broken down into three developmental classes, based on Shriberg (1993):
 
-- Early 8:
-- Middle 8:
-- Late 8:
+- Early 8: m b j n w d p h
+- Middle 8: t ŋ k g f v tʃ dʒ, 
+- Late 8: ʃ θ s z ð l r ʒ 
 
-From these names alone, we might interpret these classes such that sounds in the Early 8 would be acquired before the ones in the Middle 8, and the sounds in the Late 8. But these classes were not created by examining patterns of typical consonant acquisition. 
-
-> The values for this trend, which is a profile of consonant mastery, were taken from a group of 64 3- to 6-year-old speech-delayed children (Shriberg, Kwiatkowski, & Gruber, 1992). Severity of involvement of the 24 English consonants is represented as the percentage correct for each consonant sorted in decreasing order
-from left to right. Notice that the most obvious breaks in this
-function allow for a division of the 24 consonants into three
-groups of eight sounds termed the Early-8, averaging over
-75% correct, the Middle-8, averaging 25%-75% correct, and
-the Late-8, including consonants averaging less than 25%
-correct in continuous conversational speech (/3/ is infrequently represented in young, speech-delayed children's
-spontaneous conversational speech). 
-
-There were 64 3--6-year-old children with speech delays, and consonant sounds were
-divided into three classes based on how often *these children* produced the sounds correctly on average. This classification is not so much a measure of the relative ordering of speech sound development as it is the relative difficulty of these sounds for children with a speech delay of unknown origin. The authors compare their grouping to the rankings of sounds by acquisition order. Their figure is hard to interpret, so I provide a different version.
+From these names alone, we might interpret these classes such that
+sounds in the Early 8 would be acquired before the ones in the Middle 8,
+and the sounds in the Late 8. But these classes were not created by
+examining patterns of typical consonant acquisition.
 
 
+For some context, Shriberg (1993) introduces the Early 8, Middle 8, and Late 8 
+data by describing the following panel of Figure 7:
+
+```{r, echo = FALSE}
+knitr::include_graphics(
+  "./assets/shriberg_1993.png"
+)
+```
+
+Shriberg (1993) says:
+
+> The values for this trend, which is a profile of consonant mastery,
+> were taken from a group of 64 3- to 6-year-old speech-delayed children
+> (Shriberg, Kwiatkowski, & Gruber, 1992). Severity of involvement of
+> the 24 English consonants is represented as the percentage correct for
+> each consonant sorted in decreasing order from left to right. Notice
+> that the most obvious breaks in this function allow for a division of
+> the 24 consonants into three groups of eight sounds termed the
+> *Early-8*, averaging over 75% correct, the *Middle-8*, averaging 25%-75%
+> correct, and the *Late-8*, including consonants averaging less than 25%
+> correct in continuous conversational speech (/ʒ/ is infrequently
+> represented in young, speech-delayed children's spontaneous
+> conversational speech).
+
+There were 64 3--6-year-old children with speech delays, and consonant
+sounds were divided into three classes based on how often *these
+children* produced the sounds correctly on average in a conversational
+speech sample. This classification is not so much a measure of the
+relative ordering of speech sound development as it is **the relative
+difficulty of these sounds for children with a speech delay of unknown
+origin**. It would be more appropriate to replace the levels of
+Early/Middle/Late with Easy/Medium/Hard. 
+
+
+
+Shriberg (1993) compares its difficulty grouping to the rankings of
+sounds by acquisition order. They find developmental benchmarks for the
+consonants in normal acquisition, identify consonant rankings (from
+earliest to latest acquisition), and evaluate how the acquisition
+rankings compare to the three groups here. (Figure 8 attempts to 
+visualize the difficulty ranking alongside the acquisition rankings 
+but it uses two *y* axes that makes it easy to misinterpret things.) 
+
+I provide a different version.
+
+Here are the sounds ranked by Shirberg.
 
 ```{r}
-ipa <- c(
-  "m", "b", "j", "n", "w", "d", "p",   "h", 
-  "t", "ŋ", "k", "g", "f", "v", "tʃ", "dʒ", 
-  "ʃ", "θ", "s", "z", "ð", "l",  "r",  "ʒ" 
+data_eml <- tibble::tibble(
+  ipa = c(
+    "m", "b", "j", "n", "w", "d", "p",   "h", 
+    "t", "ŋ", "k", "g", "f", "v", "tʃ", "dʒ", 
+    "ʃ", "θ", "s", "z", "ð", "l",  "r",  "ʒ" 
+  ),
+  rank_shriberg = 1:24,
+  order_sander = c(
+    1,  2, 6, 1,  1,  4, 1,  1,
+    5,  5, 3, 4,  6, 10, 8, 10,
+    8, 10, 7, 8, 10,  7, 7,  9
+  ),
+  order_prather <- c(
+     2, 7, 9,  1,  5, 10,  2,  2,  
+     3, 4, 6,  7,  4, 13, 12, 12,   
+    12,15, 8, 14, 15, 11, 11, 14
+  ),
+  rank_sander = round(rank(order_sander)),
+  rank_prather = round(rank(order_prather)),
 )
 
-shriberg <- c(1:24)
-sander <- c(
-  1,  2, 6, 1,  1,  4, 1,  1,
-  5,  5, 3, 4,  6, 10, 8, 10,
-  8, 10, 7, 8, 10,  7, 7,  9
-)
-prather <- c(
-   2, 7, 9,  1,  5, 10,  2,  2,  
-   3, 4, 6,  7,  4, 13, 12, 12,   
-  12,15, 8, 14, 15, 11, 11, 14
-  )
-
-df <- data.frame(
-  ipa, shriberg, sander, prather
-)
-library(ggplot2)
-
+# Rectangle around the three tertiles
 df_rect <- data.frame(
   xmin = c(0, 8.5, 16.5),
   xmax = c(8.5, 16.5, 24.5),
@@ -428,8 +464,10 @@ df_rect <- data.frame(
   group = factor(1:3)  
 )
 
-ggplot(df) + 
-  aes(x = shriberg, y = round(rank(sander))) +
+library(ggplot2)
+
+ggplot(data_eml) + 
+  aes(x = rank_shriberg, y = rank_sander) +
   # geom_point() +
   geom_text(aes(label = ipa)) +
   geom_abline() +
@@ -441,6 +479,18 @@ ggplot(df) +
       xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, group = group),
     fill = NA, color = "black"
   )
+
+```
+
+> The two rank orderings are fairly congruent, with 15 of the 24 consonant ranks (63%) from the Sander data falling within their putative early-middle-late groups on the consonant mastery profile.
+
+That 63% visually is represented in how 15 sounds fall inside of
+rectangles. Is 63% good or bad? Not clear. They rankings come from
+different types of speakers saying different kinds of things.
+
+```{r, eval = FALSE}
+
+
 ggplot(df) + 
   aes(x = shriberg, y = round(rank(prather))) +
   # geom_point() +
