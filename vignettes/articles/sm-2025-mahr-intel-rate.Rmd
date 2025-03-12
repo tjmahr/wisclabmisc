@@ -1,12 +1,15 @@
 ---
-title: "Analysis code for 'Speech development between 30 and 119 months in typical children III: Interaction between speaking rate and intelligibility'"
+title: >
+  Analysis code: 'Speech development between 30 and 119 months in typical 
+  children III: Interaction between speaking rate and intelligibility'
 author: "Tristan Mahr"
 date: "2024-05-20"
 ---
 
 
 The following is a reproduction of the Supplemental Material (analysis
-code) for Mahr, Rathouz, & Hustad (2025).
+code) for Mahr, Rathouz, & Hustad (2025). All code is in
+the R programming language.
 
 - Publication DOI: [10.1044/2024_JSLHR-24-00356](https://doi.org/10.1044/2024_JSLHR-24-00356)
 - Supplemental Material DOI: [10.23641/asha.27964125.v2](https://doi.org/10.23641/asha.27964125.v2)
@@ -14,6 +17,6 @@ code) for Mahr, Rathouz, & Hustad (2025).
 
 ***
 
-```{r, child="docx/sm-mahr-2024-intel-rate.md"}
+```{r, child="sm-2025-mahr-intel-rate.md"}
 ```
 
