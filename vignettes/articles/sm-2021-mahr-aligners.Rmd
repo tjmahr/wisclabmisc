@@ -1,0 +1,22 @@
+---
+title: >
+  Analysis code: 'Performance of Forced-Alignment Algorithms on Children's 
+  Speech'
+author: Tristan Mahr
+date: 2020-10-30
+---
+
+The following is a reproduction of the Supplemental Material (analysis
+code) for Mahr, Berisha, Kawabata, Liss, and Hustad (2021). All code is in
+the R programming language.
+
+- Publication DOI: [10.1044/2020_JSLHR-20-00268](https://doi.org/10.1044/2020_JSLHR-20-00268)
+- PubMed URL: <https://pubmed.ncbi.nlm.nih.gov/33705675/> 
+- Supplemental Material DOI: [10.23641/asha.14167058.v1](https://doi.org/10.23641/asha.14167058.v1)
+- Analysis notes: mixed effects logistic regression; estimated marginal means; lme4
+
+***
+
+```{r, child="sm-2021-mahr-aligners.md"}
+```
+

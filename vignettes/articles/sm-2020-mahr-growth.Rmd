@@ -1,0 +1,21 @@
+---
+title: >
+  Analysis code: 'Longitudinal growth in intelligibility of connected speech 
+  from 2 to 8 years in children with cerebral palsy: A novel Bayesian approach'
+author: Tristan Mahr
+date: 2020-04-18
+---
+
+The following is a reproduction of the Supplemental Material (analysis
+code) for Mahr, Rathouz, and Hustad (2020). All code is in
+the R programming language.
+
+- Publication DOI: [10.1044/2020_JSLHR-20-00181](https://doi.org/10.1044/2020_JSLHR-20-00181)
+- Supplemental Material DOI: [10.23641/asha.12777659.v1](https://doi.org/10.23641/asha.12777659.v1)
+- Analysis notes: nonlinear mixed effects beta regression; brms
+
+***
+
+```{r, child="sm-2020-mahr-growth.md"}
+```
+
