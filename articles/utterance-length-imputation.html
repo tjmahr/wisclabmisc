@@ -35,10 +35,12 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/brms.html">A Workflow for brms</a></li>
-    <li><a class="dropdown-item" href="../articles/gamlss-tools.html">Tools for GAMLSS models</a></li>
+<li><a class="dropdown-item" href="../articles/gamlss-tools.html">Tools for GAMLSS models</a></li>
     <li><a class="dropdown-item" href="../articles/roc.html">Tools for ROC curves</a></li>
     <li><a class="dropdown-item" href="../articles/utterance-length-imputation.html">Utterance length imputation and weighting</a></li>
+    <li><a class="dropdown-item" href="../articles/brms.html">A Workflow for brms</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../articles/index.html">More articles...</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -329,7 +331,7 @@ of models or the variables involved are no longer hard-coded.</p>
 <span>    include_max_length <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/all.equal-methods.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_imputation_1</span><span class="op">$</span><span class="va">imputed_sim_intelligibility</span>, </span>
 <span>  <span class="va">data_imputation_2</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span></span>
 <span><span class="op">)</span></span>
@@ -347,7 +349,7 @@ the results noticeably.</p>
 <span>    include_max_length <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/all.equal-methods.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_imputation_2</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span>, </span>
 <span>  <span class="va">data_imputation_3</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span></span>
 <span><span class="op">)</span></span>
@@ -411,7 +413,7 @@ imputation.</p>
 <span>    data_train <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age_months</span> <span class="op">&gt;</span> <span class="fl">44</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/all.equal-methods.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_imputation_trained</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span>, </span>
 <span>  <span class="va">data_imputation_trained_2</span><span class="op">$</span><span class="va">sim_intelligibility_imputed</span></span>
 <span><span class="op">)</span></span>
@@ -549,13 +551,13 @@ everything behind a single function.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>We can see a match in weights between the two implementations.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/all.equal-methods.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_lol_weights</span><span class="op">$</span><span class="va">normalized_prob_reach_length</span>, </span>
 <span>  <span class="va">data_plot</span><span class="op">$</span><span class="va">tocs_level_weight</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/all.equal-methods.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_lol_weights</span><span class="op">$</span><span class="va">prob_reach_length</span>, </span>
 <span>  <span class="va">data_plot</span><span class="op">$</span><span class="va">tocs_level_prob_reached</span></span>
 <span><span class="op">)</span></span>
@@ -629,11 +631,11 @@ has the same length of longest utterance.</p>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>We can see the same results from both methods.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">data_means_wide_1</span><span class="op">$</span><span class="va">observed</span>, <span class="va">data_means_wide_2</span><span class="op">$</span><span class="va">observed</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/all.equal-methods.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">data_means_wide_1</span><span class="op">$</span><span class="va">observed</span>, <span class="va">data_means_wide_2</span><span class="op">$</span><span class="va">observed</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">data_means_wide_1</span><span class="op">$</span><span class="va">imputed</span>,  <span class="va">data_means_wide_2</span><span class="op">$</span><span class="va">imputed</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/all.equal-methods.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">data_means_wide_1</span><span class="op">$</span><span class="va">imputed</span>,  <span class="va">data_means_wide_2</span><span class="op">$</span><span class="va">imputed</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">data_means_wide_1</span><span class="op">$</span><span class="va">weighted</span>, <span class="va">data_means_wide_2</span><span class="op">$</span><span class="va">weighted</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/all.equal-methods.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">data_means_wide_1</span><span class="op">$</span><span class="va">weighted</span>, <span class="va">data_means_wide_2</span><span class="op">$</span><span class="va">weighted</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p>The three values overall are very similar:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
@@ -701,7 +703,7 @@ dataframe.</p>
 <span>  data_join <span class="op">=</span> <span class="va">data_imputation_2</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tocs_level</span> <span class="op">!=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/all.equal-methods.html" class="external-link">all.equal</a></span><span class="op">(</span></span>
 <span>  <span class="va">data_weighted_2</span><span class="op">$</span><span class="va">tocs_level_prob_reached</span>, </span>
 <span>  <span class="va">data_weighted_3</span><span class="op">$</span><span class="va">tocs_level_prob_reached</span></span>
 <span><span class="op">)</span></span>
