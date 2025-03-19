@@ -96,14 +96,18 @@ NULL
 
 
 
-#' Phonetic features of consonants and vowels
+#' Phonetic and acquisition features of consonants and vowels
 #'
-#' These are two dataframes that contain conventional phonetic features of
-#' the consonants and vowels used by CMU phonetic alphabet.
+#' These are dataframes that contain information about the consonants and
+#' vowels in American English. The *phonetic* features are conventional
+#' descriptions of how sounds are produced. The *acquisition* (`acq`) features
+#' (try to) describe the expected acquisition or speech-motor difficulty of
+#' speech sounds.
+#'
 #'
 #' @details
 #'
-#' Most of the features are self-evident and definitional. For example, /p/ is
+#' Most of the phonetic features are self-evident and definitional. For example, /p/ is
 #' *the* bilabial voiceless stop. For fuzzier features, I consulted the general
 #' IPA chart and the Wikipedia page on English phonology. These issues included
 #' things like: *what are the lax vowels again?* or *the last two rows of the
@@ -113,7 +117,7 @@ NULL
 #' of aggregation. For example, /r,l,j,w/ are *approximant* in `manner`
 #' but divided into *liquid* and *glide* in `manner_alt`.
 #'
-#' ## Consonants
+#' ## Phonetic features of consonants
 #'
 #'  `data_features_consonants` is a dataframe with 24 rows and
 #' 10 variables.
@@ -148,7 +152,7 @@ NULL
 #'   Filter(length, x = _)
 #' ```
 #'
-#' ## Considerations about consonant features
+#' ## Considerations about consonant phonetic features
 #'
 #' The CMU alphabet does not include a glottal stop.
 #'
@@ -163,7 +167,7 @@ NULL
 #' strategies in different languages. Note that `voicing_alt` does not assign
 #' a feature to nasals or approximants.
 #'
-#' ## Vowels
+#' ## Phonetic features of vowels
 #'
 #' `data_features_vowels` is a dataframe with 17 rows and
 #' 11 variables.
@@ -266,6 +270,8 @@ NULL
 #'
 #' I adapted these features in this way:
 #'
+#' - A four-level breakdown of height (high, mid-high, mid-low, low) was used
+#'   instead of a three-level one (close, mid, open).
 #' - *tense* and *lax* features were directly borrowed. Diphthongs and
 #'   r-colored vowels are were not assign a tenseness.
 #' - /ɑ/ moved to *back* (following the general IPA)
@@ -282,8 +288,58 @@ NULL
 #' vowel \[ɐ\] in RP and advanced back \[ʌ̟\] in General American." That is,
 #' /ʌ/ is fronted in American English (hence, *mid*) in American English.
 #'
+#' ## Acquisition features of consonants
+#'
+#' `data_acq_consonants` provides
+#'
+#' ```{r}
+#' knitr::kable(data_acq_consonants)
+#' ```
+#'
+#' Description of each column:
+#'
+#' \describe{
+#'   \item{phone}{phone in IPA}
+#'   \item{cmubet}{phone in the CMU alphabet}
+#'   \item{wiscbet}{phone in an older system used by our lab}
+#'   \item{cm2020_90_age_mean, cm2020_90_age_sd, cm2020_90_age_min,
+#'   cm2020_90_age_max}{Age of acquisition statistics reported by Crowe &
+#'   McLeod (2020). Statistics are the mean, SD, min and max age (in months)
+#'   when children reached 90% accuracy on a consonant.}
+#'   \item{cm2020_90_num_studies}{Number of studies used by Crowe & McLeod
+#'   (2020) to compute the corresponding statistics.}
+#'   \item{cm2020_90_stage }{Developmental stage assigned to the consonant by
+#'   Crowe & McLeod (2020). Sounds with an `age_mean` before 48 months are
+#'   `early`, before 60 months are `middle`, and of 60 or older are `late`.}
+#' }
+#'
+#' Crowe and McLeod (2020, `cm2020_` variables) provides a systematic review and
+#' summary statistics for age of acquisition norms for English consonants. They
+#' scoured the literature of acquisition ages for individual consonants and
+#' computed summary statistics on them. They considered just accuracy of sounds
+#' when produced in single words. Their sources include a mix of a journal
+#' articles and norms for articulation assessments. They do not weight
+#' statistics from individual studies by sample size or sampling procedure.
+#'
+#' I prepared the Crowe and McLeod (2020) data by copying the relevant numbers
+#' from their Table 2 making the following changes: 1) rounding mean and SD
+#' values to 1 decimal point (3 days for ages in months), 2) dropping /ʍ/, 3)
+#' using /r/, /g/, /tʃ/, /dʒ/ for IPA characters instead of the specialized
+#' characters used in the article. I believe these changes are so minimal that
+#' they do not qualify as transformative and hence do not break the "no
+#' derivatives"
+#'
+#' ### Acquisition references
+#'
+#' Crowe, K., & McLeod, S. (2020). Children’s English Consonant Acquisition in
+#' the United States: A Review. *American Journal of Speech-Language Pathology*,
+#' *29*(4), 2155–2169. <https://doi.org/10.1044/2020_AJSLP-19-00168>
+#'
 #' @concept datasets
 "data_features_consonants"
 
 #' @rdname data_features_consonants
 "data_features_vowels"
+
+#' @rdname data_features_consonants
+"data_acq_consonants"
