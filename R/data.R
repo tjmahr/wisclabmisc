@@ -96,13 +96,13 @@ NULL
 
 
 
-#' Phonetic and acquisition features of consonants and vowels
+
+#' Phonetic features of consonants and vowels
 #'
-#' These are dataframes that contain information about the consonants and
+#' This package provides dataframes of information about the consonants and
 #' vowels in American English. The *phonetic* features are conventional
-#' descriptions of how sounds are produced. The *acquisition* (`acq`) features
-#' (try to) describe the expected acquisition or speech-motor difficulty of
-#' speech sounds.
+#' descriptions of how sounds are produced. See also
+#' [data_acq_consonants].
 #'
 #'
 #' @details
@@ -288,9 +288,98 @@ NULL
 #' vowel \[ɐ\] in RP and advanced back \[ʌ̟\] in General American." That is,
 #' /ʌ/ is fronted in American English (hence, *mid*) in American English.
 #'
-#' ## Acquisition features of consonants
+#' @concept datasets
+"data_features_consonants"
+
+#' @rdname data_features_consonants
+"data_features_vowels"
+
+
+
+
+#' Acquisition and developmental descriptions of consonants and vowels
 #'
-#' `data_acq_consonants` provides
+#' This package provides dataframes of information about the consonants and
+#' vowels in American English. The following datasets collect *acquisition*
+#' (`acq`) features which (try to) characterize the expected acquisition or
+#' speech-motor difficulty of speech sounds. See also
+#' [data_features_consonants].
+#'
+#' @references Crowe, K., & McLeod, S. (2020). Children’s English Consonant
+#' Acquisition in the United States: A Review. *American Journal of
+#' Speech-Language Pathology*,
+#' *29*(4), 2155–2169. <https://doi.org/10.1044/2020_AJSLP-19-00168>
+#'
+#' Shriberg, L. D. (1993). Four New Speech and Prosody-Voice Measures for
+#' Genetics Research and Other Studies in Developmental Phonological Disorders.
+#' *Journal of Speech, Language, and Hearing Research*, *36*(1), 105–140.
+#' <https://doi.org/10.1044/jshr.3601.105>
+#'
+#' @rdname data_acq_consonants
+#' @concept datasets
+#'
+#' @details ## Crowe and McLeod (2020) norms for English consonant acquisition
+#'
+#' Crowe and McLeod (2020, below as the `cm2020_` variables) provides a
+#' systematic review and summary statistics for age of acquisition norms for
+#' English consonants. They scoured the literature of acquisition ages for
+#' individual consonants and computed summary statistics on them. They
+#' considered just accuracy of sounds when produced in single words. Their
+#' sources include a mix of a journal articles and norms for articulation
+#' assessments. They do not weight statistics from individual studies by sample
+#' size or sampling procedure.
+#'
+#' I prepared the Crowe and McLeod (2020) data by copying the relevant numbers
+#' from their Table 2 making the following changes: 1) rounding mean and SD
+#' values to 1 decimal point (3 days for ages in months), 2) dropping /ʍ/, 3)
+#' using /r/, /g/, /tʃ/, /dʒ/ for IPA characters instead of the specialized
+#' characters used in the article.
+#'
+#' ## The early 8, middle 8 and late 8 (Shriberg, 1993)
+#'
+#' The English consonants are often broken down into three developmental
+#' classes, based on Shriberg (1993):
+#'
+#' - Early 8: m b j n w d p h
+#' - Middle 8: t ŋ k g f v tʃ dʒ,
+#' - Late 8: ʃ θ s z ð l r ʒ
+#'
+#' This classification is included as the `s93_eights` column.
+#'
+#' From these names alone, we might interpret these classes such that sounds in
+#' the Early 8 would be acquired before the ones in the Middle 8, and likewise
+#' that the Middle 8 would be acquired before the Late 8. But these classes were
+#' not created by examining patterns of typical consonant acquisition.
+#'
+#' For some context, Shriberg (1993) introduces the Early 8, Middle 8, and Late
+#' 8 data by describing the following panel of the article's Figure 7:
+#'
+#' ![First panel of Figure 7 from Shriberg (1993)](shriberg_1993_600.png)
+#'
+#' About which, Shriberg (1993) says:  _"The values for this trend, which is a
+#' profile of consonant mastery, were taken from a group of 64 3- to 6-year-old
+#' speech-delayed children Shriberg, Kwiatkowski, & Gruber, 1992). Severity of
+#' involvement of the 24 English consonants is represented as the percentage
+#' correct for each consonant sorted in decreasing order from left to right.
+#' Notice that the most obvious breaks in this function allow for a division of
+#' the 24 consonants into three groups of eight sounds termed the
+#' **Early-8**, averaging over 75% correct, the **Middle-8**, averaging 25%-75%
+#' correct, and the **Late-8**, including consonants averaging less than 25%
+#' correct in continuous conversational speech (/ʒ/ is infrequently represented
+#' in young, speech-delayed children's spontaneous conversational speech)."_
+#'
+#' So, there were 64 3--6-year-old children with speech delays, and consonant
+#' sounds were divided into three classes based on how often *these
+#' children* produced the sounds correctly on average in a conversational
+#' speech sample. This classification is not so much a measure of the
+#' relative ordering of speech sound development as it is **the relative
+#' difficulty of these sounds for children with a speech delay of unknown
+#' origin**. It would be more appropriate to replace the levels of
+#' Early/Middle/Late with Easy/Medium/Hard.
+#'
+#' ## Consonant acquisition features
+#'
+#' `data_acq_consonants` provides the following features:
 #'
 #' ```{r}
 #' knitr::kable(data_acq_consonants)
@@ -308,38 +397,19 @@ NULL
 #'   when children reached 90% accuracy on a consonant.}
 #'   \item{cm2020_90_num_studies}{Number of studies used by Crowe & McLeod
 #'   (2020) to compute the corresponding statistics.}
-#'   \item{cm2020_90_stage }{Developmental stage assigned to the consonant by
+#'   \item{cm2020_90_stage}{Developmental stage assigned to the consonant by
 #'   Crowe & McLeod (2020). Sounds with an `age_mean` before 48 months are
 #'   `early`, before 60 months are `middle`, and of 60 or older are `late`.}
+#'   \item{s93_eights}{Developmental stage of Shriberg (1993)---that is,
+#'   the `early` 8, `middle` 8 and `late` 8 consonants.}
 #' }
 #'
-#' Crowe and McLeod (2020, `cm2020_` variables) provides a systematic review and
-#' summary statistics for age of acquisition norms for English consonants. They
-#' scoured the literature of acquisition ages for individual consonants and
-#' computed summary statistics on them. They considered just accuracy of sounds
-#' when produced in single words. Their sources include a mix of a journal
-#' articles and norms for articulation assessments. They do not weight
-#' statistics from individual studies by sample size or sampling procedure.
-#'
-#' I prepared the Crowe and McLeod (2020) data by copying the relevant numbers
-#' from their Table 2 making the following changes: 1) rounding mean and SD
-#' values to 1 decimal point (3 days for ages in months), 2) dropping /ʍ/, 3)
-#' using /r/, /g/, /tʃ/, /dʒ/ for IPA characters instead of the specialized
-#' characters used in the article. I believe these changes are so minimal that
-#' they do not qualify as transformative and hence do not break the "no
-#' derivatives"
-#'
-#' ### Acquisition references
-#'
-#' Crowe, K., & McLeod, S. (2020). Children’s English Consonant Acquisition in
-#' the United States: A Review. *American Journal of Speech-Language Pathology*,
-#' *29*(4), 2155–2169. <https://doi.org/10.1044/2020_AJSLP-19-00168>
-#'
-#' @concept datasets
-"data_features_consonants"
-
-#' @rdname data_features_consonants
-"data_features_vowels"
-
-#' @rdname data_features_consonants
 "data_acq_consonants"
+
+
+
+
+#
+#
+#
+

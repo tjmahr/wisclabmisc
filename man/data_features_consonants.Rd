@@ -4,28 +4,22 @@
 \name{data_features_consonants}
 \alias{data_features_consonants}
 \alias{data_features_vowels}
-\alias{data_acq_consonants}
-\title{Phonetic and acquisition features of consonants and vowels}
+\title{Phonetic features of consonants and vowels}
 \format{
 An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 24 rows and 11 columns.
 
 An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 17 rows and 13 columns.
-
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 24 rows and 9 columns.
 }
 \usage{
 data_features_consonants
 
 data_features_vowels
-
-data_acq_consonants
 }
 \description{
-These are dataframes that contain information about the consonants and
+This package provides dataframes of information about the consonants and
 vowels in American English. The \emph{phonetic} features are conventional
-descriptions of how sounds are produced. The \emph{acquisition} (\code{acq}) features
-(try to) describe the expected acquisition or speech-motor difficulty of
-speech sounds.
+descriptions of how sounds are produced. See also
+\link{data_acq_consonants}.
 }
 \details{
 Most of the phonetic features are self-evident and definitional. For example, /p/ is
@@ -264,78 +258,6 @@ clashes with the general IPA chart which places /ʌ/ as a back vowel. However,
 American, the actual pronunciation is closer to a near-open central
 vowel [ɐ] in RP and advanced back [ʌ̟] in General American." That is,
 /ʌ/ is fronted in American English (hence, \emph{mid}) in American English.
-}
-
-\subsection{Acquisition features of consonants}{
-
-\code{data_acq_consonants} provides
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_acq_consonants)
-}\if{html}{\out{</div>}}\tabular{lllrrrrrl}{
-   phone \tab cmubet \tab wiscbet \tab cm2020_90_age_mean \tab cm2020_90_age_sd \tab cm2020_90_age_min \tab cm2020_90_age_max \tab cm2020_90_num_studies \tab cm2020_90_stage \cr
-   p \tab P \tab p \tab 33.2 \tab 6.9 \tab 24 \tab 48 \tab 12 \tab early \cr
-   b \tab B \tab b \tab 31.4 \tab 7.8 \tab 24 \tab 48 \tab 13 \tab early \cr
-   t \tab T \tab t \tab 38.5 \tab 9.2 \tab 24 \tab 60 \tab 13 \tab early \cr
-   d \tab D \tab d \tab 35.7 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \cr
-   k \tab K \tab k \tab 37.7 \tab 7.3 \tab 24 \tab 48 \tab 13 \tab early \cr
-   g \tab G \tab g \tab 36.8 \tab 6.6 \tab 24 \tab 48 \tab 13 \tab early \cr
-   tʃ \tab CH \tab tsh \tab 53.5 \tab 10.7 \tab 36 \tab 72 \tab 12 \tab middle \cr
-   dʒ \tab JH \tab dzh \tab 51.0 \tab 11.8 \tab 36 \tab 72 \tab 13 \tab middle \cr
-   m \tab M \tab m \tab 33.2 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \cr
-   n \tab N \tab n \tab 33.1 \tab 7.4 \tab 24 \tab 48 \tab 13 \tab early \cr
-   ŋ \tab NG \tab ng \tab 40.3 \tab 10.8 \tab 24 \tab 55 \tab 10 \tab early \cr
-   f \tab F \tab f \tab 38.3 \tab 6.3 \tab 24 \tab 48 \tab 13 \tab early \cr
-   v \tab V \tab v \tab 50.8 \tab 10.8 \tab 36 \tab 66 \tab 12 \tab middle \cr
-   θ \tab TH \tab th \tab 77.0 \tab 7.4 \tab 72 \tab 96 \tab 10 \tab late \cr
-   ð \tab DH \tab dh \tab 69.0 \tab 11.3 \tab 54 \tab 96 \tab 12 \tab late \cr
-   s \tab S \tab s \tab 51.3 \tab 16.3 \tab 24 \tab 84 \tab 12 \tab middle \cr
-   z \tab Z \tab z \tab 56.8 \tab 14.3 \tab 30 \tab 84 \tab 11 \tab middle \cr
-   ʃ \tab SH \tab sh \tab 55.0 \tab 10.5 \tab 36 \tab 72 \tab 12 \tab middle \cr
-   ʒ \tab ZH \tab zh \tab 70.7 \tab 12.2 \tab 60 \tab 84 \tab 3 \tab late \cr
-   h \tab HH \tab h \tab 35.0 \tab 7.0 \tab 24 \tab 48 \tab 13 \tab early \cr
-   l \tab L \tab l \tab 53.8 \tab 10.4 \tab 24 \tab 60 \tab 12 \tab middle \cr
-   r \tab R \tab r \tab 66.6 \tab 18.6 \tab 30 \tab 96 \tab 12 \tab late \cr
-   w \tab W \tab w \tab 35.2 \tab 6.8 \tab 24 \tab 48 \tab 13 \tab early \cr
-   j \tab Y \tab j \tab 45.8 \tab 11.0 \tab 30 \tab 60 \tab 13 \tab early \cr
-}
-
-
-Description of each column:
-
-\describe{
-\item{phone}{phone in IPA}
-\item{cmubet}{phone in the CMU alphabet}
-\item{wiscbet}{phone in an older system used by our lab}
-\item{cm2020_90_age_mean, cm2020_90_age_sd, cm2020_90_age_min,
-cm2020_90_age_max}{Age of acquisition statistics reported by Crowe &
-McLeod (2020). Statistics are the mean, SD, min and max age (in months)
-when children reached 90\% accuracy on a consonant.}
-\item{cm2020_90_num_studies}{Number of studies used by Crowe & McLeod
-(2020) to compute the corresponding statistics.}
-\item{cm2020_90_stage }{Developmental stage assigned to the consonant by
-Crowe & McLeod (2020). Sounds with an \code{age_mean} before 48 months are
-\code{early}, before 60 months are \code{middle}, and of 60 or older are \code{late}.}
-}
-
-Crowe and McLeod (2020, \code{cm2020_} variables) provides a systematic review and
-summary statistics for age of acquisition norms for English consonants. They
-scoured the literature of acquisition ages for individual consonants and
-computed summary statistics on them. They considered just accuracy of sounds
-when produced in single words. Their sources include a mix of a journal
-articles and norms for articulation assessments. They do not weight
-statistics from individual studies by sample size or sampling procedure.
-
-I prepared the data by copying the relevant numbers from their Table 2 making
-the following changes: 1) rounding mean and SD values to 1 decimal point (3
-days for ages in months), 2) dropping /ʍ/, 3) using /r/, /g/, /tʃ/, /dʒ/ for
-IPA characters instead of the specialized characters used in the article.
-\subsection{Acquisition references}{
-
-Crowe, K., & McLeod, S. (2020). Children’s English Consonant Acquisition in
-the United States: A Review. \emph{American Journal of Speech-Language Pathology},
-\emph{29}(4), 2155–2169. \url{https://doi.org/10.1044/2020_AJSLP-19-00168}
-}
-
 }
 }
 \concept{datasets}

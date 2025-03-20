@@ -82,6 +82,19 @@ data_acq_consonants <- readr::read_csv("data-raw/consonants.csv") |>
   right_join(data_crowe_mcleod2) |>
   print(n = Inf)
 
+
+s8_e <- c("m", "b", "j", "n", "w", "d",  "p",  "h")
+s8_m <- c("t", "ŋ", "k", "g", "f", "v", "tʃ", "dʒ")
+s8_l <- c("ʃ", "θ", "s", "z", "ð", "l",  "r",  "ʒ")
+
+data_s93 <- data.frame(
+  phone = c(s8_e, s8_m, s8_l),
+  s93_eights = c(rep("early", 8), rep("middle", 8), rep("late", 8))
+)
+
+data_acq_consonants <- data_acq_consonants |>
+  left_join(data_s93, by = "phone")
+
 usethis::use_data(
   data_acq_consonants,
   overwrite = TRUE
