@@ -1,0 +1,83 @@
+---
+title: "Untitled"
+author: "Tristan Mahr"
+date: "2025-04-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+wisclabmisc::data_acq_consonants |> 
+  print(n = Inf)
+```
+
+
+Which speech sounds are more or less difficult for children to produce? Phonetic 
+complexity scores (`sss` and `ttt`) assign the speech sounds different 
+complexity levels based on biological principles outlined in Kent (1992).
+
+
+
+Kent (1992) examined the ages of English consonant acqusition in Sander (1972) and 
+observed that /p m n w h/ are mastered at age 3, /b d k g j f/ at age 4, /t ŋ r l/ at age 6 and /s z ʃ ʒ v θ ð tʃ dʒ/ after age 7. He then proceeds to describe motoric demands in each of these sets of sounds. I'll paraphrase:
+
+  - Set 1 requires fast "ballistic" movements for stops /p m n/, slow
+    "ramp" movements for /w h/, velopharyngeal control for oral-nasal
+    contrast, laryngeal control for voicing contrast.
+  - Set 2 adds more stops /b d k g/ and another ramp /j/ and a new place
+    of articulation (velars), but also requires "fine force regulation
+    for frication" for /f/.
+  - Set 3 adds more stops /t ŋ/, but also requires tongue "bending" for
+    /r/ and /l/.
+  - Set 4 adds more lingual fricatives /s z ʃ ʒ θ ð/ which require
+    tongue bending and fine force control along with /v tʃ dʒ/. Kent
+    does not characterize the motor demands for the affricates /tʃ dʒ/.
+
+Let's pause for a moment and observe that this breakdown is just an
+attempt to describe the Sander (1972) consonant norms in terms of
+articulatory motor demands. Specifically, the sets above correspond to the 
+right edges on the following bar graph:
+
+`sander-image`
+
+
+Kent (1992) description does not answer questions like "why is /d/ in
+age 4 and /t/ in age 6?" or "why is /f/ in age 4 but /v/ in age 6?". But
+it is fine to ignore those questions because they might be artefactual
+features (quirks) of the source material. 
+
+aside: For example, Sander (1972)
+defined "customary articulation" as correct production of a sound in at
+least two word positions (initial, medial and final). The main source of
+Sander's norms (Templin, 1957), all children in the sample can produce
+initial /t/ at age-3, but it takes until ages 6 or 7 for at least 90% of
+the sample to produce /t/ correct in another position.
+
+
+The main point of Kent's description, I think, is that lingual
+(tongue) consonants are more difficult. Elsewhere in the chapter, Kent
+(1992) describes how the tongue is a "muscular hydrostat" like an
+elephant trunk, and bending a hydrostat requires coordination of
+different muscle directions:
+
+"*Gaining motor control over a hydrostat presents some special problems
+to the young child learning speech. For one, bending the hydrostat is
+unlike bending a jointed structure such as a finger. The tongue has no
+joints per se; it flexes by appropriate contraction of its
+three-dimensional network of intrinsic longitudinal, vertical, and
+transverse fibers. Bending a hydrostat requires that muscle fibers be
+shortened on one aspect simultaneously with a resistance to a change in
+diameter (Smith and Kier 1989). If the diameter change is not resisted,
+then the hydrostat will shorten on one side but will not bend. To use
+the tongue in speech, the child must learn to control the tongue to meet
+skeletal, movement, and shaping requirements, often simultaneously.
+These special characteristics of the tongue may well play a role in
+vowel and consonant mastery.*"
+
+Kim and colleagues (2010) applied these developmental sets as articulatory complexity "levels" while examining consonant errors in dysarthric speech. They then asked questions such as whether more complex consonants had more consonant errors than less complex ones (*yes*) or whether lower intelligibility speakers made more complexity-reducing consonant substitutions than higher intelligibility speakers (*apparently so*).
+
+Allison and Hustad (2014) used these complexity levels as a way to score the phonetic complexity of sentences. They assigned consonants 1--5 scores (the 1--4 complexity levels with 5 for consonants clusters), and summed up the scores to provide a complexity score for a sentence. 
+
+Kuruvilla-Dugdale and colleagues (2018) elaborated on this scale.
+
+

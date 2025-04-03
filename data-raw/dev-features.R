@@ -1,11 +1,12 @@
 library(tidyverse)
 
-# I pasted the table into NotePad++ and did some find and replace to get.
-# - change 1) I dropped the voiceless /ʍ/ row
-# - change 2) Used /r/ instead of /ɹ/ for the English approximant sound
-# - change 3) Used /g/ instead of /ɡ/
-# - change 4) Used /tʃ, dʒ/ instead of single-character versions.
-data_crowe_mcleod <- readr::read_csv(
+make_crowe_mcleod <- function() {
+  # I pasted the table into NotePad++ and did some find and replace to get.
+  # - change 1) I dropped the voiceless /ʍ/ row
+  # - change 2) Used /r/ instead of /ɹ/ for the English approximant sound
+  # - change 3) Used /g/ instead of /ɡ/
+  # - change 4) Used /tʃ, dʒ/ instead of single-character versions.
+  data_crowe_mcleod <- readr::read_csv(
   "phone,M_50,SD_50,Range_50,N_50,M_75,SD_75,Range_75,N_75,M_90,SD_90,Range_90,N_90
   p,30.60,7.18,18–36,10,32.73,5.61,24–36,11,33.25,6.94,24–48,12
   b,30.60,7.18,18–36,10,32.73,5.61,24–36,11,31.38,7.81,24–48,13
@@ -32,68 +33,101 @@ data_crowe_mcleod <- readr::read_csv(
   tʃ,34.20,4.05,24–36,10,41.64,8.71,24–54,11,53.50,10.69,36–72,12
   dʒ,34.20,4.05,24–36,10,41.27,8.68,24–54,11,51.00,11.82,36–72,13
 "
-) |>
-  janitor::clean_names() |>
-  separate(range_90, c("min_90", "max_90"), sep = "\\D") |>
-  separate(range_50, c("min_50", "max_50"), sep = "\\D") |>
-  separate(range_75, c("min_75", "max_75"), sep = "\\D") |>
-  mutate(
-    across(c(starts_with("min"), starts_with("max")), as.numeric)
   ) |>
-  pivot_longer(
-    -phone,
-    names_to = c("stat", "criterion"),
-    names_sep = "_",
-    values_to = "value"
-  ) |>
-  pivot_wider(names_from = stat, values_from = value) |>
-  rename(
-    age_mean = m,
-    age_sd = sd,
-    age_min = min,
-    age_max = max,
-    num_studies = n
-  ) |>
-  # - change 5) rounded mean and sd to 1 decimal
-  mutate(
-    age_mean = round(age_mean, 1),
-    age_sd = round(age_sd, 1)
-  )
-
-
-data_crowe_mcleod2 <- data_crowe_mcleod |>
-  filter(criterion == 90) |>
-  mutate(
-    stage = case_when(
-      age_mean < 4 * 12 ~ "early",
-      age_mean < 5 * 12 ~ "middle",
-      age_mean < 7 * 12 ~ "late",
+    janitor::clean_names() |>
+    mutate(phone = str_trim(phone)) |>
+    separate(range_90, c("min_90", "max_90"), sep = "\\D") |>
+    separate(range_50, c("min_50", "max_50"), sep = "\\D") |>
+    separate(range_75, c("min_75", "max_75"), sep = "\\D") |>
+    mutate(
+      across(c(starts_with("min"), starts_with("max")), as.numeric)
+    ) |>
+    pivot_longer(
+      -phone,
+      names_to = c("stat", "criterion"),
+      names_sep = "_",
+      values_to = "value"
+    ) |>
+    pivot_wider(names_from = stat, values_from = value) |>
+    rename(
+      age_mean = m,
+      age_sd = sd,
+      age_min = min,
+      age_max = max,
+      num_studies = n
+    ) |>
+    # - change 5) rounded mean and sd to 1 decimal
+    mutate(
+      age_mean = round(age_mean, 1),
+      age_sd = round(age_sd, 1)
     )
-  ) |>
-  select(-criterion)
 
-names(data_crowe_mcleod2) <- names(data_crowe_mcleod2) |>
-  stringr::str_replace("age_", "cm2020_90_age_") |>
-  stringr::str_replace("stage", "cm2020_90_stage") |>
-  stringr::str_replace("num_studies", "cm2020_90_num_studies")
+  data_crowe_mcleod2 <- data_crowe_mcleod |>
+    filter(criterion == 90) |>
+    mutate(
+      stage = case_when(
+        age_mean < 4 * 12 ~ "early",
+        age_mean < 5 * 12 ~ "middle",
+        age_mean < 7 * 12 ~ "late",
+      )
+    ) |>
+    select(-criterion)
+
+  names(data_crowe_mcleod2) <- names(data_crowe_mcleod2) |>
+    stringr::str_replace("age_", "cm2020_90_age_") |>
+    stringr::str_replace("stage", "cm2020_90_stage") |>
+    stringr::str_replace("num_studies", "cm2020_90_num_studies")
+
+  data_crowe_mcleod2
+}
+
+make_shriberg_eights <- function() {
+  s8_e <- c("m", "b", "j", "n", "w", "d",  "p",  "h")
+  s8_m <- c("t", "ŋ", "k", "g", "f", "v", "tʃ", "dʒ")
+  s8_l <- c("ʃ", "θ", "s", "z", "ð", "l",  "r",  "ʒ")
+
+  data_s93 <- data.frame(
+    phone = c(s8_e, s8_m, s8_l),
+    s93_eights = c(rep("early", 8), rep("middle", 8), rep("late", 8))
+  )
+}
+
+make_complexity_scales <- function() {
+  vowels <- local({
+    v <- c(
+      "AH" = 1, "AA" = 1,
+      "IY" = 2, "UW" = 2, "OW" = 2,
+      "AY" = 3, "AO" = 3, "AW" = 3, "EH" = 3, "OY" = 3,
+      "IH" = 4, "AE" = 4, "EY" = 4, "UH" = 4, "ER" = 5
+    )
+    data.frame(cmubet = names(v), complexity = unname(v))
+  })
+
+  consonants <- local({
+    v <- c(
+       "P" = 3,  "M" = 3,  "N" = 3,  "W" = 3, "HH" = 3,
+       "B" = 4,  "D" = 4,  "K" = 4,  "G" = 4,  "Y" = 4,  "F" = 4,
+       "T" = 5, "NG" = 5,  "R" = 5,  "L" = 5,
+       "S" = 6,  "Z" = 6, "SH" = 6, "ZH" = 6,  "V" = 6, "TH" = 6, "DH" = 6,
+      "CH" = 6, "JH" = 6
+    )
+    data.frame(cmubet = names(v), complexity = unname(v))
+  })
+
+  consonants2 <- consonants
+  consonants2$complexity <- consonants2$complexity - 2
+}
+
+data_s93 <- make_shriberg_eights()
+data_crowe_mcleod <- make_crowe_mcleod()
 
 data_acq_consonants <- readr::read_csv("data-raw/consonants.csv") |>
   select(phone, cmubet, wiscbet) |>
-  right_join(data_crowe_mcleod2) |>
+  right_join(data_crowe_mcleod, by = "phone") |>
+  left_join(data_s93, by = "phone") |>
   print(n = Inf)
 
 
-s8_e <- c("m", "b", "j", "n", "w", "d",  "p",  "h")
-s8_m <- c("t", "ŋ", "k", "g", "f", "v", "tʃ", "dʒ")
-s8_l <- c("ʃ", "θ", "s", "z", "ð", "l",  "r",  "ʒ")
-
-data_s93 <- data.frame(
-  phone = c(s8_e, s8_m, s8_l),
-  s93_eights = c(rep("early", 8), rep("middle", 8), rep("late", 8))
-)
-
-data_acq_consonants <- data_acq_consonants |>
-  left_join(data_s93, by = "phone")
 
 usethis::use_data(
   data_acq_consonants,
