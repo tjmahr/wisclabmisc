@@ -402,10 +402,26 @@ NULL
 #'   `early`, before 60 months are `middle`, and of 60 or older are `late`.}
 #'   \item{s93_eights}{Developmental stage of Shriberg (1993)---that is,
 #'   the `early` 8, `middle` 8 and `late` 8 consonants.}
+#'   \item{k1992_set}{tk tk}
+#'   \item{kd2018_complexity}{tk tk}
 #' }
 #'
+#' ## Vowel acquisition features
+#'
+#' `data_acq_vowels` provides the following features:
+#'
+#' ```{r}
+#' knitr::kable(data_acq_vowels)
+#' ```
+#'
+#' \describe{
+#'   \item{phone}{phone in IPA}
+#'   \item{cmubet}{phone in the CMU alphabet}
+#'   \item{wiscbet}{phone in an older system used by our lab}
+#'   \item{kd2018_complexity}{tk tk}
+#' }
 "data_acq_consonants"
 
-
-
+#' @rdname data_acq_consonants
+"data_acq_vowels"
 

@@ -3,12 +3,17 @@
 \docType{data}
 \name{data_acq_consonants}
 \alias{data_acq_consonants}
+\alias{data_acq_vowels}
 \title{Acquisition and developmental descriptions of consonants and vowels}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 24 rows and 10 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 24 rows and 12 columns.
+
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 17 rows and 4 columns.
 }
 \usage{
 data_acq_consonants
+
+data_acq_vowels
 }
 \description{
 This package provides dataframes of information about the consonants and
@@ -85,32 +90,32 @@ Early/Middle/Late with Easy/Medium/Hard.
 \code{data_acq_consonants} provides the following features:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_acq_consonants)
-}\if{html}{\out{</div>}}\tabular{lllrrrrrll}{
-   phone \tab cmubet \tab wiscbet \tab cm2020_90_age_mean \tab cm2020_90_age_sd \tab cm2020_90_age_min \tab cm2020_90_age_max \tab cm2020_90_num_studies \tab cm2020_90_stage \tab s93_eights \cr
-   p \tab P \tab p \tab 33.2 \tab 6.9 \tab 24 \tab 48 \tab 12 \tab early \tab early \cr
-   b \tab B \tab b \tab 31.4 \tab 7.8 \tab 24 \tab 48 \tab 13 \tab early \tab early \cr
-   t \tab T \tab t \tab 38.5 \tab 9.2 \tab 24 \tab 60 \tab 13 \tab early \tab middle \cr
-   d \tab D \tab d \tab 35.7 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \tab early \cr
-   k \tab K \tab k \tab 37.7 \tab 7.3 \tab 24 \tab 48 \tab 13 \tab early \tab middle \cr
-   g \tab G \tab g \tab 36.8 \tab 6.6 \tab 24 \tab 48 \tab 13 \tab early \tab middle \cr
-   tʃ \tab CH \tab tsh \tab 53.5 \tab 10.7 \tab 36 \tab 72 \tab 12 \tab middle \tab middle \cr
-   dʒ \tab JH \tab dzh \tab 51.0 \tab 11.8 \tab 36 \tab 72 \tab 13 \tab middle \tab middle \cr
-   m \tab M \tab m \tab 33.2 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \tab early \cr
-   n \tab N \tab n \tab 33.1 \tab 7.4 \tab 24 \tab 48 \tab 13 \tab early \tab early \cr
-   ŋ \tab NG \tab ng \tab 40.3 \tab 10.8 \tab 24 \tab 55 \tab 10 \tab early \tab middle \cr
-   f \tab F \tab f \tab 38.3 \tab 6.3 \tab 24 \tab 48 \tab 13 \tab early \tab middle \cr
-   v \tab V \tab v \tab 50.8 \tab 10.8 \tab 36 \tab 66 \tab 12 \tab middle \tab middle \cr
-   θ \tab TH \tab th \tab 77.0 \tab 7.4 \tab 72 \tab 96 \tab 10 \tab late \tab late \cr
-   ð \tab DH \tab dh \tab 69.0 \tab 11.3 \tab 54 \tab 96 \tab 12 \tab late \tab late \cr
-   s \tab S \tab s \tab 51.3 \tab 16.3 \tab 24 \tab 84 \tab 12 \tab middle \tab late \cr
-   z \tab Z \tab z \tab 56.8 \tab 14.3 \tab 30 \tab 84 \tab 11 \tab middle \tab late \cr
-   ʃ \tab SH \tab sh \tab 55.0 \tab 10.5 \tab 36 \tab 72 \tab 12 \tab middle \tab late \cr
-   ʒ \tab ZH \tab zh \tab 70.7 \tab 12.2 \tab 60 \tab 84 \tab 3 \tab late \tab late \cr
-   h \tab HH \tab h \tab 35.0 \tab 7.0 \tab 24 \tab 48 \tab 13 \tab early \tab early \cr
-   l \tab L \tab l \tab 53.8 \tab 10.4 \tab 24 \tab 60 \tab 12 \tab middle \tab late \cr
-   r \tab R \tab r \tab 66.6 \tab 18.6 \tab 30 \tab 96 \tab 12 \tab late \tab late \cr
-   w \tab W \tab w \tab 35.2 \tab 6.8 \tab 24 \tab 48 \tab 13 \tab early \tab early \cr
-   j \tab Y \tab j \tab 45.8 \tab 11.0 \tab 30 \tab 60 \tab 13 \tab early \tab early \cr
+}\if{html}{\out{</div>}}\tabular{lllrrrrrllrr}{
+   phone \tab cmubet \tab wiscbet \tab cm2020_90_age_mean \tab cm2020_90_age_sd \tab cm2020_90_age_min \tab cm2020_90_age_max \tab cm2020_90_num_studies \tab cm2020_90_stage \tab s93_eights \tab k1992_set \tab kd2018_complexity \cr
+   p \tab P \tab p \tab 33.2 \tab 6.9 \tab 24 \tab 48 \tab 12 \tab early \tab early \tab 1 \tab 3 \cr
+   b \tab B \tab b \tab 31.4 \tab 7.8 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 2 \tab 4 \cr
+   t \tab T \tab t \tab 38.5 \tab 9.2 \tab 24 \tab 60 \tab 13 \tab early \tab middle \tab 3 \tab 5 \cr
+   d \tab D \tab d \tab 35.7 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 2 \tab 4 \cr
+   k \tab K \tab k \tab 37.7 \tab 7.3 \tab 24 \tab 48 \tab 13 \tab early \tab middle \tab 2 \tab 4 \cr
+   g \tab G \tab g \tab 36.8 \tab 6.6 \tab 24 \tab 48 \tab 13 \tab early \tab middle \tab 2 \tab 4 \cr
+   tʃ \tab CH \tab tsh \tab 53.5 \tab 10.7 \tab 36 \tab 72 \tab 12 \tab middle \tab middle \tab 4 \tab 6 \cr
+   dʒ \tab JH \tab dzh \tab 51.0 \tab 11.8 \tab 36 \tab 72 \tab 13 \tab middle \tab middle \tab 4 \tab 6 \cr
+   m \tab M \tab m \tab 33.2 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \cr
+   n \tab N \tab n \tab 33.1 \tab 7.4 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \cr
+   ŋ \tab NG \tab ng \tab 40.3 \tab 10.8 \tab 24 \tab 55 \tab 10 \tab early \tab middle \tab 3 \tab 5 \cr
+   f \tab F \tab f \tab 38.3 \tab 6.3 \tab 24 \tab 48 \tab 13 \tab early \tab middle \tab 2 \tab 4 \cr
+   v \tab V \tab v \tab 50.8 \tab 10.8 \tab 36 \tab 66 \tab 12 \tab middle \tab middle \tab 4 \tab 6 \cr
+   θ \tab TH \tab th \tab 77.0 \tab 7.4 \tab 72 \tab 96 \tab 10 \tab late \tab late \tab 4 \tab 6 \cr
+   ð \tab DH \tab dh \tab 69.0 \tab 11.3 \tab 54 \tab 96 \tab 12 \tab late \tab late \tab 4 \tab 6 \cr
+   s \tab S \tab s \tab 51.3 \tab 16.3 \tab 24 \tab 84 \tab 12 \tab middle \tab late \tab 4 \tab 6 \cr
+   z \tab Z \tab z \tab 56.8 \tab 14.3 \tab 30 \tab 84 \tab 11 \tab middle \tab late \tab 4 \tab 6 \cr
+   ʃ \tab SH \tab sh \tab 55.0 \tab 10.5 \tab 36 \tab 72 \tab 12 \tab middle \tab late \tab 4 \tab 6 \cr
+   ʒ \tab ZH \tab zh \tab 70.7 \tab 12.2 \tab 60 \tab 84 \tab 3 \tab late \tab late \tab 4 \tab 6 \cr
+   h \tab HH \tab h \tab 35.0 \tab 7.0 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \cr
+   l \tab L \tab l \tab 53.8 \tab 10.4 \tab 24 \tab 60 \tab 12 \tab middle \tab late \tab 3 \tab 5 \cr
+   r \tab R \tab r \tab 66.6 \tab 18.6 \tab 30 \tab 96 \tab 12 \tab late \tab late \tab 3 \tab 5 \cr
+   w \tab W \tab w \tab 35.2 \tab 6.8 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \cr
+   j \tab Y \tab j \tab 45.8 \tab 11.0 \tab 30 \tab 60 \tab 13 \tab early \tab early \tab 2 \tab 4 \cr
 }
 
 
@@ -131,6 +136,43 @@ Crowe & McLeod (2020). Sounds with an \code{age_mean} before 48 months are
 \code{early}, before 60 months are \code{middle}, and of 60 or older are \code{late}.}
 \item{s93_eights}{Developmental stage of Shriberg (1993)---that is,
 the \code{early} 8, \code{middle} 8 and \code{late} 8 consonants.}
+\item{k1992_set}{tk tk}
+\item{kd2018_complexity}{tk tk}
+}
+}
+
+\subsection{Vowel acquisition features}{
+
+\code{data_acq_vowels} provides the following features:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_acq_vowels)
+}\if{html}{\out{</div>}}\tabular{lllr}{
+   phone \tab cmubet \tab wiscbet \tab kd2018_complexity \cr
+   i \tab IY \tab i \tab 2 \cr
+   ɪ \tab IH \tab I \tab 4 \cr
+   eɪ \tab EY \tab eI \tab 4 \cr
+   ɛ \tab EH \tab E \tab 3 \cr
+   æ \tab AE \tab ae \tab 4 \cr
+   ʌ \tab AH \tab ^ \tab 1 \cr
+   ə \tab AH \tab 4 \tab 1 \cr
+   u \tab UW \tab u \tab 2 \cr
+   ʊ \tab UH \tab U \tab 4 \cr
+   oʊ \tab OW \tab oU \tab 2 \cr
+   ɔ \tab AO \tab c \tab 3 \cr
+   ɑ \tab AA \tab @ \tab 1 \cr
+   aʊ \tab AW \tab @U \tab 3 \cr
+   aɪ \tab AY \tab @I \tab 3 \cr
+   ɔɪ \tab OY \tab cI \tab 3 \cr
+   ɝ \tab ER \tab 3^ \tab 5 \cr
+   ɚ \tab ER \tab 4^ \tab 5 \cr
+}
+
+
+\describe{
+\item{phone}{phone in IPA}
+\item{cmubet}{phone in the CMU alphabet}
+\item{wiscbet}{phone in an older system used by our lab}
+\item{kd2018_complexity}{tk tk}
 }
 }
 }

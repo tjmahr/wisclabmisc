@@ -98,9 +98,10 @@ make_complexity_scales <- function() {
       "AH" = 1, "AA" = 1,
       "IY" = 2, "UW" = 2, "OW" = 2,
       "AY" = 3, "AO" = 3, "AW" = 3, "EH" = 3, "OY" = 3,
-      "IH" = 4, "AE" = 4, "EY" = 4, "UH" = 4, "ER" = 5
+      "IH" = 4, "AE" = 4, "EY" = 4, "UH" = 4,
+      "ER" = 5
     )
-    data.frame(cmubet = names(v), complexity = unname(v))
+    data.frame(cmubet = names(v), kd2018_complexity = unname(v))
   })
 
   consonants <- local({
@@ -111,26 +112,35 @@ make_complexity_scales <- function() {
        "S" = 6,  "Z" = 6, "SH" = 6, "ZH" = 6,  "V" = 6, "TH" = 6, "DH" = 6,
       "CH" = 6, "JH" = 6
     )
-    data.frame(cmubet = names(v), complexity = unname(v))
+    data.frame(cmubet = names(v), kd2018_complexity = unname(v))
   })
 
-  consonants2 <- consonants
-  consonants2$complexity <- consonants2$complexity - 2
+  consonants$k1992_set <- consonants$kd2018_complexity - 2
+  consonants <- consonants[c("cmubet", "k1992_set", "kd2018_complexity")]
+  list(consonants = consonants, vowels = vowels)
 }
 
 data_s93 <- make_shriberg_eights()
 data_crowe_mcleod <- make_crowe_mcleod()
+list_complexity <- make_complexity_scales()
 
 data_acq_consonants <- readr::read_csv("data-raw/consonants.csv") |>
   select(phone, cmubet, wiscbet) |>
   right_join(data_crowe_mcleod, by = "phone") |>
   left_join(data_s93, by = "phone") |>
+  left_join(list_complexity$consonants, by = "cmubet") |>
   print(n = Inf)
 
-
+data_acq_vowels <- readr::read_csv("data-raw/vowels.csv") |>
+  select(phone, cmubet, wiscbet) |>
+  right_join(list_complexity$vowels, by = "cmubet")
 
 usethis::use_data(
   data_acq_consonants,
+  overwrite = TRUE
+)
+usethis::use_data(
+  data_acq_vowels,
   overwrite = TRUE
 )
 
