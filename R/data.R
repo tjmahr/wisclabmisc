@@ -305,7 +305,13 @@ NULL
 #' speech-motor difficulty of speech sounds. See also
 #' [data_features_consonants].
 #'
-#' @references Crowe, K., & McLeod, S. (2020). Children’s English Consonant
+#' @references Allison, K. M., & Hustad, K. C. (2014). Impact of sentence length and
+#' phonetic complexity on intelligibility of 5-year-old children with
+#' cerebral palsy. *International Journal of Speech-Language
+#' Pathology*, *16*(4), 396–407.
+#' <https://doi.org/10.3109/17549507.2013.876667>
+#'
+#' Crowe, K., & McLeod, S. (2020). Children’s English Consonant
 #' Acquisition in the United States: A Review. *American Journal of
 #' Speech-Language Pathology*,
 #' *29*(4), 2155–2169. <https://doi.org/10.1044/2020_AJSLP-19-00168>
@@ -314,12 +320,22 @@ NULL
 #' Ferguson, L. Menn, & C. Stoel-Gammon (Eds.), *Phonological development:
 #' Models, research, implications* (pp. 65–90). York Press.
 #'
+#' Kim, H., Martin, K., Hasegawa-Johnson, M., & Perlman, A. (2010).
+#' Frequency of consonant articulation errors in dysarthric speech.
+#' *Clinical Linguistics and Phonetics*, *24*(10), 759–770.
+#' <https://doi.org/10.3109/02699206.2010.497238>
+#'
 #' Kuruvilla-Dugdale, M., Custer, C., Heidrick, L., Barohn, R., &
 #' Govindarajan, R. (2018). A Phonetic Complexity-Based Approach for
 #' Intelligibility and Articulatory Precision Testing: A Preliminary Study
 #' on Talkers With Amyotrophic Lateral Sclerosis. *Journal of Speech,
 #' Language, and Hearing Research*, *61*(9), 2205–2214.
 #' <https://doi.org/10.1044/2018_JSLHR-S-17-0462>
+#'
+#' Mahr, T. J., & Hustad, K. C. (2023). Lexical Predictors of
+#' Intelligibility in Young Children’s Speech. *Journal of Speech, Language,
+#' and Hearing Research*, 66(8S), 3013–3025.
+#' <https://doi.org/10.1044/2022_JSLHR-22-00294>
 #'
 #' Sander, E. K. (1972). When are Speech Sounds Learned? *Journal of Speech
 #' and Hearing Disorders*, *37*(1), 55–63.
@@ -454,7 +470,161 @@ NULL
 #'
 #' ## Phonetic complexity (Kent, 1992; Kuruvilla-Dugdale et al. 2018)
 #'
-#' tk tk
+#' Phonetic complexity measures (`k1992_set` and `kd2018_complexity`)
+#' assign the speech sounds different complexity levels based on biological
+#' principles outlined in Kent (1992). Because Kent (1992) is a book
+#' chapter that is not floating around online, it's worthwhile to review
+#' the provenance of these complexity measures.
+#'
+#' Sander (1972) set out to construct a set of developmental norms for
+#' typical consonant acquisition in English. His big idea was to include
+#' the median age of acquisition as well as the 90th percentile age of
+#' acquisition. The median can tell us something about the average
+#' acquisition of the speech sounds, and the 90th percentile can set a
+#' benchmark for delayed acquisition. There are some quirks of the
+#' methodology. First, Sander (1972) was targeting "customary articulation"
+#' which was defined using production accuracy average across word
+#' positions. So, the age of 50% customary articulation for /t/ is the
+#' earliest age when the average of word-initial accuracy, word-medial
+#' accuracy and word-final accuracy is greater than 50%. Second, the norms
+#' for this study were created by augmenting data from 3--8-year-olds
+#' (Templin, 1957; *n* = 480) with some earlier data for 2-year-olds
+#' (Wellman et al. 1931; *n* = 15).
+#'
+#' Sander (1972) presented these acquisition norms in the following figure:
+#'
+#' ![Figure 1 from Sander (1972)](sander_1972_400.png)
+#'
+#' Kent (1992) aimed to explain the course of English sound development in
+#' terms of biological and motoric principles. He examined the ages of 90%
+#' acquisition from Sander (1972)---that is, the right edges of the bars in
+#' the previous figure---and observed that /p m n w h/ are mastered at
+#' age 3, /b d k g j f/ at age 4, /t ŋ r l/ at age 6 and /s z ʃ ʒ v θ ð tʃ
+#' dʒ/ after age 7. He then described motoric demands in each of these sets
+#' of sounds. I'll paraphrase:
+#'
+#'   - Set 1 requires fast "ballistic" movements for stops /p m n/, slow
+#'     "ramp" movements for /w h/, velopharyngeal control for oral-nasal
+#'     contrast, laryngeal control for voicing contrast.
+#'   - Set 2 adds more stops /b d k g/ and another ramp /j/ and a new place
+#'     of articulation (velars), but also requires "fine force regulation
+#'     for frication" for /f/.
+#'   - Set 3 adds more stops /t ŋ/, but also requires tongue "bending" for
+#'     /r/ and /l/.
+#'   - Set 4 adds more lingual fricatives /s z ʃ ʒ θ ð/ which require
+#'     tongue bending and fine force control along with /v tʃ dʒ/. Kent
+#'     does not characterize the motor demands for the affricates /tʃ dʒ/.
+#'
+#' Let's pause for a moment and observe that this breakdown is just an
+#' attempt to describe the Sander (1972) norms, and it is somewhat
+#' underdeveloped. For example, why is /t/ in Set 3 but /d/ in Set 2? It is
+#' not answered here, but I think this late mastery is an artefact of
+#' Sander's requirement of 90% accuracy averaging over the three
+#' word-positions. The medial and final productions of /t/ might require
+#' allophonic variation in /t/ (e.g., flapping or glottalization), so
+#' mastery of /t/ would require different motor gestures and some
+#' phonological knowledge on the part of the child. But in Kent's
+#' description /t/ is a later-mastered ballistic movement.
+#'
+#' Still, the main point of Kent's description, I think, is that lingual
+#' (tongue) consonants are more difficult. Elsewhere in the chapter, Kent
+#' (1992) describes how the tongue is a "muscular hydrostat" like an
+#' elephant trunk, and bending a hydrostat requires coordination of
+#' different muscle directions:
+#'
+#' *"Gaining motor control over a hydrostat presents some special problems
+#' to the young child learning speech. For one, bending the hydrostat is
+#' unlike bending a jointed structure such as a finger. The tongue has no
+#' joints per se; it flexes by appropriate contraction of its
+#' three-dimensional network of intrinsic longitudinal, vertical, and
+#' transverse fibers. Bending a hydrostat requires that muscle fibers be
+#' shortened on one aspect simultaneously with a resistance to a change in
+#' diameter (Smith and Kier 1989). If the diameter change is not resisted,
+#' then the hydrostat will shorten on one side but will not bend. To use
+#' the tongue in speech, the child must learn to control the tongue to meet
+#' skeletal, movement, and shaping requirements, often simultaneously.
+#' These special characteristics of the tongue may well play a role in
+#' vowel and consonant mastery."*
+#'
+#' Kim and colleagues (2010) applied these developmental sets (`k1992_set`) as
+#' articulatory complexity *levels* while
+#' examining consonant errors in dysarthric speech. They then asked
+#' questions such as whether more complex consonants had more consonant
+#' errors than less complex ones (*yes*) or whether lower intelligibility
+#' speakers made more complexity-reducing consonant substitutions than
+#' higher intelligibility speakers (*apparently so*). Examining the speech
+#' of 5-year-olds, Allison and Hustad (2014) later used these complexity
+#' levels as a way to *score* the phonetic complexity of sentences. They
+#' assigned consonants 1--5 scores (the 1--4 complexity levels with a score
+#' of 5 for consonants clusters), and summed up the scores to provide a
+#' complexity score for a sentence. Three of the eight 5-year-olds with
+#' dysarthria showed a negative effect of sentence complexity on
+#' intelligibility.
+#'
+#' Kent (1992) also described the yearly developmental progression of
+#' vowels. I'll paraphrase again:
+#'
+#'   - By age 1: Infants produce *vocants* (vowel precursors) which
+#'     correspond to the low-front, central and low-back vowels /æ ɛ ʌ ə
+#'     ɑ/. Thus, the tongue only moves in the anterior-posterior direction
+#'     (i.e., there is limited up-down movement).
+#'   - By age 2: Toddlers produce the "maximally dissimilar" corner vowels
+#'     /i u ɑ/ and produce /o/ and the central vowels /ʌ ə/.
+#'   - By age 3: Children incorporate two lower vowels /ɛ ɔ/ and the
+#'     diphthongs /aɪ aʊ ɔɪ/ which require gliding movements.
+#'   - By age 4: Children incorporate the remaining non-rhotic vowels /ʊ ɪ
+#'     e æ/. The appearance of the front vowels suggests that tongue-jaw
+#'     coordination is a relatively late motor achievement. (/i/ appears
+#'     earlier because its extreme height is easy.)
+#'   - Lastly: Children incorporate /ɚ ɝ/ last because these r-colored
+#'     vowels require tongue bending.
+#'
+#' Kuruvilla-Dugdale and colleagues (2018) used this description to
+#' incorporate vowels into the phonetic complexity scale
+#' (`kd2018_complexity`). The /ʌ ə ɑ/ vocants from age 1 and the vowels
+#' from age 2 mark the bottom of the complexity scale. The vowels that are
+#' acquired at ages 3, 4 and afterwards are assigned to the consonant
+#' complexity levels with the same age of mastery. Finally, consonant
+#' clusters serve as the ceiling for the scale:
+#'
+#' ```{r, echo = FALSE}
+#' df <- structure(
+#'   list(
+#'     kd2018_complexity = c(1, 2, 3, 4, 5, 6, 7, 8),
+#'     consonants = c(
+#'       "", "", "p m n h w", "b d k g f j", "t ŋ l r",
+#'       "tʃ dʒ v θ ð s z ʃ ʒ", "2-consonant clusters", "3-consonant clusters"
+#'     ),
+#'     vowels = c(
+#'       "ʌ ə ɑ", "i u oʊ", "ɛ ɔ aʊ aɪ ɔɪ", "ɪ eɪ æ ʊ", "ɝ ɚ",
+#'       "", "", ""
+#'     )
+#'   ),
+#'   row.names = c(NA, -8L),
+#'   class = "data.frame"
+#' )
+#'
+#' knitr::kable(df, caption = "Phonetic complexity scores from Kuruvilla-Dugdale et al. (2018).")
+#' ```
+#'
+#' It is not clear how to apply this scale, so my approach has been to
+#' break words into subsyllabic units and assign scores to the syllable
+#' onsets, nucleui and codas in each word. For example, "jump" is /dʒ/ +
+#' /ʌ/ + /mp/ so it would have complexity of 6 + 1 + 7 = 14, and "jumper"
+#' includes a syllable break between the cluster, so it would have a
+#' score 6 + 1 + 1 + 1 + 5 = 14.
+#'
+#' Kuruvilla-Dugdale and colleagues (2018) used this scoring system to
+#' compare intelligibility for low complexity versus high complexity words.
+#' For example, for speakers with ALS and mild dysarthria, there was
+#' statistically clear reduction in intelligibility for high complexity
+#' words but not for low complexity words. I applied this scoring system on
+#' single-word intelligibility in children's speech (Mahr & Hustad, 2023).
+#' There was a probable but not statistically clear negative effect of
+#' complexity on intelligibility over and above the effects of age, word
+#' frequency and word neighborhood competition. (Regrettably, I coded the
+#' one consonant cluster in the word list with a complexity of 8 instead
+#' of 7, but otherwise this is the approach.)
 "data_acq_consonants"
 
 #' @rdname data_acq_consonants
