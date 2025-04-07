@@ -402,8 +402,15 @@ NULL
 #'   `early`, before 60 months are `middle`, and of 60 or older are `late`.}
 #'   \item{s93_eights}{Developmental stage of Shriberg (1993)---that is,
 #'   the `early` 8, `middle` 8 and `late` 8 consonants.}
-#'   \item{k1992_set}{tk tk}
-#'   \item{kd2018_complexity}{tk tk}
+#'   \item{k1992_set}{Developmental set from Kent (1992). Sets corresponds
+#'   to the age of 90% mastery in Sander (1972): Set 1 is mastered at age
+#'   3-years-old, Set 2 at age 4, Set 3 at age 6, and Set 4 at a later age.}
+#'   \item{kd2018_complexity}{Phonetic complexity scores from Kuruvilla-Dugdale
+#'   (2018). This scoring system is based on the development description of
+#'   vowels and consonants in Kent (1992). The scores for individual segments
+#'   range from 1 for the earliest vowels to 6 for the last-acquired consonants.
+#'   Under this system, 2-consonant clusters have a complexity of 7 and
+#'   3-consonant clusters have a complexity of 8.}
 #' }
 #'
 #' ## Vowel acquisition features
@@ -418,7 +425,12 @@ NULL
 #'   \item{phone}{phone in IPA}
 #'   \item{cmubet}{phone in the CMU alphabet}
 #'   \item{wiscbet}{phone in an older system used by our lab}
-#'   \item{kd2018_complexity}{tk tk}
+#'   \item{kd2018_complexity}{Phonetic complexity scores from Kuruvilla-Dugdale
+#'   (2018). This scoring system is based on the development description of
+#'   vowels and consonants in Kent (1992). The scores for individual segments
+#'   range from 1 for the earliest vowels to 6 for the last-acquired consonants.
+#'   Under this system, 2-consonant clusters have a complexity of 7 and
+#'   3-consonant clusters have a complexity of 8.}
 #' }
 "data_acq_consonants"
 
