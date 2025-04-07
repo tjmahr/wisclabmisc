@@ -310,6 +310,21 @@ NULL
 #' Speech-Language Pathology*,
 #' *29*(4), 2155–2169. <https://doi.org/10.1044/2020_AJSLP-19-00168>
 #'
+#' Kent, R. D. (1992). The Biology of Phonological Development. In C. A.
+#' Ferguson, L. Menn, & C. Stoel-Gammon (Eds.), *Phonological development:
+#' Models, research, implications* (pp. 65–90). York Press.
+#'
+#' Kuruvilla-Dugdale, M., Custer, C., Heidrick, L., Barohn, R., &
+#' Govindarajan, R. (2018). A Phonetic Complexity-Based Approach for
+#' Intelligibility and Articulatory Precision Testing: A Preliminary Study
+#' on Talkers With Amyotrophic Lateral Sclerosis. *Journal of Speech,
+#' Language, and Hearing Research*, *61*(9), 2205–2214.
+#' <https://doi.org/10.1044/2018_JSLHR-S-17-0462>
+#'
+#' Sander, E. K. (1972). When are Speech Sounds Learned? *Journal of Speech
+#' and Hearing Disorders*, *37*(1), 55–63.
+#' <https://doi.org/10.1044/jshd.3701.55>
+#'
 #' Shriberg, L. D. (1993). Four New Speech and Prosody-Voice Measures for
 #' Genetics Research and Other Studies in Developmental Phonological Disorders.
 #' *Journal of Speech, Language, and Hearing Research*, *36*(1), 105–140.
@@ -318,7 +333,67 @@ NULL
 #' @rdname data_acq_consonants
 #' @concept datasets
 #'
-#' @details ## Crowe and McLeod (2020) norms for English consonant acquisition
+#' @details ## Consonant acquisition features
+#'
+#' `data_acq_consonants` provides the following features:
+#'
+#' ```{r}
+#' knitr::kable(data_acq_consonants)
+#' ```
+#'
+#' Description of each column:
+#'
+#' \describe{
+#'   \item{phone}{phone in IPA}
+#'   \item{cmubet}{phone in the CMU alphabet}
+#'   \item{wiscbet}{phone in an older system used by our lab}
+#'   \item{cm2020_90_age_mean, cm2020_90_age_sd, cm2020_90_age_min,
+#'   cm2020_90_age_max}{Age of acquisition statistics reported by Crowe &
+#'   McLeod (2020). Statistics are the mean, SD, min and max age (in months)
+#'   when children reached 90% accuracy on a consonant.}
+#'   \item{cm2020_90_num_studies}{Number of studies used by Crowe & McLeod
+#'   (2020) to compute the corresponding statistics.}
+#'   \item{cm2020_90_stage}{Developmental stage assigned to the consonant by
+#'   Crowe & McLeod (2020). Sounds with an `age_mean` before 48 months are
+#'   `early`, before 60 months are `middle`, and of 60 or older are `late`.}
+#'   \item{s93_eights}{Developmental stage of Shriberg (1993)---that is,
+#'   the `early` 8, `middle` 8 and `late` 8 consonants.}
+#'   \item{k1992_set}{Developmental set from Kent (1992). Sets corresponds
+#'   to the age of 90% mastery in Sander (1972): Set 1 is mastered at age
+#'   3-years-old, Set 2 at age 4, Set 3 at age 6, and Set 4 at a later age.}
+#'   \item{kd2018_complexity}{Phonetic complexity scores from
+#'   Kuruvilla-Dugdale et al. (2018). This scoring system is based on the
+#'   development description of vowels and consonants in Kent (1992). The
+#'   scores for individual segments range from 1 for the earliest vowels to
+#'   6 for the last-acquired consonants. Under this system, assign a score to
+#'   each part of a syllable (onset, nucleus, coda) using these scores when
+#'   the syllable part is a single segment and using scores of 7 and 8 for
+#'   2-consonant and 3-consonant clusters, respectively.}
+#' }
+#'
+#' ## Vowel acquisition features
+#'
+#' `data_acq_vowels` provides the following features:
+#'
+#' ```{r}
+#' knitr::kable(data_acq_vowels)
+#' ```
+#'
+#' \describe{
+#'   \item{phone}{phone in IPA}
+#'   \item{cmubet}{phone in the CMU alphabet}
+#'   \item{wiscbet}{phone in an older system used by our lab}
+#'   \item{kd2018_complexity}{Phonetic complexity scores from
+#'   Kuruvilla-Dugdale et al. (2018). This scoring system is based on the
+#'   development description of vowels and consonants in Kent (1992). The
+#'   scores for individual segments range from 1 for the earliest vowels to
+#'   6 for the last-acquired consonants. Under this system, assign a score to
+#'   each part of a syllable (onset, nucleus, coda) using these scores when
+#'   the syllable part is a single segment and using scores of 7 and 8 for
+#'   2-consonant and 3-consonant clusters, respectively.}
+#' }
+#'
+#' ## Crowe and McLeod (2020) norms for English consonant acquisition
 #'
 #' Crowe and McLeod (2020, below as the `cm2020_` variables) provides a
 #' systematic review and summary statistics for age of acquisition norms for
@@ -377,63 +452,10 @@ NULL
 #' origin**. It would be more appropriate to replace the levels of
 #' Early/Middle/Late with Easy/Medium/Hard.
 #'
-#' ## Consonant acquisition features
+#' ## Phonetic complexity (Kent, 1992; Kuruvilla-Dugdale et al. 2018)
 #'
-#' `data_acq_consonants` provides the following features:
-#'
-#' ```{r}
-#' knitr::kable(data_acq_consonants)
-#' ```
-#'
-#' Description of each column:
-#'
-#' \describe{
-#'   \item{phone}{phone in IPA}
-#'   \item{cmubet}{phone in the CMU alphabet}
-#'   \item{wiscbet}{phone in an older system used by our lab}
-#'   \item{cm2020_90_age_mean, cm2020_90_age_sd, cm2020_90_age_min,
-#'   cm2020_90_age_max}{Age of acquisition statistics reported by Crowe &
-#'   McLeod (2020). Statistics are the mean, SD, min and max age (in months)
-#'   when children reached 90% accuracy on a consonant.}
-#'   \item{cm2020_90_num_studies}{Number of studies used by Crowe & McLeod
-#'   (2020) to compute the corresponding statistics.}
-#'   \item{cm2020_90_stage}{Developmental stage assigned to the consonant by
-#'   Crowe & McLeod (2020). Sounds with an `age_mean` before 48 months are
-#'   `early`, before 60 months are `middle`, and of 60 or older are `late`.}
-#'   \item{s93_eights}{Developmental stage of Shriberg (1993)---that is,
-#'   the `early` 8, `middle` 8 and `late` 8 consonants.}
-#'   \item{k1992_set}{Developmental set from Kent (1992). Sets corresponds
-#'   to the age of 90% mastery in Sander (1972): Set 1 is mastered at age
-#'   3-years-old, Set 2 at age 4, Set 3 at age 6, and Set 4 at a later age.}
-#'   \item{kd2018_complexity}{Phonetic complexity scores from Kuruvilla-Dugdale
-#'   (2018). This scoring system is based on the development description of
-#'   vowels and consonants in Kent (1992). The scores for individual segments
-#'   range from 1 for the earliest vowels to 6 for the last-acquired consonants.
-#'   Under this system, 2-consonant clusters have a complexity of 7 and
-#'   3-consonant clusters have a complexity of 8.}
-#' }
-#'
-#' ## Vowel acquisition features
-#'
-#' `data_acq_vowels` provides the following features:
-#'
-#' ```{r}
-#' knitr::kable(data_acq_vowels)
-#' ```
-#'
-#' \describe{
-#'   \item{phone}{phone in IPA}
-#'   \item{cmubet}{phone in the CMU alphabet}
-#'   \item{wiscbet}{phone in an older system used by our lab}
-#'   \item{kd2018_complexity}{Phonetic complexity scores from Kuruvilla-Dugdale
-#'   (2018). This scoring system is based on the development description of
-#'   vowels and consonants in Kent (1992). The scores for individual segments
-#'   range from 1 for the earliest vowels to 6 for the last-acquired consonants.
-#'   Under this system, 2-consonant clusters have a complexity of 7 and
-#'   3-consonant clusters have a complexity of 8.}
-#' }
+#' tk tk
 "data_acq_consonants"
 
 #' @rdname data_acq_consonants
 "data_acq_vowels"
-
