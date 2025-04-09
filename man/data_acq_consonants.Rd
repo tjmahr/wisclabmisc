@@ -3,12 +3,17 @@
 \docType{data}
 \name{data_acq_consonants}
 \alias{data_acq_consonants}
+\alias{data_acq_vowels}
 \title{Acquisition and developmental descriptions of consonants and vowels}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 24 rows and 10 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 24 rows and 12 columns.
+
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 17 rows and 4 columns.
 }
 \usage{
 data_acq_consonants
+
+data_acq_vowels
 }
 \description{
 This package provides dataframes of information about the consonants and
@@ -18,6 +23,113 @@ speech-motor difficulty of speech sounds. See also
 \link{data_features_consonants}.
 }
 \details{
+\subsection{Consonant acquisition features}{
+
+\code{data_acq_consonants} provides the following features:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_acq_consonants)
+}\if{html}{\out{</div>}}\tabular{lllrrrrrllrr}{
+   phone \tab cmubet \tab wiscbet \tab cm2020_90_age_mean \tab cm2020_90_age_sd \tab cm2020_90_age_min \tab cm2020_90_age_max \tab cm2020_90_num_studies \tab cm2020_90_stage \tab s93_eights \tab k1992_set \tab kd2018_complexity \cr
+   p \tab P \tab p \tab 33.2 \tab 6.9 \tab 24 \tab 48 \tab 12 \tab early \tab early \tab 1 \tab 3 \cr
+   b \tab B \tab b \tab 31.4 \tab 7.8 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 2 \tab 4 \cr
+   t \tab T \tab t \tab 38.5 \tab 9.2 \tab 24 \tab 60 \tab 13 \tab early \tab middle \tab 3 \tab 5 \cr
+   d \tab D \tab d \tab 35.7 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 2 \tab 4 \cr
+   k \tab K \tab k \tab 37.7 \tab 7.3 \tab 24 \tab 48 \tab 13 \tab early \tab middle \tab 2 \tab 4 \cr
+   g \tab G \tab g \tab 36.8 \tab 6.6 \tab 24 \tab 48 \tab 13 \tab early \tab middle \tab 2 \tab 4 \cr
+   tʃ \tab CH \tab tsh \tab 53.5 \tab 10.7 \tab 36 \tab 72 \tab 12 \tab middle \tab middle \tab 4 \tab 6 \cr
+   dʒ \tab JH \tab dzh \tab 51.0 \tab 11.8 \tab 36 \tab 72 \tab 13 \tab middle \tab middle \tab 4 \tab 6 \cr
+   m \tab M \tab m \tab 33.2 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \cr
+   n \tab N \tab n \tab 33.1 \tab 7.4 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \cr
+   ŋ \tab NG \tab ng \tab 40.3 \tab 10.8 \tab 24 \tab 55 \tab 10 \tab early \tab middle \tab 3 \tab 5 \cr
+   f \tab F \tab f \tab 38.3 \tab 6.3 \tab 24 \tab 48 \tab 13 \tab early \tab middle \tab 2 \tab 4 \cr
+   v \tab V \tab v \tab 50.8 \tab 10.8 \tab 36 \tab 66 \tab 12 \tab middle \tab middle \tab 4 \tab 6 \cr
+   θ \tab TH \tab th \tab 77.0 \tab 7.4 \tab 72 \tab 96 \tab 10 \tab late \tab late \tab 4 \tab 6 \cr
+   ð \tab DH \tab dh \tab 69.0 \tab 11.3 \tab 54 \tab 96 \tab 12 \tab late \tab late \tab 4 \tab 6 \cr
+   s \tab S \tab s \tab 51.3 \tab 16.3 \tab 24 \tab 84 \tab 12 \tab middle \tab late \tab 4 \tab 6 \cr
+   z \tab Z \tab z \tab 56.8 \tab 14.3 \tab 30 \tab 84 \tab 11 \tab middle \tab late \tab 4 \tab 6 \cr
+   ʃ \tab SH \tab sh \tab 55.0 \tab 10.5 \tab 36 \tab 72 \tab 12 \tab middle \tab late \tab 4 \tab 6 \cr
+   ʒ \tab ZH \tab zh \tab 70.7 \tab 12.2 \tab 60 \tab 84 \tab 3 \tab late \tab late \tab 4 \tab 6 \cr
+   h \tab HH \tab h \tab 35.0 \tab 7.0 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \cr
+   l \tab L \tab l \tab 53.8 \tab 10.4 \tab 24 \tab 60 \tab 12 \tab middle \tab late \tab 3 \tab 5 \cr
+   r \tab R \tab r \tab 66.6 \tab 18.6 \tab 30 \tab 96 \tab 12 \tab late \tab late \tab 3 \tab 5 \cr
+   w \tab W \tab w \tab 35.2 \tab 6.8 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \cr
+   j \tab Y \tab j \tab 45.8 \tab 11.0 \tab 30 \tab 60 \tab 13 \tab early \tab early \tab 2 \tab 4 \cr
+}
+
+
+Description of each column:
+
+\describe{
+\item{phone}{phone in IPA}
+\item{cmubet}{phone in the CMU alphabet}
+\item{wiscbet}{phone in an older system used by our lab}
+\item{cm2020_90_age_mean, cm2020_90_age_sd, cm2020_90_age_min,
+cm2020_90_age_max}{Age of acquisition statistics reported by Crowe &
+McLeod (2020). Statistics are the mean, SD, min and max age (in months)
+when children reached 90\% accuracy on a consonant.}
+\item{cm2020_90_num_studies}{Number of studies used by Crowe & McLeod
+(2020) to compute the corresponding statistics.}
+\item{cm2020_90_stage}{Developmental stage assigned to the consonant by
+Crowe & McLeod (2020). Sounds with an \code{age_mean} before 48 months are
+\code{early}, before 60 months are \code{middle}, and of 60 or older are \code{late}.}
+\item{s93_eights}{Developmental stage of Shriberg (1993)---that is,
+the \code{early} 8, \code{middle} 8 and \code{late} 8 consonants.}
+\item{k1992_set}{Developmental set from Kent (1992). Sets corresponds
+to the age of 90\% mastery in Sander (1972): Set 1 is mastered at age
+3-years-old, Set 2 at age 4, Set 3 at age 6, and Set 4 at a later age.}
+\item{kd2018_complexity}{Phonetic complexity scores from
+Kuruvilla-Dugdale et al. (2018). This scoring system is based on the
+development description of vowels and consonants in Kent (1992). The
+scores for individual segments range from 1 for the earliest vowels to
+6 for the last-acquired consonants. Under this system, assign a score to
+each part of a syllable (onset, nucleus, coda) using these scores when
+the syllable part is a single segment and using scores of 7 and 8 for
+2-consonant and 3-consonant clusters, respectively.}
+}
+}
+
+\subsection{Vowel acquisition features}{
+
+\code{data_acq_vowels} provides the following features:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_acq_vowels)
+}\if{html}{\out{</div>}}\tabular{lllr}{
+   phone \tab cmubet \tab wiscbet \tab kd2018_complexity \cr
+   i \tab IY \tab i \tab 2 \cr
+   ɪ \tab IH \tab I \tab 4 \cr
+   eɪ \tab EY \tab eI \tab 4 \cr
+   ɛ \tab EH \tab E \tab 3 \cr
+   æ \tab AE \tab ae \tab 4 \cr
+   ʌ \tab AH \tab ^ \tab 1 \cr
+   ə \tab AH \tab 4 \tab 1 \cr
+   u \tab UW \tab u \tab 2 \cr
+   ʊ \tab UH \tab U \tab 4 \cr
+   oʊ \tab OW \tab oU \tab 2 \cr
+   ɔ \tab AO \tab c \tab 3 \cr
+   ɑ \tab AA \tab @ \tab 1 \cr
+   aʊ \tab AW \tab @U \tab 3 \cr
+   aɪ \tab AY \tab @I \tab 3 \cr
+   ɔɪ \tab OY \tab cI \tab 3 \cr
+   ɝ \tab ER \tab 3^ \tab 5 \cr
+   ɚ \tab ER \tab 4^ \tab 5 \cr
+}
+
+
+\describe{
+\item{phone}{phone in IPA}
+\item{cmubet}{phone in the CMU alphabet}
+\item{wiscbet}{phone in an older system used by our lab}
+\item{kd2018_complexity}{Phonetic complexity scores from
+Kuruvilla-Dugdale et al. (2018). This scoring system is based on the
+development description of vowels and consonants in Kent (1992). The
+scores for individual segments range from 1 for the earliest vowels to
+6 for the last-acquired consonants. Under this system, assign a score to
+each part of a syllable (onset, nucleus, coda) using these scores when
+the syllable part is a single segment and using scores of 7 and 8 for
+2-consonant and 3-consonant clusters, respectively.}
+}
+}
+
 \subsection{Crowe and McLeod (2020) norms for English consonant acquisition}{
 
 Crowe and McLeod (2020, below as the \code{cm2020_} variables) provides a
@@ -80,65 +192,196 @@ origin}. It would be more appropriate to replace the levels of
 Early/Middle/Late with Easy/Medium/Hard.
 }
 
-\subsection{Consonant acquisition features}{
+\subsection{Phonetic complexity (Kent, 1992; Kuruvilla-Dugdale et al. 2018)}{
 
-\code{data_acq_consonants} provides the following features:
+Phonetic complexity measures (\code{k1992_set} and \code{kd2018_complexity})
+assign the speech sounds different complexity levels based on biological
+principles outlined in Kent (1992). Because Kent (1992) is a book
+chapter that is not floating around online, it's worthwhile to review
+the provenance of these complexity measures.
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_acq_consonants)
-}\if{html}{\out{</div>}}\tabular{lllrrrrrll}{
-   phone \tab cmubet \tab wiscbet \tab cm2020_90_age_mean \tab cm2020_90_age_sd \tab cm2020_90_age_min \tab cm2020_90_age_max \tab cm2020_90_num_studies \tab cm2020_90_stage \tab s93_eights \cr
-   p \tab P \tab p \tab 33.2 \tab 6.9 \tab 24 \tab 48 \tab 12 \tab early \tab early \cr
-   b \tab B \tab b \tab 31.4 \tab 7.8 \tab 24 \tab 48 \tab 13 \tab early \tab early \cr
-   t \tab T \tab t \tab 38.5 \tab 9.2 \tab 24 \tab 60 \tab 13 \tab early \tab middle \cr
-   d \tab D \tab d \tab 35.7 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \tab early \cr
-   k \tab K \tab k \tab 37.7 \tab 7.3 \tab 24 \tab 48 \tab 13 \tab early \tab middle \cr
-   g \tab G \tab g \tab 36.8 \tab 6.6 \tab 24 \tab 48 \tab 13 \tab early \tab middle \cr
-   tʃ \tab CH \tab tsh \tab 53.5 \tab 10.7 \tab 36 \tab 72 \tab 12 \tab middle \tab middle \cr
-   dʒ \tab JH \tab dzh \tab 51.0 \tab 11.8 \tab 36 \tab 72 \tab 13 \tab middle \tab middle \cr
-   m \tab M \tab m \tab 33.2 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \tab early \cr
-   n \tab N \tab n \tab 33.1 \tab 7.4 \tab 24 \tab 48 \tab 13 \tab early \tab early \cr
-   ŋ \tab NG \tab ng \tab 40.3 \tab 10.8 \tab 24 \tab 55 \tab 10 \tab early \tab middle \cr
-   f \tab F \tab f \tab 38.3 \tab 6.3 \tab 24 \tab 48 \tab 13 \tab early \tab middle \cr
-   v \tab V \tab v \tab 50.8 \tab 10.8 \tab 36 \tab 66 \tab 12 \tab middle \tab middle \cr
-   θ \tab TH \tab th \tab 77.0 \tab 7.4 \tab 72 \tab 96 \tab 10 \tab late \tab late \cr
-   ð \tab DH \tab dh \tab 69.0 \tab 11.3 \tab 54 \tab 96 \tab 12 \tab late \tab late \cr
-   s \tab S \tab s \tab 51.3 \tab 16.3 \tab 24 \tab 84 \tab 12 \tab middle \tab late \cr
-   z \tab Z \tab z \tab 56.8 \tab 14.3 \tab 30 \tab 84 \tab 11 \tab middle \tab late \cr
-   ʃ \tab SH \tab sh \tab 55.0 \tab 10.5 \tab 36 \tab 72 \tab 12 \tab middle \tab late \cr
-   ʒ \tab ZH \tab zh \tab 70.7 \tab 12.2 \tab 60 \tab 84 \tab 3 \tab late \tab late \cr
-   h \tab HH \tab h \tab 35.0 \tab 7.0 \tab 24 \tab 48 \tab 13 \tab early \tab early \cr
-   l \tab L \tab l \tab 53.8 \tab 10.4 \tab 24 \tab 60 \tab 12 \tab middle \tab late \cr
-   r \tab R \tab r \tab 66.6 \tab 18.6 \tab 30 \tab 96 \tab 12 \tab late \tab late \cr
-   w \tab W \tab w \tab 35.2 \tab 6.8 \tab 24 \tab 48 \tab 13 \tab early \tab early \cr
-   j \tab Y \tab j \tab 45.8 \tab 11.0 \tab 30 \tab 60 \tab 13 \tab early \tab early \cr
+Sander (1972) set out to construct a set of developmental norms for
+typical consonant acquisition in English. His big idea was to include
+the median age of acquisition as well as the 90th percentile age of
+acquisition. The median can tell us something about the average
+acquisition of the speech sounds, and the 90th percentile can set a
+benchmark for delayed acquisition. There are some quirks of the
+methodology. First, Sander (1972) was targeting "customary articulation"
+which was defined using production accuracy average across word
+positions. So, the age of 50\% customary articulation for /t/ is the
+earliest age when the average of word-initial accuracy, word-medial
+accuracy and word-final accuracy is greater than 50\%. Second, the norms
+for this study were created by augmenting data from 3--8-year-olds
+(Templin, 1957; \emph{n} = 480) with some earlier data for 2-year-olds
+(Wellman et al. 1931; \emph{n} = 15).
+
+Sander (1972) presented these acquisition norms in the following figure:
+
+\figure{sander_1972_400.png}
+
+Kent (1992) aimed to explain the course of English sound development in
+terms of biological and motoric principles. He examined the ages of 90\%
+acquisition from Sander (1972)---that is, the right edges of the bars in
+the previous figure---and observed that /p m n w h/ are mastered at
+age 3, /b d k g j f/ at age 4, /t ŋ r l/ at age 6 and /s z ʃ ʒ v θ ð tʃ
+dʒ/ after age 7. He then described motoric demands in each of these sets
+of sounds. I'll paraphrase:
+\itemize{
+\item Set 1 requires fast "ballistic" movements for stops /p m n/, slow
+"ramp" movements for /w h/, velopharyngeal control for oral-nasal
+contrast, laryngeal control for voicing contrast.
+\item Set 2 adds more stops /b d k g/ and another ramp /j/ and a new place
+of articulation (velars), but also requires "fine force regulation
+for frication" for /f/.
+\item Set 3 adds more stops /t ŋ/, but also requires tongue "bending" for
+/r/ and /l/.
+\item Set 4 adds more lingual fricatives /s z ʃ ʒ θ ð/ which require
+tongue bending and fine force control along with /v tʃ dʒ/. Kent
+does not characterize the motor demands for the affricates /tʃ dʒ/.
+}
+
+Let's pause for a moment and observe that this breakdown is just an
+attempt to describe the Sander (1972) norms, and it is somewhat
+underdeveloped. For example, why is /t/ in Set 3 but /d/ in Set 2? It is
+not answered here, but I think this late mastery is an artefact of
+Sander's requirement of 90\% accuracy averaging over the three
+word-positions. The medial and final productions of /t/ might require
+allophonic variation in /t/ (e.g., flapping or glottalization), so
+mastery of /t/ would require different motor gestures and some
+phonological knowledge on the part of the child. But in Kent's
+description /t/ is a later-mastered ballistic movement.
+
+Still, the main point of Kent's description, I think, is that lingual
+(tongue) consonants are more difficult. Elsewhere in the chapter, Kent
+(1992) describes how the tongue is a "muscular hydrostat" like an
+elephant trunk, and bending a hydrostat requires coordination of
+different muscle directions:
+
+\emph{"Gaining motor control over a hydrostat presents some special problems
+to the young child learning speech. For one, bending the hydrostat is
+unlike bending a jointed structure such as a finger. The tongue has no
+joints per se; it flexes by appropriate contraction of its
+three-dimensional network of intrinsic longitudinal, vertical, and
+transverse fibers. Bending a hydrostat requires that muscle fibers be
+shortened on one aspect simultaneously with a resistance to a change in
+diameter (Smith and Kier 1989). If the diameter change is not resisted,
+then the hydrostat will shorten on one side but will not bend. To use
+the tongue in speech, the child must learn to control the tongue to meet
+skeletal, movement, and shaping requirements, often simultaneously.
+These special characteristics of the tongue may well play a role in
+vowel and consonant mastery."}
+
+Kim and colleagues (2010) applied these developmental sets (\code{k1992_set}) as
+articulatory complexity \emph{levels} while
+examining consonant errors in dysarthric speech. They then asked
+questions such as whether more complex consonants had more consonant
+errors than less complex ones (\emph{yes}) or whether lower intelligibility
+speakers made more complexity-reducing consonant substitutions than
+higher intelligibility speakers (\emph{apparently so}). Examining the speech
+of 5-year-olds, Allison and Hustad (2014) later used these complexity
+levels as a way to \emph{score} the phonetic complexity of sentences. They
+assigned consonants 1--5 scores (the 1--4 complexity levels with a score
+of 5 for consonants clusters), and summed up the scores to provide a
+complexity score for a sentence. Three of the eight 5-year-olds with
+dysarthria showed a negative effect of sentence complexity on
+intelligibility.
+
+Kent (1992) also described the yearly developmental progression of
+vowels. I'll paraphrase again:
+\itemize{
+\item By age 1: Infants produce \emph{vocants} (vowel precursors) which
+correspond to the low-front, central and low-back vowels /æ ɛ ʌ ə
+ɑ/. Thus, the tongue only moves in the anterior-posterior direction
+(i.e., there is limited up-down movement).
+\item By age 2: Toddlers produce the "maximally dissimilar" corner vowels
+/i u ɑ/ and produce /o/ and the central vowels /ʌ ə/.
+\item By age 3: Children incorporate two lower vowels /ɛ ɔ/ and the
+diphthongs /aɪ aʊ ɔɪ/ which require gliding movements.
+\item By age 4: Children incorporate the remaining non-rhotic vowels /ʊ ɪ
+e æ/. The appearance of the front vowels suggests that tongue-jaw
+coordination is a relatively late motor achievement. (/i/ appears
+earlier because its extreme height is easy.)
+\item Lastly: Children incorporate /ɚ ɝ/ last because these r-colored
+vowels require tongue bending.
+}
+
+Kuruvilla-Dugdale and colleagues (2018) used this description to
+incorporate vowels into the phonetic complexity scale
+(\code{kd2018_complexity}). The /ʌ ə ɑ/ vocants from age 1 and the vowels
+from age 2 mark the bottom of the complexity scale. The vowels that are
+acquired at ages 3, 4 and afterwards are assigned to the consonant
+complexity levels with the same age of mastery. Finally, consonant
+clusters serve as the ceiling for the scale:
+
+Table: Phonetic complexity scores from Kuruvilla-Dugdale et al. (2018).\tabular{rll}{
+   kd2018_complexity \tab consonants \tab vowels \cr
+   1 \tab  \tab ʌ ə ɑ \cr
+   2 \tab  \tab i u oʊ \cr
+   3 \tab p m n h w \tab ɛ ɔ aʊ aɪ ɔɪ \cr
+   4 \tab b d k g f j \tab ɪ eɪ æ ʊ \cr
+   5 \tab t ŋ l r \tab ɝ ɚ \cr
+   6 \tab tʃ dʒ v θ ð s z ʃ ʒ \tab  \cr
+   7 \tab 2-consonant clusters \tab  \cr
+   8 \tab 3-consonant clusters \tab  \cr
 }
 
 
-Description of each column:
+It is not clear how to apply this scale, so my approach has been to
+break words into subsyllabic units and assign scores to the syllable
+onsets, nucleui and codas in each word. For example, "jump" is /dʒ/ +
+/ʌ/ + /mp/ so it would have complexity of 6 + 1 + 7 = 14, and "jumper"
+includes a syllable break between the cluster, so it would have a
+score 6 + 1 + 1 + 1 + 5 = 14.
 
-\describe{
-\item{phone}{phone in IPA}
-\item{cmubet}{phone in the CMU alphabet}
-\item{wiscbet}{phone in an older system used by our lab}
-\item{cm2020_90_age_mean, cm2020_90_age_sd, cm2020_90_age_min,
-cm2020_90_age_max}{Age of acquisition statistics reported by Crowe &
-McLeod (2020). Statistics are the mean, SD, min and max age (in months)
-when children reached 90\% accuracy on a consonant.}
-\item{cm2020_90_num_studies}{Number of studies used by Crowe & McLeod
-(2020) to compute the corresponding statistics.}
-\item{cm2020_90_stage}{Developmental stage assigned to the consonant by
-Crowe & McLeod (2020). Sounds with an \code{age_mean} before 48 months are
-\code{early}, before 60 months are \code{middle}, and of 60 or older are \code{late}.}
-\item{s93_eights}{Developmental stage of Shriberg (1993)---that is,
-the \code{early} 8, \code{middle} 8 and \code{late} 8 consonants.}
-}
+Kuruvilla-Dugdale and colleagues (2018) used this scoring system to
+compare intelligibility for low complexity versus high complexity words.
+For example, for speakers with ALS and mild dysarthria, there was
+statistically clear reduction in intelligibility for high complexity
+words but not for low complexity words. I applied this scoring system on
+single-word intelligibility in children's speech (Mahr & Hustad, 2023).
+There was a probable but not statistically clear negative effect of
+complexity on intelligibility over and above the effects of age, word
+frequency and word neighborhood competition. (Regrettably, I coded the
+one consonant cluster in the word list with a complexity of 8 instead
+of 7, but otherwise this is the approach.)
 }
 }
 \references{
+Allison, K. M., & Hustad, K. C. (2014). Impact of sentence length and
+phonetic complexity on intelligibility of 5-year-old children with
+cerebral palsy. \emph{International Journal of Speech-Language
+Pathology}, \emph{16}(4), 396–407.
+\url{https://doi.org/10.3109/17549507.2013.876667}
+
 Crowe, K., & McLeod, S. (2020). Children’s English Consonant
 Acquisition in the United States: A Review. \emph{American Journal of
 Speech-Language Pathology},
 \emph{29}(4), 2155–2169. \url{https://doi.org/10.1044/2020_AJSLP-19-00168}
+
+Kent, R. D. (1992). The Biology of Phonological Development. In C. A.
+Ferguson, L. Menn, & C. Stoel-Gammon (Eds.), \emph{Phonological development:
+Models, research, implications} (pp. 65–90). York Press.
+
+Kim, H., Martin, K., Hasegawa-Johnson, M., & Perlman, A. (2010).
+Frequency of consonant articulation errors in dysarthric speech.
+\emph{Clinical Linguistics and Phonetics}, \emph{24}(10), 759–770.
+\url{https://doi.org/10.3109/02699206.2010.497238}
+
+Kuruvilla-Dugdale, M., Custer, C., Heidrick, L., Barohn, R., &
+Govindarajan, R. (2018). A Phonetic Complexity-Based Approach for
+Intelligibility and Articulatory Precision Testing: A Preliminary Study
+on Talkers With Amyotrophic Lateral Sclerosis. \emph{Journal of Speech,
+Language, and Hearing Research}, \emph{61}(9), 2205–2214.
+\url{https://doi.org/10.1044/2018_JSLHR-S-17-0462}
+
+Mahr, T. J., & Hustad, K. C. (2023). Lexical Predictors of
+Intelligibility in Young Children’s Speech. \emph{Journal of Speech, Language,
+and Hearing Research}, 66(8S), 3013–3025.
+\url{https://doi.org/10.1044/2022_JSLHR-22-00294}
+
+Sander, E. K. (1972). When are Speech Sounds Learned? \emph{Journal of Speech
+and Hearing Disorders}, \emph{37}(1), 55–63.
+\url{https://doi.org/10.1044/jshd.3701.55}
 
 Shriberg, L. D. (1993). Four New Speech and Prosody-Voice Measures for
 Genetics Research and Other Studies in Developmental Phonological Disorders.
