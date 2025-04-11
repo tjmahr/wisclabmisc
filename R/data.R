@@ -385,6 +385,12 @@ NULL
 #'   each part of a syllable (onset, nucleus, coda) using these scores when
 #'   the syllable part is a single segment and using scores of 7 and 8 for
 #'   2-consonant and 3-consonant clusters, respectively.}
+#'   \item{hml84_frequency, hml84_log10fpm}{Raw frequency and log10 frequency
+#'   per million of the phoneme in the Hoosier Mental Lexicon (Nusbaum, Pisoni,
+#'   Pisoni, 1984) word-frequency dictionary.}
+#'   \item{hml84_log10fpm, mhr82_frequency}{Raw frequency and log10 frequency
+#'   per million of the phoneme in the Moe, Hopkins, and Rush (1982) word
+#'   frequency dictionary of first-graders.}
 #' }
 #'
 #' ## Vowel acquisition features
@@ -407,6 +413,12 @@ NULL
 #'   each part of a syllable (onset, nucleus, coda) using these scores when
 #'   the syllable part is a single segment and using scores of 7 and 8 for
 #'   2-consonant and 3-consonant clusters, respectively.}
+#'   \item{hml84_frequency, hml84_log10fpm}{Raw frequency and log10 frequency
+#'   per million of the phoneme in the Hoosier Mental Lexicon (Nusbaum, Pisoni,
+#'   Pisoni, 1984) word-frequency dictionary.}
+#'   \item{hml84_log10fpm, mhr82_frequency}{Raw frequency and log10 frequency
+#'   per million of the phoneme in the Moe, Hopkins, and Rush (1982) word
+#'   frequency dictionary of first-graders.}
 #' }
 #'
 #' ## Crowe and McLeod (2020) norms for English consonant acquisition
@@ -474,7 +486,9 @@ NULL
 #' assign the speech sounds different complexity levels based on biological
 #' principles outlined in Kent (1992). Because Kent (1992) is a book
 #' chapter that is not floating around online, it's worthwhile to review
-#' the provenance of these complexity measures.
+#' the provenance of these complexity measures. In short, Kent (1992) applied
+#' interpreted consonant and vowel development data in terms of their
+#' motor demands.
 #'
 #' Sander (1972) set out to construct a set of developmental norms for
 #' typical consonant acquisition in English. His big idea was to include

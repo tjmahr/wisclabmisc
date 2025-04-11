@@ -124,16 +124,20 @@ data_s93 <- make_shriberg_eights()
 data_crowe_mcleod <- make_crowe_mcleod()
 list_complexity <- make_complexity_scales()
 
+data_freq <- readr::read_csv("data-raw/phone-freqs.csv", col_types = "cnnnn")
+
 data_acq_consonants <- readr::read_csv("data-raw/consonants.csv") |>
   select(phone, cmubet, wiscbet) |>
   right_join(data_crowe_mcleod, by = "phone") |>
   left_join(data_s93, by = "phone") |>
   left_join(list_complexity$consonants, by = "cmubet") |>
+  left_join(data_freq, by = "phone") |>
   print(n = Inf)
 
 data_acq_vowels <- readr::read_csv("data-raw/vowels.csv") |>
   select(phone, cmubet, wiscbet) |>
-  right_join(list_complexity$vowels, by = "cmubet")
+  right_join(list_complexity$vowels, by = "cmubet") |>
+  left_join(data_freq, by = "phone")
 
 usethis::use_data(
   data_acq_consonants,
