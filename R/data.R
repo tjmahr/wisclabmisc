@@ -388,7 +388,7 @@ NULL
 #'   \item{hml84_frequency, hml84_log10fpm}{Raw frequency and log10 frequency
 #'   per million of the phoneme in the Hoosier Mental Lexicon (Nusbaum, Pisoni,
 #'   Pisoni, 1984) word-frequency dictionary.}
-#'   \item{hml84_log10fpm, mhr82_frequency}{Raw frequency and log10 frequency
+#'   \item{mhr82_frequency, mhr82_log10fpm}{Raw frequency and log10 frequency
 #'   per million of the phoneme in the Moe, Hopkins, and Rush (1982) word
 #'   frequency dictionary of first-graders.}
 #' }
@@ -416,7 +416,7 @@ NULL
 #'   \item{hml84_frequency, hml84_log10fpm}{Raw frequency and log10 frequency
 #'   per million of the phoneme in the Hoosier Mental Lexicon (Nusbaum, Pisoni,
 #'   Pisoni, 1984) word-frequency dictionary.}
-#'   \item{hml84_log10fpm, mhr82_frequency}{Raw frequency and log10 frequency
+#'   \item{mhr82_frequency, mhr82_log10fpm}{Raw frequency and log10 frequency
 #'   per million of the phoneme in the Moe, Hopkins, and Rush (1982) word
 #'   frequency dictionary of first-graders.}
 #' }
@@ -437,6 +437,37 @@ NULL
 #' values to 1 decimal point (3 days for ages in months), 2) dropping /ʍ/, 3)
 #' using /r/, /g/, /tʃ/, /dʒ/ for IPA characters instead of the specialized
 #' characters used in the article.
+#'
+#' ## English language phoneme frequencies
+#'
+#' The `hml84_frequency` column provides the frequency count for the phonemes in
+#' the Hoosier Mental Lexicon (Nusbaum, Pisoni, Pisoni, 1984). That is, we count
+#' how many times the phonemes appear in each word in the word list and weight
+#' them by the word frequency. For example, "ad" has two phonemes and a corpus
+#' frequency of 99, so it counts for 99 /æ/ tokens and 99 /d/ tokens.
+#'
+#' The HML frequency counts derive from the Brown Corpus of one million English
+#' words that were printed/published in 1961. The HML provides frequencies of
+#' *phonological* words, and homophones are combined into a single entry. For
+#' example, the word "ad" has a frequency of 99 (11 *ad* tokens plus 88 *add*
+#' tokens). That's why, I suppose, it's a *mental* lexicon. Approximately 8,000
+#' words in the HML were not in the K&F frequency word list, and these are
+#' apparently assigned a frequency of 1.
+#'
+#' The `mhr82_frequency` column was constructed in a similar way but the frequencies
+#' were based on a corpus of words used by first-graders
+#' (Moe, Hopkins, & Rush, 1982).
+#'
+#' The `hml84_log10fpm` and `mhr82_log10fpm` columns provide the frequency in log-10
+#' frequency per million which is more appropriate for analyses. Computing
+#' frequency per million normalize the frequency counts across different
+#' corpora, and log-frequency is better suited than raw or normalized frequency
+#' counts.
+#'
+#' I computed these phoneme frequencies independently, but retrieved my copies
+#' of the HML and MHR frequency-pronunciation tables from [a
+#' course](https://kb.osu.edu/items/6b1379d3-e15d-53e4-99b6-85f2bb09b3af) by
+#' Smith, Beckman and Foltz (2016).
 #'
 #' ## The early 8, middle 8 and late 8 (Shriberg, 1993)
 #'

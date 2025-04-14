@@ -30,30 +30,30 @@ speech-motor difficulty of speech sounds. See also
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_acq_consonants)
 }\if{html}{\out{</div>}}\tabular{lllrrrrrllrrrrrr}{
    phone \tab cmubet \tab wiscbet \tab cm2020_90_age_mean \tab cm2020_90_age_sd \tab cm2020_90_age_min \tab cm2020_90_age_max \tab cm2020_90_num_studies \tab cm2020_90_stage \tab s93_eights \tab k1992_set \tab kd2018_complexity \tab hml84_frequency \tab hml84_log10fpm \tab mhr82_frequency \tab mhr82_log10fpm \cr
-   p \tab P \tab p \tab 33.2 \tab 6.9 \tab 24 \tab 48 \tab 12 \tab early \tab early \tab 1 \tab 3 \tab 50694 \tab 4.274964 \tab 14851 \tab 4.230197 \cr
-   b \tab B \tab b \tab 31.4 \tab 7.8 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 2 \tab 4 \tab 51831 \tab 4.284598 \tab 18027 \tab 4.314365 \cr
-   t \tab T \tab t \tab 38.5 \tab 9.2 \tab 24 \tab 60 \tab 13 \tab early \tab middle \tab 3 \tab 5 \tab 188536 \tab 4.845402 \tab 69108 \tab 4.897970 \cr
-   d \tab D \tab d \tab 35.7 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 2 \tab 4 \tab 102205 \tab 4.579480 \tab 47838 \tab 4.738214 \cr
-   k \tab K \tab k \tab 37.7 \tab 7.3 \tab 24 \tab 48 \tab 13 \tab early \tab middle \tab 2 \tab 4 \tab 73250 \tab 4.434816 \tab 25462 \tab 4.464334 \cr
-   g \tab G \tab g \tab 36.8 \tab 6.6 \tab 24 \tab 48 \tab 13 \tab early \tab middle \tab 2 \tab 4 \tab 19422 \tab 3.858302 \tab 15789 \tab 4.256796 \cr
-   tʃ \tab CH \tab tsh \tab 53.5 \tab 10.7 \tab 36 \tab 72 \tab 12 \tab middle \tab middle \tab 4 \tab 6 \tab 17147 \tab 3.804196 \tab 3149 \tab 3.556614 \cr
-   dʒ \tab JH \tab dzh \tab 51.0 \tab 11.8 \tab 36 \tab 72 \tab 13 \tab middle \tab middle \tab 4 \tab 6 \tab 13220 \tab 3.691239 \tab 3015 \tab 3.537729 \cr
-   m \tab M \tab m \tab 33.2 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \tab 75850 \tab 4.449963 \tab 25799 \tab 4.470044 \cr
-   n \tab N \tab n \tab 33.1 \tab 7.4 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \tab 204939 \tab 4.881633 \tab 68331 \tab 4.893059 \cr
-   ŋ \tab NG \tab ng \tab 40.3 \tab 10.8 \tab 24 \tab 55 \tab 10 \tab early \tab middle \tab 3 \tab 5 \tab 13692 \tab 3.706475 \tab 9102 \tab 4.017578 \cr
-   f \tab F \tab f \tab 38.3 \tab 6.3 \tab 24 \tab 48 \tab 13 \tab early \tab middle \tab 2 \tab 4 \tab 51526 \tab 4.282034 \tab 10731 \tab 4.089082 \cr
-   v \tab V \tab v \tab 50.8 \tab 10.8 \tab 36 \tab 66 \tab 12 \tab middle \tab middle \tab 4 \tab 6 \tab 66490 \tab 4.392764 \tab 8753 \tab 4.000598 \cr
-   θ \tab TH \tab th \tab 77.0 \tab 7.4 \tab 72 \tab 96 \tab 10 \tab late \tab late \tab 4 \tab 6 \tab 18300 \tab 3.832459 \tab 4337 \tab 3.695631 \cr
-   ð \tab DH \tab dh \tab 69.0 \tab 11.3 \tab 54 \tab 96 \tab 12 \tab late \tab late \tab 4 \tab 6 \tab 108602 \tab 4.605846 \tab 35995 \tab 4.614683 \cr
-   s \tab S \tab s \tab 51.3 \tab 16.3 \tab 24 \tab 84 \tab 12 \tab middle \tab late \tab 4 \tab 6 \tab 114733 \tab 4.629696 \tab 33752 \tab 4.586741 \cr
-   z \tab Z \tab z \tab 56.8 \tab 14.3 \tab 30 \tab 84 \tab 11 \tab middle \tab late \tab 4 \tab 6 \tab 54454 \tab 4.306038 \tab 24027 \tab 4.439141 \cr
-   ʃ \tab SH \tab sh \tab 55.0 \tab 10.5 \tab 36 \tab 72 \tab 12 \tab middle \tab late \tab 4 \tab 6 \tab 21756 \tab 3.907587 \tab 4844 \tab 3.743645 \cr
-   ʒ \tab ZH \tab zh \tab 70.7 \tab 12.2 \tab 60 \tab 84 \tab 3 \tab late \tab late \tab 4 \tab 6 \tab 1488 \tab 2.742611 \tab 100 \tab 2.058441 \cr
-   h \tab HH \tab h \tab 35.0 \tab 7.0 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \tab 61905 \tab 4.361734 \tab 18896 \tab 4.334811 \cr
-   l \tab L \tab l \tab 53.8 \tab 10.4 \tab 24 \tab 60 \tab 12 \tab middle \tab late \tab 3 \tab 5 \tab 98287 \tab 4.562504 \tab 29343 \tab 4.525946 \cr
-   r \tab R \tab r \tab 66.6 \tab 18.6 \tab 30 \tab 96 \tab 12 \tab late \tab late \tab 3 \tab 5 \tab 121548 \tab 4.654756 \tab 29534 \tab 4.528764 \cr
-   w \tab W \tab w \tab 35.2 \tab 6.8 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \tab 60251 \tab 4.349972 \tab 25171 \tab 4.459342 \cr
-   j \tab Y \tab j \tab 45.8 \tab 11.0 \tab 30 \tab 60 \tab 13 \tab early \tab early \tab 2 \tab 4 \tab 16510 \tab 3.787755 \tab 8544 \tab 3.990103 \cr
+   p \tab P \tab p \tab 33.2 \tab 6.9 \tab 24 \tab 48 \tab 12 \tab early \tab early \tab 1 \tab 3 \tab 50694 \tab 4.276690 \tab 14851 \tab 4.230197 \cr
+   b \tab B \tab b \tab 31.4 \tab 7.8 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 2 \tab 4 \tab 51831 \tab 4.286323 \tab 18027 \tab 4.314365 \cr
+   t \tab T \tab t \tab 38.5 \tab 9.2 \tab 24 \tab 60 \tab 13 \tab early \tab middle \tab 3 \tab 5 \tab 188536 \tab 4.847127 \tab 69108 \tab 4.897970 \cr
+   d \tab D \tab d \tab 35.7 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 2 \tab 4 \tab 102205 \tab 4.581205 \tab 47838 \tab 4.738214 \cr
+   k \tab K \tab k \tab 37.7 \tab 7.3 \tab 24 \tab 48 \tab 13 \tab early \tab middle \tab 2 \tab 4 \tab 73250 \tab 4.436541 \tab 25462 \tab 4.464334 \cr
+   g \tab G \tab g \tab 36.8 \tab 6.6 \tab 24 \tab 48 \tab 13 \tab early \tab middle \tab 2 \tab 4 \tab 19422 \tab 3.860027 \tab 15789 \tab 4.256796 \cr
+   tʃ \tab CH \tab tsh \tab 53.5 \tab 10.7 \tab 36 \tab 72 \tab 12 \tab middle \tab middle \tab 4 \tab 6 \tab 17147 \tab 3.805921 \tab 3149 \tab 3.556614 \cr
+   dʒ \tab JH \tab dzh \tab 51.0 \tab 11.8 \tab 36 \tab 72 \tab 13 \tab middle \tab middle \tab 4 \tab 6 \tab 13220 \tab 3.692964 \tab 3015 \tab 3.537729 \cr
+   m \tab M \tab m \tab 33.2 \tab 6.7 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \tab 75850 \tab 4.451689 \tab 25799 \tab 4.470044 \cr
+   n \tab N \tab n \tab 33.1 \tab 7.4 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \tab 204939 \tab 4.883358 \tab 68331 \tab 4.893059 \cr
+   ŋ \tab NG \tab ng \tab 40.3 \tab 10.8 \tab 24 \tab 55 \tab 10 \tab early \tab middle \tab 3 \tab 5 \tab 13692 \tab 3.708200 \tab 9102 \tab 4.017578 \cr
+   f \tab F \tab f \tab 38.3 \tab 6.3 \tab 24 \tab 48 \tab 13 \tab early \tab middle \tab 2 \tab 4 \tab 51526 \tab 4.283759 \tab 10731 \tab 4.089082 \cr
+   v \tab V \tab v \tab 50.8 \tab 10.8 \tab 36 \tab 66 \tab 12 \tab middle \tab middle \tab 4 \tab 6 \tab 66490 \tab 4.394489 \tab 8753 \tab 4.000598 \cr
+   θ \tab TH \tab th \tab 77.0 \tab 7.4 \tab 72 \tab 96 \tab 10 \tab late \tab late \tab 4 \tab 6 \tab 18300 \tab 3.834184 \tab 4337 \tab 3.695631 \cr
+   ð \tab DH \tab dh \tab 69.0 \tab 11.3 \tab 54 \tab 96 \tab 12 \tab late \tab late \tab 4 \tab 6 \tab 108602 \tab 4.607571 \tab 35995 \tab 4.614683 \cr
+   s \tab S \tab s \tab 51.3 \tab 16.3 \tab 24 \tab 84 \tab 12 \tab middle \tab late \tab 4 \tab 6 \tab 114733 \tab 4.631421 \tab 33752 \tab 4.586741 \cr
+   z \tab Z \tab z \tab 56.8 \tab 14.3 \tab 30 \tab 84 \tab 11 \tab middle \tab late \tab 4 \tab 6 \tab 54454 \tab 4.307763 \tab 24027 \tab 4.439141 \cr
+   ʃ \tab SH \tab sh \tab 55.0 \tab 10.5 \tab 36 \tab 72 \tab 12 \tab middle \tab late \tab 4 \tab 6 \tab 21756 \tab 3.909312 \tab 4844 \tab 3.743645 \cr
+   ʒ \tab ZH \tab zh \tab 70.7 \tab 12.2 \tab 60 \tab 84 \tab 3 \tab late \tab late \tab 4 \tab 6 \tab 1488 \tab 2.744336 \tab 100 \tab 2.058441 \cr
+   h \tab HH \tab h \tab 35.0 \tab 7.0 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \tab 51235 \tab 4.281300 \tab 18896 \tab 4.334811 \cr
+   l \tab L \tab l \tab 53.8 \tab 10.4 \tab 24 \tab 60 \tab 12 \tab middle \tab late \tab 3 \tab 5 \tab 98287 \tab 4.564229 \tab 29343 \tab 4.525946 \cr
+   r \tab R \tab r \tab 66.6 \tab 18.6 \tab 30 \tab 96 \tab 12 \tab late \tab late \tab 3 \tab 5 \tab 121548 \tab 4.656481 \tab 29534 \tab 4.528764 \cr
+   w \tab W \tab w \tab 35.2 \tab 6.8 \tab 24 \tab 48 \tab 13 \tab early \tab early \tab 1 \tab 3 \tab 60251 \tab 4.351697 \tab 25171 \tab 4.459342 \cr
+   j \tab Y \tab j \tab 45.8 \tab 11.0 \tab 30 \tab 60 \tab 13 \tab early \tab early \tab 2 \tab 4 \tab 16510 \tab 3.789480 \tab 8544 \tab 3.990103 \cr
 }
 
 
@@ -85,6 +85,12 @@ scores for individual segments range from 1 for the earliest vowels to
 each part of a syllable (onset, nucleus, coda) using these scores when
 the syllable part is a single segment and using scores of 7 and 8 for
 2-consonant and 3-consonant clusters, respectively.}
+\item{hml84_frequency, hml84_log10fpm}{Raw frequency and log10 frequency
+per million of the phoneme in the Hoosier Mental Lexicon (Nusbaum, Pisoni,
+Pisoni, 1984) word-frequency dictionary.}
+\item{mhr82_frequency, mhr82_log10fpm}{Raw frequency and log10 frequency
+per million of the phoneme in the Moe, Hopkins, and Rush (1982) word
+frequency dictionary of first-graders.}
 }
 }
 
@@ -95,23 +101,23 @@ the syllable part is a single segment and using scores of 7 and 8 for
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{knitr::kable(data_acq_vowels)
 }\if{html}{\out{</div>}}\tabular{lllrrrrr}{
    phone \tab cmubet \tab wiscbet \tab kd2018_complexity \tab hml84_frequency \tab hml84_log10fpm \tab mhr82_frequency \tab mhr82_log10fpm \cr
-   i \tab IY \tab i \tab 2 \tab 82430 \tab 4.486093 \tab 28537 \tab 4.513850 \cr
-   ɪ \tab IH \tab I \tab 4 \tab 195348 \tab 4.860817 \tab 43999 \tab 4.701884 \cr
-   eɪ \tab EY \tab eI \tab 4 \tab 38966 \tab 4.160694 \tab 16679 \tab 4.280611 \cr
-   ɛ \tab EH \tab E \tab 3 \tab 73107 \tab 4.433967 \tab 31322 \tab 4.554291 \cr
-   æ \tab AE \tab ae \tab 4 \tab 106838 \tab 4.598734 \tab 40290 \tab 4.663639 \cr
-   ʌ \tab AH \tab ^ \tab 1 \tab 44555 \tab 4.218904 \tab 22826 \tab 4.416871 \cr
-   ə \tab AH \tab 4 \tab 1 \tab 231568 \tab 4.934686 \tab 38977 \tab 4.649250 \cr
-   u \tab UW \tab u \tab 2 \tab 57320 \tab 4.328314 \tab 19188 \tab 4.341471 \cr
-   ʊ \tab UH \tab U \tab 4 \tab 13557 \tab 3.702171 \tab 4288 \tab 3.690696 \cr
-   oʊ \tab OW \tab oU \tab 2 \tab 61954 \tab 4.362077 \tab 17330 \tab 4.297240 \cr
-   ɔ \tab AO \tab c \tab 3 \tab 26110 \tab 3.986815 \tab 12004 \tab 4.137767 \cr
-   ɑ \tab AA \tab @ \tab 1 \tab 36589 \tab 4.133358 \tab 17326 \tab 4.297140 \cr
-   aʊ \tab AW \tab @U \tab 3 \tab 16079 \tab 3.776267 \tab 7377 \tab 3.926321 \cr
-   aɪ \tab AY \tab @I \tab 3 \tab 39275 \tab 4.164124 \tab 23807 \tab 4.435146 \cr
-   ɔɪ \tab OY \tab cI \tab 3 \tab 2140 \tab 2.900422 \tab 744 \tab 2.930014 \cr
-   ɝ \tab ER \tab 3^ \tab 5 \tab 17048 \tab 3.801681 \tab 4227 \tab 3.684474 \cr
-   ɚ \tab ER \tab 4^ \tab 5 \tab 41966 \tab 4.192906 \tab 10676 \tab 4.086850 \cr
+   i \tab IY \tab i \tab 2 \tab 82430 \tab 4.487818 \tab 28537 \tab 4.513850 \cr
+   ɪ \tab IH \tab I \tab 4 \tab 195348 \tab 4.862542 \tab 43999 \tab 4.701884 \cr
+   eɪ \tab EY \tab eI \tab 4 \tab 38966 \tab 4.162419 \tab 16679 \tab 4.280611 \cr
+   ɛ \tab EH \tab E \tab 3 \tab 73107 \tab 4.435692 \tab 31322 \tab 4.554291 \cr
+   æ \tab AE \tab ae \tab 4 \tab 106838 \tab 4.600459 \tab 40290 \tab 4.663639 \cr
+   ʌ \tab AH \tab ^ \tab 1 \tab 44555 \tab 4.220629 \tab 22826 \tab 4.416871 \cr
+   ə \tab AH \tab 4 \tab 1 \tab 231568 \tab 4.936412 \tab 38977 \tab 4.649250 \cr
+   u \tab UW \tab u \tab 2 \tab 57320 \tab 4.330039 \tab 19188 \tab 4.341471 \cr
+   ʊ \tab UH \tab U \tab 4 \tab 13557 \tab 3.703897 \tab 4288 \tab 3.690696 \cr
+   oʊ \tab OW \tab oU \tab 2 \tab 61954 \tab 4.363802 \tab 17330 \tab 4.297240 \cr
+   ɔ \tab AO \tab c \tab 3 \tab 26110 \tab 3.988540 \tab 12004 \tab 4.137767 \cr
+   ɑ \tab AA \tab @ \tab 1 \tab 36589 \tab 4.135084 \tab 17326 \tab 4.297140 \cr
+   aʊ \tab AW \tab @U \tab 3 \tab 16079 \tab 3.777992 \tab 7377 \tab 3.926321 \cr
+   aɪ \tab AY \tab @I \tab 3 \tab 39275 \tab 4.165849 \tab 23807 \tab 4.435146 \cr
+   ɔɪ \tab OY \tab cI \tab 3 \tab 2140 \tab 2.902147 \tab 744 \tab 2.930014 \cr
+   ɝ \tab ER \tab 3^ \tab 5 \tab 17048 \tab 3.803406 \tab 4227 \tab 3.684474 \cr
+   ɚ \tab ER \tab 4^ \tab 5 \tab 41966 \tab 4.194631 \tab 10676 \tab 4.086850 \cr
 }
 
 
@@ -127,7 +133,12 @@ scores for individual segments range from 1 for the earliest vowels to
 each part of a syllable (onset, nucleus, coda) using these scores when
 the syllable part is a single segment and using scores of 7 and 8 for
 2-consonant and 3-consonant clusters, respectively.}
-\item{wiscbet}{phone in an older system used by our lab}
+\item{hml84_frequency, hml84_log10fpm}{Raw frequency and log10 frequency
+per million of the phoneme in the Hoosier Mental Lexicon (Nusbaum, Pisoni,
+Pisoni, 1984) word-frequency dictionary.}
+\item{mhr82_frequency, mhr82_log10fpm}{Raw frequency and log10 frequency
+per million of the phoneme in the Moe, Hopkins, and Rush (1982) word
+frequency dictionary of first-graders.}
 }
 }
 
@@ -147,6 +158,37 @@ from their Table 2 making the following changes: 1) rounding mean and SD
 values to 1 decimal point (3 days for ages in months), 2) dropping /ʍ/, 3)
 using /r/, /g/, /tʃ/, /dʒ/ for IPA characters instead of the specialized
 characters used in the article.
+}
+
+\subsection{English language phoneme frequencies}{
+
+The \code{hml84_frequency} column provides the frequency count for the phonemes in
+the Hoosier Mental Lexicon (Nusbaum, Pisoni, Pisoni, 1984). That is, we count
+how many times the phonemes appear in each word in the word list and weight
+them by the word frequency. For example, "ad" has two phonemes and a corpus
+frequency of 99, so it counts for 99 /æ/ tokens and 99 /d/ tokens.
+
+The HML frequency counts derive from the Brown Corpus of one million English
+words that were printed/published in 1961. The HML provides frequencies of
+\emph{phonological} words, and homophones are combined into a single entry. For
+example, the word "ad" has a frequency of 99 (11 \emph{ad} tokens plus 88 \emph{add}
+tokens). That's why, I suppose, it's a \emph{mental} lexicon. Approximately 8,000
+words in the HML were not in the K&F frequency word list, and these are
+apparently assigned a frequency of 1.
+
+The \code{mhr82_frequency} column was constructed in a similar way but the frequencies
+were based on a corpus of words used by first-graders
+(Moe, Hopkins, & Rush, 1982).
+
+The \code{hml84_log10fpm} and \code{mhr82_log10fpm} columns provide the frequency in log-10
+frequency per million which is more appropriate for analyses. Computing
+frequency per million normalize the frequency counts across different
+corpora, and log-frequency is better suited than raw or normalized frequency
+counts.
+
+I computed these phoneme frequencies independently, but retrieved my copies
+of the HML and MHR frequency-pronunciation tables from \href{https://kb.osu.edu/items/6b1379d3-e15d-53e4-99b6-85f2bb09b3af}{a course} by
+Smith, Beckman and Foltz (2016).
 }
 
 \subsection{The early 8, middle 8 and late 8 (Shriberg, 1993)}{

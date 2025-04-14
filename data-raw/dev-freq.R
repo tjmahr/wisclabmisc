@@ -1,5 +1,4 @@
 # We retrieve two corpora from a private Github repo.
-
 retrieve_private_file <- function(filepath) {
   repo <- "tjmahr/backroom-corpora"
   branch <- "main"
@@ -55,6 +54,7 @@ ipa_phones <- c(
 )
 
 data_mhr <- readr::read_delim("data-raw/moe-word-freq.wp")
+nrow(data_mhr)
 
 # MHR uses numbered vowels, inherited presumably from the CMU dictionary.
 # Patch any entries with unnumbered vowels.
@@ -269,11 +269,16 @@ data_prepared_mhr_counts$count |> sum()
 data_hml <- readr::read_delim("data-raw/hml-word-freq.txt")
 # one of the rows has two extra columns so reader complains about them
 
-# Patch away syllablic Cs
+nrow(data_hml)
+data_hml$frequency |> table()
+
+# Patch away syllabic Cs
 data_hml$HMLbet <- data_hml$HMLbet |>
   stringr::str_replace_all("L", "xl") |>
   stringr::str_replace_all("M", "xm") |>
-  stringr::str_replace_all("N", "xn")
+  stringr::str_replace_all("N", "xn") |>
+  # voiceless /w/ is not allowed
+  stringr::str_replace_all("hw", "w")
 
 # Prepare the mapping from HMLBet (names) to IPA (values)
 hmlbet_to_ipa <- c(
