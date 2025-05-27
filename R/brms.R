@@ -85,3 +85,58 @@ handle_control_args <- function(args) {
   }
   args
 }
+
+
+
+# #' Compute the finite population SD for random effect levels
+# #'
+# #' @param model a model fitted by brms
+# #' @return a data.frame with one row per grouping variable per coefficient per
+# #' posterior draw with the SD of the random effect estimates for grouping
+# #' variable
+# #' @noRd
+# fsd_ranef <- function(model) {
+#   ls <- brms::ranef(model, summary = FALSE)
+#   l <- as.list(seq_along(ls))
+#
+#   for (i in seq_along(ls)) {
+#     l[[i]] <- ls[[i]] |>
+#       apply(3, as.data.frame) |>
+#       bind_rows(.id = "ranef") |>
+#       mutate(
+#         group = names(ls)[i],
+#         .draw = seq_along(.data$ranef)
+#       ) |>
+#       tidyr::pivot_longer(
+#         cols = -one_of(c("ranef", "group", ".draw")),
+#         names_to = "level"
+#       )
+#   }
+#
+#   results <- bind_rows(l) |>
+#     group_by(ranef, group, .draw) |>
+#     summarise(
+#       n_levels = n_distinct(.data$level),
+#       finite_sd = sd(.data$value),
+#       .groups = "drop"
+#     ) |>
+#     mutate(
+#       label = ifelse(ranef == "Intercept", .data$group, paste0(.data$group, " . ", .data$ranef)),
+#       label = sprintf("%s (%s)", .data$label, .data$n_levels)
+#     )
+#
+#   if (model$family$family == "gaussian") {
+#     draws <- stats::residuals(model, summary = FALSE)
+#     resid <- tibble::tibble(
+#       ranef = "Residual",
+#       group = "Residual",
+#       .draw = seq(1, nrow(draws)),
+#       n_levels = ncol(draws),
+#       finite_sd = apply(draws, 1, sd),
+#       label = sprintf("Residual (%s)", ncol(draws))
+#     )
+#     results <- rbind(results, resid)
+#   }
+#
+#   results
+# }
