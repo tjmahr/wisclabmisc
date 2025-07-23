@@ -88,13 +88,13 @@ handle_control_args <- function(args) {
 
 
 
-# #' Compute the finite population SD for random effect levels
-# #'
-# #' @param model a model fitted by brms
-# #' @return a data.frame with one row per grouping variable per coefficient per
-# #' posterior draw with the SD of the random effect estimates for grouping
-# #' variable
-# #' @noRd
+# # Compute the finite population SD for random effect levels
+# #
+# # @param model a model fitted by brms
+# # @return a data.frame with one row per grouping variable per coefficient per
+# # posterior draw with the SD of the random effect estimates for grouping
+# # variable
+# # @noRd
 # fsd_ranef <- function(model) {
 #   ls <- brms::ranef(model, summary = FALSE)
 #   l <- as.list(seq_along(ls))

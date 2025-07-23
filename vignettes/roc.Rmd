@@ -102,7 +102,7 @@ proportions of patients in each group above or below that threshold. We
 can then plot these proportions to visualize the trading relations
 between specificity and sensitivity as the threshold changes.
 
-```{r sens-spec, fig.height = 3, fig.width = 5}
+```{r sens-spec, fig.height = 3.5, fig.width = 5}
 by_outcome <- split(data, data$outcome)
 smallest_diff <- min(diff(unique(sort(data$s100b))))
 grid <- tibble(
@@ -113,8 +113,8 @@ grid <- tibble(
   )
 )
 
-roc_coordinates <- grid %>% 
-  rowwise() %>% 
+roc_coordinates <- grid |> 
+  rowwise() |> 
   summarise(
     threshold = threshold,
     prop_poor_above = mean(by_outcome$Poor$s100b >= threshold),
@@ -125,12 +125,19 @@ ggplot(roc_coordinates) +
   aes(x = threshold) + 
   geom_step(aes(y = prop_poor_above)) + 
   geom_step(aes(y = prop_good_below)) +
-  annotate("text", x = 2, y = .9, hjust = 1, label = "specificity") + 
-  annotate("text", x = 2, y = .1, hjust = 1, label = "sensitivity") +
+  annotate(
+    "text", x = 2, y = .9, hjust = 1, vjust = 1, size = 3.25,
+    label = "specificity\nproportion of `control` below threshold"
+  ) + 
+  annotate(
+    "text", x = 2, y = .1, hjust = 1, vjust = 0, size = 3.25,
+    label = "sensitivity\nproportion of `clinical` above threshold"
+  ) +
   labs(
     title = "Sensitivity and specificity as cumulative proportions",
     x = "threshold (diagnosis when score >= threshold)",
-    y = NULL
+    y = NULL,
+    subtitle = "threshold direction: control < clinical"
   )
 ```
 
@@ -141,17 +148,53 @@ specificity of 1. Conversely, there is just `Poor` outcome above 1, so a
 threshold of 1 is going to detect 1 `Poor` outcome and hence have a very
 low sensitivity.
 
-If we ignore the threshold in our visualization, we can (finally) plot a
+We can also compute the empirical sensitivity and specificity directly
+from the data instead of traversing a grid of thresholds by using the
+empirical cumulative distribution function (ECDFs). *Cumulative
+distribution* is the proportion of points below each value of x and
+*empirical* means that this value is computed directly from the data.
+
+```{r sens-spec-b, fig.height = 3.5, fig.width = 5}
+ggplot(data) + 
+  aes(x = s100b) + 
+  stat_ecdf(
+    data = data |> filter(outcome == "Good"),
+  ) +
+  stat_ecdf(
+    aes(y = 1 - after_stat(ecdf)),
+    data = data |> filter(outcome == "Poor")
+  ) + 
+  labs(
+    x = "s100b",
+    y = "Empirical distribution functions"
+  ) +
+  annotate(
+    "text", x = 2, y = .9, hjust = 1, vjust = 1,
+    label = "specificity\nECDF(x) for `control`"
+  ) + 
+  annotate(
+    "text", x = 2, y = .1, hjust = 1, vjust = 0,
+    label = "sensitivity\n1 - ECDF(x) for `clinical`"
+  ) +
+  labs(
+    title = "Sensitivity and specificity as ECDFs",
+    x = "threshold (diagnosis when score >= threshold)",
+    y = NULL,
+    subtitle = "threshold direction: control < clinical"
+  )
+```
+
+If we ignore the threshold values for our visualization, we can (finally) plot a
 canonical ROC curve. It shows specificity in reversing order so that the
 most ideal point is the top left corner (sensitivity = 1,
 specificity = 1).
 
 ```{r roc-1, fig.width = 3, fig.height = 3}
-roc_coordinates <- roc_coordinates %>% 
+roc_coordinates <- roc_coordinates |> 
   rename(
     sensitivities = prop_poor_above, 
     specificities = prop_good_below
-  ) %>%
+  ) |>
   # otherwise the stair-steps look wrong
   arrange(sensitivities)
 
@@ -171,8 +214,8 @@ match in our sensitivity and specificity values.
 roc <- pROC::roc(data, response = outcome, predictor = s100b)
 plot(roc)
 
-proc_coordinates <- roc[2:3] %>% 
-  as.data.frame() %>% 
+proc_coordinates <- roc[2:3] |> 
+  as.data.frame() |> 
   arrange(sensitivities)
 
 # Plot the pROC point as a wide semi-transparent blue
@@ -231,11 +274,11 @@ We can get close to a dataframe by manipulating the list or by using
 the "best" ROC points, but it strips off useful data like the direction used.
 
 ```{r}
-r[1:5] %>% 
-  as.data.frame() %>% 
+r[1:5] |> 
+  as.data.frame() |> 
   tibble::as_tibble()
 
-pROC::coords(r) %>% 
+pROC::coords(r) |> 
   tibble::as_tibble()
 ```
 
@@ -274,7 +317,7 @@ The following plot labels each of these distances. The Youden's point
 and the topleft point here are the same point.
 
 ```{r roc-annotated}
-data_roc <- data_roc %>% 
+data_roc <- data_roc |> 
   arrange(.sensitivities)
 
 p_best <- ggplot(data_roc) + 
@@ -288,13 +331,13 @@ p_best <- ggplot(data_roc) +
   geom_step() + 
   geom_segment(
     aes(xend = .specificities, yend = 1 - .specificities),
-    data = . %>% filter(.is_best_youden),
+    data = function(x) filter(x, .is_best_youden),
     color = "blue",
     linetype = "dashed"
   ) + 
   geom_segment(
     aes(xend = 1, yend = 1),
-    data = . %>% filter(.is_best_closest_topleft),
+    data = function(x) filter(x, .is_best_closest_topleft),
     color = "maroon",
     linetype = "dashed"
   ) + 
@@ -305,7 +348,7 @@ p_best <- ggplot(data_roc) +
       x = weighted.mean(c(1, .specificities), c(9, 1)), 
       y = weighted.mean(c(1, .sensitivities), c(9, 1)), 
     ),
-    data = . %>% filter(.is_best_closest_topleft),
+    data =  function(x) filter(x, .is_best_closest_topleft),
     color = "maroon",
     label = "closest to topleft",
     hjust = 0, 
@@ -317,7 +360,7 @@ p_best <- ggplot(data_roc) +
       x = .specificities, 
       y = weighted.mean(c(1 - .specificities, .sensitivities), c(1, 2)), 
     ),
-    data = . %>% filter(.is_best_youden),
+    data =  function(x) filter(x, .is_best_youden),
     color = "blue",
     label = "Youden's J\n(max height above diagonal)",
     hjust = 0,
@@ -355,19 +398,19 @@ normal density curves on top of each other. Pepe (2003) refers to this
 approach as the "binormal ROC curve".
 
 ```{r data-points-2, fig.width = 4, fig.height = 3}
-data_stats <- data %>% 
-  group_by(outcome) %>% 
+data_stats <- data |> 
+  group_by(outcome) |> 
   summarise(
     mean = mean(s100b),
     sd = sd(s100b)
   ) 
 
-l_control <- data_stats %>% 
-  filter(outcome == "Good") %>% 
+l_control <- data_stats |> 
+  filter(outcome == "Good") |> 
   as.list()
 
-l_case <- data_stats %>% 
-  filter(outcome != "Good") %>% 
+l_case <- data_stats |> 
+  filter(outcome != "Good") |> 
   as.list()
 
 ggplot(data) + 
@@ -375,12 +418,12 @@ ggplot(data) +
   # include a "rug" at the bottom
   geom_jitter(aes(y = -.2), width = 0, height = .15, alpha = .4) +
   stat_function(
-    data = . %>% filter(outcome == "Good"),
+    data = function(x) filter(x, outcome == "Good"),
     fun = dnorm, 
     args = list(mean = l_control$mean, sd = l_control$sd)
   ) +
   stat_function(
-    data = . %>% filter(outcome != "Good"),
+    data = function(x)filter(x, outcome != "Good"),
     fun = dnorm, 
     args = list(mean = l_case$mean, sd = l_case$sd)
   ) +
@@ -406,12 +449,12 @@ group, generate a set of points along that range and compute that
 group's density at each point.
 
 ```{r}
-data_grid <- data %>% 
+data_grid <- data |> 
   mutate(
     xmin = min(s100b),
     xmax = max(s100b)
-  ) %>% 
-  group_by(outcome) %>% 
+  ) |> 
+  group_by(outcome) |> 
   summarise(
     x = seq(xmin[1], xmax[1], length.out = 200),
     group_mean = mean(s100b),
@@ -426,9 +469,9 @@ Next, we pivot to a wide pivot format because we will be comparing the
 two densities at each point.
 
 ```{r}
-data_dens <- data_grid %>% 
-  rename(s100b = x) %>% 
-  select(-group_mean, -group_sd) %>% 
+data_dens <- data_grid |> 
+  rename(s100b = x) |> 
+  select(-group_mean, -group_sd) |> 
   pivot_wider(names_from = outcome, values_from = density)
 data_dens
 ```
