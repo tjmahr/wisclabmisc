@@ -198,8 +198,8 @@ changes.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">roc_coordinates</span> <span class="op">&lt;-</span> <span class="va">grid</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html" class="external-link">rowwise</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="va">roc_coordinates</span> <span class="op">&lt;-</span> <span class="va">grid</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html" class="external-link">rowwise</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>    threshold <span class="op">=</span> <span class="va">threshold</span>,</span>
 <span>    prop_poor_above <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">by_outcome</span><span class="op">$</span><span class="va">Poor</span><span class="op">$</span><span class="va">s100b</span> <span class="op">&gt;=</span> <span class="va">threshold</span><span class="op">)</span>,</span>
@@ -210,12 +210,19 @@ changes.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">threshold</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_step</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">prop_poor_above</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_step</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">prop_good_below</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">2</span>, y <span class="op">=</span> <span class="fl">.9</span>, hjust <span class="op">=</span> <span class="fl">1</span>, label <span class="op">=</span> <span class="st">"specificity"</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">2</span>, y <span class="op">=</span> <span class="fl">.1</span>, hjust <span class="op">=</span> <span class="fl">1</span>, label <span class="op">=</span> <span class="st">"sensitivity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span></span>
+<span>    <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">2</span>, y <span class="op">=</span> <span class="fl">.9</span>, hjust <span class="op">=</span> <span class="fl">1</span>, vjust <span class="op">=</span> <span class="fl">1</span>, size <span class="op">=</span> <span class="fl">3.25</span>,</span>
+<span>    label <span class="op">=</span> <span class="st">"specificity\nproportion of `control` below threshold"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span></span>
+<span>    <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">2</span>, y <span class="op">=</span> <span class="fl">.1</span>, hjust <span class="op">=</span> <span class="fl">1</span>, vjust <span class="op">=</span> <span class="fl">0</span>, size <span class="op">=</span> <span class="fl">3.25</span>,</span>
+<span>    label <span class="op">=</span> <span class="st">"sensitivity\nproportion of `clinical` above threshold"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    title <span class="op">=</span> <span class="st">"Sensitivity and specificity as cumulative proportions"</span>,</span>
 <span>    x <span class="op">=</span> <span class="st">"threshold (diagnosis when score &gt;= threshold)"</span>,</span>
-<span>    y <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>    y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    subtitle <span class="op">=</span> <span class="st">"threshold direction: control &lt; clinical"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p><img src="roc_files/figure-html/sens-spec-1.png" width="750"></p>
 <p>It took me about 5 tries to get this plot correct. I am able to
@@ -225,16 +232,51 @@ less than .51 so the threshold should not catch a single
 there is just <code>Poor</code> outcome above 1, so a threshold of 1 is
 going to detect 1 <code>Poor</code> outcome and hence have a very low
 sensitivity.</p>
-<p>If we ignore the threshold in our visualization, we can (finally)
-plot a canonical ROC curve. It shows specificity in reversing order so
-that the most ideal point is the top left corner (sensitivity = 1,
-specificity = 1).</p>
+<p>We can also compute the empirical sensitivity and specificity
+directly from the data instead of traversing a grid of thresholds by
+using the empirical cumulative distribution function (ECDFs).
+<em>Cumulative distribution</em> is the proportion of points below each
+value of x and <em>empirical</em> means that this value is computed
+directly from the data.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">roc_coordinates</span> <span class="op">&lt;-</span> <span class="va">roc_coordinates</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">s100b</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html" class="external-link">stat_ecdf</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">outcome</span> <span class="op">==</span> <span class="st">"Good"</span><span class="op">)</span>,</span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html" class="external-link">stat_ecdf</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html" class="external-link">after_stat</a></span><span class="op">(</span><span class="va">ecdf</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">outcome</span> <span class="op">==</span> <span class="st">"Poor"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="st">"s100b"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Empirical distribution functions"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span></span>
+<span>    <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">2</span>, y <span class="op">=</span> <span class="fl">.9</span>, hjust <span class="op">=</span> <span class="fl">1</span>, vjust <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    label <span class="op">=</span> <span class="st">"specificity\nECDF(x) for `control`"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span></span>
+<span>    <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">2</span>, y <span class="op">=</span> <span class="fl">.1</span>, hjust <span class="op">=</span> <span class="fl">1</span>, vjust <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    label <span class="op">=</span> <span class="st">"sensitivity\n1 - ECDF(x) for `clinical`"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    title <span class="op">=</span> <span class="st">"Sensitivity and specificity as ECDFs"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"threshold (diagnosis when score &gt;= threshold)"</span>,</span>
+<span>    y <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    subtitle <span class="op">=</span> <span class="st">"threshold direction: control &lt; clinical"</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p><img src="roc_files/figure-html/sens-spec-b-1.png" width="750"></p>
+<p>If we ignore the threshold values for our visualization, we can
+(finally) plot a canonical ROC curve. It shows specificity in reversing
+order so that the most ideal point is the top left corner (sensitivity =
+1, specificity = 1).</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">roc_coordinates</span> <span class="op">&lt;-</span> <span class="va">roc_coordinates</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span></span>
 <span>    sensitivities <span class="op">=</span> <span class="va">prop_poor_above</span>, </span>
 <span>    specificities <span class="op">=</span> <span class="va">prop_good_below</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># otherwise the stair-steps look wrong</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">sensitivities</span><span class="op">)</span></span>
 <span></span>
@@ -248,16 +290,16 @@ specificity = 1).</p>
 <p><img src="roc_files/figure-html/roc-1-1.png" width="450"></p>
 <p>We can compare our plot to the one provided by pROC package. We find
 a perfect match in our sensitivity and specificity values.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">roc</span> <span class="op">&lt;-</span> <span class="fu">pROC</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">roc</a></span><span class="op">(</span><span class="va">data</span>, response <span class="op">=</span> <span class="va">outcome</span>, predictor <span class="op">=</span> <span class="va">s100b</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Setting levels: control = Good, case = Poor</span></span>
 <span><span class="co">#&gt; Setting direction: controls &lt; cases</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">roc</span><span class="op">)</span></span></code></pre></div>
 <p><img src="roc_files/figure-html/base-roc-1.png" width="450"></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">proc_coordinates</span> <span class="op">&lt;-</span> <span class="va">roc</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="va">proc_coordinates</span> <span class="op">&lt;-</span> <span class="va">roc</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">sensitivities</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the pROC point as a wide semi-transparent blue</span></span>
@@ -296,7 +338,7 @@ two distributions are used to make a smooth ROC curve.</li>
 <p>Let’s return the above example, predicting the group label
 <code>outcome</code> (case: <code>Poor</code>, control:
 <code>Good</code>) from the predictor <code>s100b</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">pROC</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">roc</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">outcome</span>, <span class="va">s100b</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Setting levels: control = Good, case = Poor</span></span>
 <span><span class="co">#&gt; Setting direction: controls &lt; cases</span></span>
@@ -315,7 +357,7 @@ controls should have a lower <code>s100b</code> than cases.</p>
 bundles all of the data and model results together. Ultimately, we want
 a the results in a dataframe so that one row will provide the
 sensitivity and specificity for each threshold value.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
@@ -346,9 +388,9 @@ sensitivity and specificity for each threshold value.</p>
 <code><a href="https://rdrr.io/pkg/pROC/man/coords.html" class="external-link">coords()</a></code>. <code><a href="https://rdrr.io/pkg/pROC/man/coords.html" class="external-link">pROC::coords()</a></code> has additional
 features that allow it to identify the “best” ROC points, but it strips
 off useful data like the direction used.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">r</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">r</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 51 × 5</span></span></span>
 <span><span class="co">#&gt;    percent sensitivities specificities thresholds direction</span></span>
@@ -365,7 +407,7 @@ off useful data like the direction used.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> FALSE           0.756        0.542       0.115 &lt;        </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 41 more rows</span></span></span>
 <span></span>
-<span><span class="fu">pROC</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pROC/man/coords.html" class="external-link">coords</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="fu">pROC</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pROC/man/coords.html" class="external-link">coords</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 51 × 3</span></span></span>
 <span><span class="co">#&gt;    threshold specificity sensitivity</span></span>
@@ -390,7 +432,7 @@ the <code>.controls</code> and <code>.cases</code> levels, the
 coordinates with <code>.is_best_youden</code> and
 <code>is_best_closest_topleft</code>. Finally, it retains the name of
 the predictor variable.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compute_empirical_roc.html">compute_empirical_roc</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">outcome</span>, <span class="va">s100b</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Setting levels: control = Good, case = Poor</span></span>
 <span><span class="co">#&gt; Setting direction: controls &lt; cases</span></span></code></pre></div>
@@ -398,7 +440,7 @@ the predictor variable.</p>
 call when we use <code><a href="../reference/compute_empirical_roc.html">compute_empirical_roc()</a></code>. We can pass the
 arguments <code>direction</code> and <code>levels</code> to
 <code><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">pROC::roc()</a></code> to silence these messages.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_roc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compute_empirical_roc.html">compute_empirical_roc</a></span><span class="op">(</span></span>
 <span>  <span class="va">data</span>, </span>
 <span>  <span class="va">outcome</span>, </span>
@@ -429,8 +471,8 @@ from the diagonal line. The other “best” point is the point closest to
 the upper-left corner. The following plot labels each of these
 distances. The Youden’s point and the topleft point here are the same
 point.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data_roc</span> <span class="op">&lt;-</span> <span class="va">data_roc</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_roc</span> <span class="op">&lt;-</span> <span class="va">data_roc</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">.sensitivities</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p_best</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_roc</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -444,13 +486,13 @@ point.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_step</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xend <span class="op">=</span> <span class="va">.specificities</span>, yend <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">.specificities</span><span class="op">)</span>,</span>
-<span>    data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.is_best_youden</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">.is_best_youden</span><span class="op">)</span>,</span>
 <span>    color <span class="op">=</span> <span class="st">"blue"</span>,</span>
 <span>    linetype <span class="op">=</span> <span class="st">"dashed"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xend <span class="op">=</span> <span class="fl">1</span>, yend <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
-<span>    data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.is_best_closest_topleft</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">.is_best_closest_topleft</span><span class="op">)</span>,</span>
 <span>    color <span class="op">=</span> <span class="st">"maroon"</span>,</span>
 <span>    linetype <span class="op">=</span> <span class="st">"dashed"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span> </span>
@@ -461,7 +503,7 @@ point.</p>
 <span>      x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/weighted.mean.html" class="external-link">weighted.mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">.specificities</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>      y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/weighted.mean.html" class="external-link">weighted.mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">.sensitivities</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>    <span class="op">)</span>,</span>
-<span>    data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.is_best_closest_topleft</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">.is_best_closest_topleft</span><span class="op">)</span>,</span>
 <span>    color <span class="op">=</span> <span class="st">"maroon"</span>,</span>
 <span>    label <span class="op">=</span> <span class="st">"closest to topleft"</span>,</span>
 <span>    hjust <span class="op">=</span> <span class="fl">0</span>, </span>
@@ -473,7 +515,7 @@ point.</p>
 <span>      x <span class="op">=</span> <span class="va">.specificities</span>, </span>
 <span>      y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/weighted.mean.html" class="external-link">weighted.mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">.specificities</span>, <span class="va">.sensitivities</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>    <span class="op">)</span>,</span>
-<span>    data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.is_best_youden</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">.is_best_youden</span><span class="op">)</span>,</span>
 <span>    color <span class="op">=</span> <span class="st">"blue"</span>,</span>
 <span>    label <span class="op">=</span> <span class="st">"Youden's J\n(max height above diagonal)"</span>,</span>
 <span>    hjust <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -506,20 +548,20 @@ different for the two groups. We can compute each group’s mean and
 standard deviation and then plot the normal density curves on top of
 each other. Pepe (2003) refers to this approach as the “binormal ROC
 curve”.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data_stats</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">outcome</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_stats</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">outcome</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>    mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">s100b</span><span class="op">)</span>,</span>
 <span>    sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">s100b</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> </span>
 <span></span>
-<span><span class="va">l_control</span> <span class="op">&lt;-</span> <span class="va">data_stats</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">outcome</span> <span class="op">==</span> <span class="st">"Good"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="va">l_control</span> <span class="op">&lt;-</span> <span class="va">data_stats</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">outcome</span> <span class="op">==</span> <span class="st">"Good"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">l_case</span> <span class="op">&lt;-</span> <span class="va">data_stats</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">outcome</span> <span class="op">!=</span> <span class="st">"Good"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="va">l_case</span> <span class="op">&lt;-</span> <span class="va">data_stats</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">outcome</span> <span class="op">!=</span> <span class="st">"Good"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -527,12 +569,12 @@ curve”.</p>
 <span>  <span class="co"># include a "rug" at the bottom</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html" class="external-link">geom_jitter</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="op">-</span><span class="fl">.2</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">0</span>, height <span class="op">=</span> <span class="fl">.15</span>, alpha <span class="op">=</span> <span class="fl">.4</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_function.html" class="external-link">stat_function</a></span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">outcome</span> <span class="op">==</span> <span class="st">"Good"</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">outcome</span> <span class="op">==</span> <span class="st">"Good"</span><span class="op">)</span>,</span>
 <span>    fun <span class="op">=</span> <span class="va">dnorm</span>, </span>
 <span>    args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="va">l_control</span><span class="op">$</span><span class="va">mean</span>, sd <span class="op">=</span> <span class="va">l_control</span><span class="op">$</span><span class="va">sd</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_function.html" class="external-link">stat_function</a></span><span class="op">(</span></span>
-<span>    data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">outcome</span> <span class="op">!=</span> <span class="st">"Good"</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">outcome</span> <span class="op">!=</span> <span class="st">"Good"</span><span class="op">)</span>,</span>
 <span>    fun <span class="op">=</span> <span class="va">dnorm</span>, </span>
 <span>    args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="va">l_case</span><span class="op">$</span><span class="va">mean</span>, sd <span class="op">=</span> <span class="va">l_case</span><span class="op">$</span><span class="va">sd</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
@@ -555,13 +597,13 @@ curve”.</p>
 of the normal curves). We can do that by hand too. We take the full
 range of the data, and then within each group, generate a set of points
 along that range and compute that group’s density at each point.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data_grid</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_grid</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    xmin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">s100b</span><span class="op">)</span>,</span>
 <span>    xmax <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">s100b</span><span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">outcome</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">outcome</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">xmin</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">xmax</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, length.out <span class="op">=</span> <span class="fl">200</span><span class="op">)</span>,</span>
 <span>    group_mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">s100b</span><span class="op">)</span>,</span>
@@ -593,10 +635,10 @@ along that range and compute that group’s density at each point.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 390 more rows</span></span></span></code></pre></div>
 <p>Next, we pivot to a wide pivot format because we will be comparing
 the two densities at each point.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data_dens</span> <span class="op">&lt;-</span> <span class="va">data_grid</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>s100b <span class="op">=</span> <span class="va">x</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">group_mean</span>, <span class="op">-</span><span class="va">group_sd</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_dens</span> <span class="op">&lt;-</span> <span class="va">data_grid</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>s100b <span class="op">=</span> <span class="va">x</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">group_mean</span>, <span class="op">-</span><span class="va">group_sd</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">outcome</span>, values_from <span class="op">=</span> <span class="va">density</span><span class="op">)</span></span>
 <span><span class="va">data_dens</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 200 × 3</span></span></span>
@@ -618,7 +660,7 @@ densities. Note that the interface here is different. We do not provide
 a dataframe and names of columns in that data frame. Instead, we provide
 two vectors of densities, and in fact, those densities are lost after
 computing the ROC curve.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_dens</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">data_dens</span>, <span class="va">s100b</span><span class="op">)</span></span>
 <span><span class="va">r_dens</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">roc</a></span><span class="op">(</span></span>
 <span>  density.controls <span class="op">=</span> <span class="va">data_dens</span><span class="op">$</span><span class="va">Good</span>, </span>
@@ -651,7 +693,7 @@ densities.</li>
 <p>Fortunately, if we compute the sensitivities by hand, we can figure
 out how the coordinates were ordered. We try both orderings and find the
 one that best matches one provided by <code><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">pROC::roc()</a></code>.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># direction &gt; : Good &gt; threshold &gt;= Poor</span></span>
 <span><span class="va">sens_gt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">data_dens</span><span class="op">$</span><span class="va">Poor</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">data_dens</span><span class="op">$</span><span class="va">Poor</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># direction &lt; : Good &lt; threshold &lt;= Poor</span></span>
@@ -671,7 +713,7 @@ determine the order of the ROC coordinates with respect to the original
 densities. As a result, we can map the original threshold values to
 sensitivity and specificity values. The function also lets us use column
 names directly.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_smooth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compute_smooth_density_roc.html">compute_smooth_density_roc</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">data_dens</span>, </span>
 <span>  controls <span class="op">=</span> <span class="va">Good</span>, </span>
@@ -699,12 +741,12 @@ for the “best” thresholds by the Youden or topleft criteria. Because of
 the consistency between the two functions, we can just replace the data
 used to make annotated ROC curve with the smoothed ROC coordinates. In
 this case, the Youden and topleft points are different.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p_best</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">data_smooth</span><span class="op">)</span></span></code></pre></div>
 <p><img src="roc_files/figure-html/roc-annotated-smooth-1.png" width="1093.75"></p>
 <p>As a final demonstration, let’s compare the smooth and empirical ROC
 sensitivity and specificity values along the threshold values.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_smooth</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">s100b</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
