@@ -102,7 +102,7 @@ proportions of patients in each group above or below that threshold. We
 can then plot these proportions to visualize the trading relations
 between specificity and sensitivity as the threshold changes.
 
-```{r sens-spec, fig.height = 4, fig.width = 6}
+```{r sens-spec, fig.height = 4, fig.width = 6.5}
 by_outcome <- split(data, data$outcome)
 smallest_diff <- min(diff(unique(sort(data$s100b))))
 grid <- tibble(
@@ -154,7 +154,7 @@ empirical cumulative distribution function (ECDFs). *Cumulative
 distribution* is the proportion of points below each value of x and
 *empirical* means that this value is computed directly from the data.
 
-```{r sens-spec-b, fig.height = 4, fig.width = 6}
+```{r sens-spec-b, fig.height = 4, fig.width = 6.5}
 ggplot(data) + 
   aes(x = s100b) + 
   stat_ecdf(
