@@ -127,7 +127,8 @@ test_that("tocs_item()", {
     "s2T01",
     "invalid-file.txt",
     "XXv01s4B01.wav",
-    "XXv01wB01.wav"
+    "XXv01wB01.wav",
+    "XXv01wB01v.wav"
   )
 
   expected <- c(
@@ -144,6 +145,7 @@ test_that("tocs_item()", {
     "S2T01",
     NA_character_,
     "S4B01",
+    "WB01",
     "WB01"
   )
 
@@ -161,6 +163,7 @@ test_that("tocs_item()", {
     2,
     NA_integer_,
     4,
+    1,
     1
   )
 
@@ -176,3 +179,41 @@ test_that("tocs_item()", {
     expect_equal(expected_length)
 })
 
+
+
+test_that("Overlap rate is computed correctly", {
+  m <- matrix(c(
+    0.10, 0.20,  0.21, 0.30,  # 1 no overlap
+    0.10, 0.30,  0.20, 0.40,  # 2 overlap
+    0.10, 0.20,  0.20, 0.30,  # 3 touching edges
+    0.25, 0.50,  0.25, 0.50,  # 4 identical spans
+    NA,   0.50,  0.25, 0.50,  # 5 NA min value
+    0.25,   NA,  0.25, 0.50  # 6 NA max value
+  ), ncol = 4, byrow = TRUE)
+
+  x1 <- m[,1]
+  x2 <- m[,2]
+  y1 <- m[,3]
+  y2 <- m[,4]
+  expected <- c(0, .1 / .3, 0, 1, NA, NA)
+  expect_equal(compute_overlap_rate(x1, x2, y1, y2), expected)
+
+  # intervals entered backwards
+  expect_equal(compute_overlap_rate(x2, x1, y1, y2), expected)
+  expect_equal(compute_overlap_rate(x1, x2, y2, y1), expected)
+
+  # switch which (x or y) starts first
+  expect_equal(compute_overlap_rate(y1, y2, x1, x2), expected)
+
+  # both point intervals
+  expect_equal(compute_overlap_rate(1, 1, 1, 1), NA_real_)
+
+  # length 1 is recycled
+  expect_no_error(compute_overlap_rate(x1, x2, 0, y2))
+
+  # lengths must be 1 or N
+  expect_error(compute_overlap_rate(x1, x2, c(0, 0), y2))
+
+  # negatives not supported
+  expect_error(compute_overlap_rate(x1, x2, -y1, y2))
+})

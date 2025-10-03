@@ -325,7 +325,9 @@ prepare_rename_plan_bullets <- function(rename_plan) {
 #' x <- c(
 #'   "XXv16s7T06.lab", "XXv15s5T06.TextGrid", "XXv13s3T10.WAV",
 #'   "XXv18wT11.wav", "non-matching", "s2T01",
-#'   "XXv01s4B01.wav", "XXv01wB01.wav"
+#'   "XXv01s4B01.wav", "XXv01wB01.wav",
+#'   # sometimes these have tags for *v*irtual visits or recording attempts
+#'   "XXv13s3T10v.WAV", "XXv13s3T10a.lab"
 #' )
 #' data.frame(
 #'   x = x,
@@ -337,7 +339,7 @@ tocs_item <- function(xs) {
   xs |>
     toupper() |>
     stringr::str_extract(
-      "(S[2-7]|W)(T|B)[0-4][0-9](?=([.]WAV|[.]TEXTGRID|[.]LAB|$))"
+      "(S[2-7]|W)(T|B)[0-4][0-9](?=[ABCDEV]?([.]WAV|[.]TEXTGRID|[.]LAB|$))"
     )
 }
 
@@ -360,3 +362,68 @@ tocs_length <- function(xs) {
   as.integer(char2)
 }
 
+
+
+
+#' Compute overlap rate for (phoneme alignment) intervals
+#'
+#' @param x1,x2 start and end times for the first interval
+#' @param y1,y2 start and end times for the second interval
+#' @return the overlap rate
+#' @export
+#' @details
+#' Paulo and Oliveira (2004) provide an "overlap rate" statistic for computing
+#' the amount of overlap between two (time) intervals. To my knowledge, nobody
+#' has described the Overlap Rate in this way, but it is the
+#' [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index) applied to time
+#' intervals.
+#'
+#' Let \eqn{X=[x_\text{min}, x_\text{max}]} and
+#' \eqn{Y=[y_\text{min}, y_\text{max}]} be the sets of times spanned by the
+#' intervals \eqn{x} and \eqn{y}. Then, \eqn{X \cap Y} is the *intersection* or the
+#' times covered by both intervals, and \eqn{X \cup Y} is the *union* or the
+#' times covered by either interval. The size of a set \eqn{A} is denoted
+#' \eqn{|A|}. Then the overlap rate is the Jaccard index or the proportion of
+#' elements that the two sets have in common:
+#'
+#' \deqn{\text{overlap rate} = \frac{|X \cap Y|}{|X \cup Y|}}
+#'
+#' @references Paulo, S., & Oliveira, L. C. (2004). Automatic Phonetic
+#' Alignment and Its Confidence Measures. In J. L. Vicedo, P. Martínez-Barco,
+#' R. Muńoz, & M. Saiz Noeda (Eds.), *Advances in Natural Language Processing*
+#' (pp. 36–44). Springer. <https://doi.org/10.1007/978-3-540-30228-5_4>
+#'
+#' @examples
+#' compute_overlap_rate(
+#'   c(0.0, 0.0, 0.0, 0.0),
+#'   c(1.0, 1.0, 1.0,  NA),
+#'   c(0.5, 2.0, 1.0, 1.0),
+#'   c(2.0, 3.0, 2.0, 2.0)
+#' )
+compute_overlap_rate <- function(x1, x2, y1, y2) {
+  lengths <- lengths(list(x1, x2, y1, y2))
+  pts <- c(x1, x2, y1, y2)
+  stopifnot(
+    # they should have length 1 or length N
+    all(lengths %in% c(1, max(lengths))),
+    # not dealing with negative times for now
+    all(pts >= 0 | is.na(pts))
+  )
+
+  # normalize intervals so x1 < x2, y1 < y2
+  min_x <- pmin(x1, x2)
+  max_x <- pmax(x1, x2)
+  min_y <- pmin(y1, y2)
+  max_y <- pmax(y1, y2)
+  dur_x <- max_x - min_x
+  dur_y <- max_y - min_y
+
+  # i for "intersect", u for "union"
+  min_i <- pmax(min_x, min_y)    # latest start
+  max_i <- pmin(max_x, max_y)    # earliest end
+  dur_i <- max_i - min_i
+  dur_i[dur_i < 0] <- 0          # negative means no overlap
+  dur_u <- dur_x + dur_y - dur_i
+  dur_u[dur_u == 0] <- NA_real_  # use explicit NA for division by 0
+  dur_i / dur_u
+}

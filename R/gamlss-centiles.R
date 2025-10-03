@@ -15,9 +15,11 @@
 mem_gamlss <- function(...) {
   model <- gamlss::gamlss(...)
 
+  si <- suppressWarnings(sessioninfo::session_info())
+
   model$.user <- list(
     data = eval(model$call[["data"]]),
-    session_info = sessioninfo::session_info(),
+    session_info = si,
     call = match.call()
   )
 

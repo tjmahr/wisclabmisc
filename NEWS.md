@@ -1,4 +1,9 @@
 
+# wisclabmisc 0.1.1.9000 (dev version)
+
+* Suppress warnings from `sessioninfo::session_info()` in `mem_gamlss()`
+* Update regex for `tocs_item()` 
+* Add `compute_overlap_rate()`
 
 # wisclabmisc 0.1.1
 
