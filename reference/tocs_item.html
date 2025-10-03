@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">wisclabmisc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +76,9 @@ words).</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="st">"XXv16s7T06.lab"</span>, <span class="st">"XXv15s5T06.TextGrid"</span>, <span class="st">"XXv13s3T10.WAV"</span>,</span></span>
 <span class="r-in"><span>  <span class="st">"XXv18wT11.wav"</span>, <span class="st">"non-matching"</span>, <span class="st">"s2T01"</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"XXv01s4B01.wav"</span>, <span class="st">"XXv01wB01.wav"</span></span></span>
+<span class="r-in"><span>  <span class="st">"XXv01s4B01.wav"</span>, <span class="st">"XXv01wB01.wav"</span>,</span></span>
+<span class="r-in"><span>  <span class="co"># sometimes these have tags for *v*irtual visits or recording attempts</span></span></span>
+<span class="r-in"><span>  <span class="st">"XXv13s3T10v.WAV"</span>, <span class="st">"XXv13s3T10a.lab"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  x <span class="op">=</span> <span class="va">x</span>,</span></span>
@@ -84,15 +86,17 @@ words).</p>
 <span class="r-in"><span>  type <span class="op">=</span> <span class="fu">tocs_type</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  length <span class="op">=</span> <span class="fu">tocs_length</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     x  item        type length</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      XXv16s7T06.lab S7T06   multiword      7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 XXv15s5T06.TextGrid S5T06   multiword      5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      XXv13s3T10.WAV S3T10   multiword      3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       XXv18wT11.wav  WT11 single-word      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5        non-matching  &lt;NA&gt;        &lt;NA&gt;     NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6               s2T01 S2T01   multiword      2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7      XXv01s4B01.wav S4B01   multiword      4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       XXv01wB01.wav  WB01 single-word      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      x  item        type length</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       XXv16s7T06.lab S7T06   multiword      7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  XXv15s5T06.TextGrid S5T06   multiword      5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       XXv13s3T10.WAV S3T10   multiword      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        XXv18wT11.wav  WT11 single-word      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5         non-matching  &lt;NA&gt;        &lt;NA&gt;     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                s2T01 S2T01   multiword      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       XXv01s4B01.wav S4B01   multiword      4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        XXv01wB01.wav  WB01 single-word      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9      XXv13s3T10v.WAV S3T10   multiword      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10     XXv13s3T10a.lab S3T10   multiword      3</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

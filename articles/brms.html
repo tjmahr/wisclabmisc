@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">wisclabmisc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -202,7 +202,8 @@ include random effects:</p>
 <span>  formula <span class="op">=</span> <span class="va">f1</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">data</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error: The following priors do not correspond to any model parameter: </span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `.validate_prior()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The following priors do not correspond to any model parameter: </span></span>
 <span><span class="co">#&gt; sd ~ normal(0, 1)</span></span>
 <span><span class="co">#&gt; Function 'default_prior' might be helpful to you.</span></span></code></pre></div>
 <p>The flipside of this strictness is that I will need to toggle between
