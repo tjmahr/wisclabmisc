@@ -7,7 +7,7 @@
 #' @param along optional bare column name for the response values
 #' @param best_weights weights for computing the best ROC curve points. Defaults
 #'   to `c(1, .5)`, which are the defaults used by `pROC::coords()`.
-#' @param direction `direction` to set for the for `pROC::roc()`. Defaults to
+#' @param direction `direction` to set for `pROC::roc()`. Defaults to
 #'   `"auto"`.
 #' @param ... additional arguments. Not used currently.
 #' @return the dataframe is updated with new columns for the `.sensitivities`,
@@ -229,6 +229,7 @@ compute_empirical_roc <- function(
     dplyr::rename(tidyselect::all_of(rename_plan_2)) |>
     tibble::as_tibble()
 }
+
 
 
 tidy_best_roc_coords <- function(x, best_weights = c(1, 0.5)) {
