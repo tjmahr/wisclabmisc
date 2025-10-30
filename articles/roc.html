@@ -434,7 +434,9 @@ coordinates with <code>.is_best_youden</code> and
 the predictor variable.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compute_empirical_roc.html">compute_empirical_roc</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">outcome</span>, <span class="va">s100b</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Setting levels: control = Good, case = Poor</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> No `levels` provided. Using `levels = c("Good", "Poor")`.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> Setting <span style="font-style: italic;">control</span> to <span style="color: #00BB00;">outcome</span> == "Good".</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> Setting <span style="font-style: italic;">case</span> to <span style="color: #00BB00;">outcome</span> == "Poor".</span></span>
 <span><span class="co">#&gt; Setting direction: controls &lt; cases</span></span></code></pre></div>
 <p>We can still see the messages emitted by the <code><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">pROC::roc()</a></code>
 call when we use <code><a href="../reference/compute_empirical_roc.html">compute_empirical_roc()</a></code>. We can pass the

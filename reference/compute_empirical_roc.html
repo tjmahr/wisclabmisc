@@ -54,6 +54,7 @@
 <span>  <span class="va">predictor</span>,</span>
 <span>  direction <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  best_weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>  levels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -68,7 +69,9 @@ variable</p></dd>
 
 
 <dt id="arg-response">response<a class="anchor" aria-label="anchor" href="#arg-response"></a></dt>
-<dd><p>a bare column name with the group status (control vs. cases)</p></dd>
+<dd><p>a bare column name with the group status (control vs. cases).
+If the response has more than two groups, the first element of <code>levels</code> is
+the control group and the second element of <code>levels</code> is the case group.</p></dd>
 
 
 <dt id="arg-predictor">predictor<a class="anchor" aria-label="anchor" href="#arg-predictor"></a></dt>
@@ -77,13 +80,27 @@ classification</p></dd>
 
 
 <dt id="arg-direction">direction<a class="anchor" aria-label="anchor" href="#arg-direction"></a></dt>
-<dd><p><code>direction</code> to set for the for <code><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">pROC::roc()</a></code>. Defaults to
-<code>"auto"</code>.</p></dd>
+<dd><p><code>direction</code> for computing case status. <code><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">pROC::roc()</a></code>'s
+<code>direction</code> conventions are supported: <code>"&lt;"</code> (i.e., <code>control &lt; case</code>) and
+<code>"&gt;"</code> (<code>control &gt; case</code>), or <code>"auto"</code> to have pROC guess the direction (if
+applicable). Alternatively, more verbose directions are supported:
+<code>"case-low"</code> or <code>"control-high"</code> if a low score predicts case status
+(<code>case &lt;= threshold &lt; control</code>, analogous to pROC's <code>"&gt;"</code>) and <code>"case-high"</code>
+or <code>"control-low"</code> if a high score predicts case status
+(<code>control &lt; threshold &lt;= case</code>, analogous to pROC's <code>"&lt;"</code>). These
+directions are translated into the pROC conventions.</p></dd>
 
 
 <dt id="arg-best-weights">best_weights<a class="anchor" aria-label="anchor" href="#arg-best-weights"></a></dt>
 <dd><p>weights for computing the best ROC curve points. Defaults
 to <code>c(1, .5)</code>, which are the defaults used by <code><a href="https://rdrr.io/pkg/pROC/man/coords.html" class="external-link">pROC::coords()</a></code>.</p></dd>
+
+
+<dt id="arg-levels">levels<a class="anchor" aria-label="anchor" href="#arg-levels"></a></dt>
+<dd><p>two-element vector <code>c(control, case)</code> where <code>control</code> is the
+value of <code>response</code> for the control group and <code>case</code> is the value of
+<code>response</code> for the case group. The ordering matters: The first element of
+the vector names the control group.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -117,11 +134,15 @@ predictor variable, <code>.sensitivities</code>, <code>.specificities</code>, <c
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get an ROC on the fake data</span></span></span>
 <span class="r-in"><span><span class="fu">compute_empirical_roc</span><span class="op">(</span><span class="va">data</span>, <span class="va">outcome</span>, <span class="va">y</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Setting levels: control = 0, case = 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No `levels` provided. Using `levels = c("0", "1")`.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Setting <span style="font-style: italic;">control</span> to <span style="color: #00BB00;">outcome</span> == "0".</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Setting <span style="font-style: italic;">case</span> to <span style="color: #00BB00;">outcome</span> == "1".</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Setting direction: controls &gt; cases</span>
 <span class="r-in"><span><span class="co"># this guess the cases and controls from the group name and gets it wrong</span></span></span>
 <span class="r-in"><span><span class="fu">compute_empirical_roc</span><span class="op">(</span><span class="va">data</span>, <span class="va">group</span>, <span class="va">y</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Setting levels: control = case, case = control</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> No `levels` provided. Using `levels = c("case", "control")`.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Setting <span style="font-style: italic;">control</span> to <span style="color: #00BB00;">group</span> == "case".</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Setting <span style="font-style: italic;">case</span> to <span style="color: #00BB00;">group</span> == "control".</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Setting direction: controls &lt; cases</span>
 <span class="r-in"><span><span class="co"># better</span></span></span>
 <span class="r-in"><span><span class="fu">compute_empirical_roc</span><span class="op">(</span><span class="va">data</span>, <span class="va">group</span>, <span class="va">y</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span>, <span class="st">"case"</span><span class="op">)</span><span class="op">)</span></span></span>
