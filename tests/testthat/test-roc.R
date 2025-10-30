@@ -18,7 +18,6 @@ test_that("trapezoid_auc() computes an area under the curve", {
   expect_equal(trapezoid_auc(x, y), sum(heights))
 })
 
-
 test_that("is_sorted() works on sorted vectors", {
   # strictly increasing
   expect_true(is_sorted(c(-3, -2, -1)))
@@ -76,3 +75,6 @@ test_that("is_increasing() and is_decreasing() work", {
   expect_false(is_increasing(s))
   expect_false(is_decreasing(s))
 })
+
+
+

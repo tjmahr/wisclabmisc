@@ -3,13 +3,20 @@
 #' Create an ROC curve from smoothed densities
 #'
 #' @param data a dataframe containing densities
-#' @param controls,cases bare column name for the densities of the control group
+#' @param controls,cases bare column names for the densities of the control
+#'   group and case group
 #' @param along optional bare column name for the response values
 #' @param best_weights weights for computing the best ROC curve points. Defaults
 #'   to `c(1, .5)`, which are the defaults used by `pROC::coords()`.
-#' @param direction `direction` to set for `pROC::roc()`. Defaults to
-#'   `"auto"`.
-#' @param ... additional arguments. Not used currently.
+#' @param direction `direction` for computing case status. `pROC::roc()`'s
+#'   `direction` conventions are supported: `"<"` (i.e., `control < case`) and
+#'   `">"` (`control > case`), or `"auto"` to have pROC guess the direction (if
+#'   applicable). Alternatively, more verbose directions are supported:
+#'   `"case-low"` or `"control-high"` if a low score predicts case status
+#'   (`case <= threshold < control`, analogous to pROC's `">"`) and `"case-high"`
+#'   or `"control-low"` if a high score predicts case status
+#'   (`control < threshold <= case`, analogous to pROC's `"<"`). These
+#'   directions are translated into the pROC conventions.
 #' @return the dataframe is updated with new columns for the `.sensitivities`,
 #'   `.specificities`, `.auc`, `.roc_row`, `.is_best_youden` and
 #'   `.is_best_closest_topleft`.
@@ -46,9 +53,10 @@ compute_smooth_density_roc <- function(
     cases,
     along = NULL,
     best_weights = c(1, 0.5),
-    direction = "auto",
-    ...
+    direction = "auto"
 ) {
+  direction <- validate_roc_direction(direction, TRUE)
+
   q_controls <- enquo(controls)
   q_cases <- enquo(cases)
   q_along <- enquo(along)
@@ -134,14 +142,17 @@ compute_smooth_density_roc <- function(
 #' Create an ROC curve from observed data
 #'
 #' @param data a dataframe containing responses (groupings) and predictor
-#' variable
-#' @param response a bare column name with the group status (control vs. cases)
+#'   variable
+#' @param response a bare column name with the group status (control vs. cases).
+#'   If the response has more than two groups, the first element of `levels` is
+#'   the control group and the second element of `levels` is the case group.
 #' @param predictor a bare column name with the predictor to use for
 #'   classification
-#' @param direction `direction` to set for the for `pROC::roc()`. Defaults to
-#'   `"auto"`.
-#' @param best_weights weights for computing the best ROC curve points. Defaults
-#'   to `c(1, .5)`, which are the defaults used by `pROC::coords()`.
+#' @param levels two-element vector `c(control, case)` where `control` is the
+#'   value of `response` for the control group and `case` is the value of
+#'   `response` for the case group. The ordering matters: The first element of
+#'   the vector names the control group.
+#' @inheritParams compute_smooth_density_roc
 #' @param ... additional arguments passed to `pROC::roc()`.
 #' @return a new dataframe of ROC coordinates is returned with columns for the
 #'   predictor variable, `.sensitivities`, `.specificities`, `.auc`,
@@ -178,19 +189,24 @@ compute_empirical_roc <- function(
     predictor,
     direction = "auto",
     best_weights = c(1, 0.5),
+    levels = NULL,
     ...
 ) {
+  direction <- validate_roc_direction(direction, TRUE)
+
   q_response <- enquo(response)
   q_predictor <- enquo(predictor)
 
   x <- select(data, !! q_predictor)
   y <- select(data, !! q_response)
+  levels <- validate_roc_levels(y, levels)
 
   roc <- pROC::roc_(
     data,
     response = colnames(y)[1],
     predictor = colnames(x)[1],
     direction = direction,
+    levels = levels,
     ...
   )
 
@@ -229,7 +245,6 @@ compute_empirical_roc <- function(
     dplyr::rename(tidyselect::all_of(rename_plan_2)) |>
     tibble::as_tibble()
 }
-
 
 
 tidy_best_roc_coords <- function(x, best_weights = c(1, 0.5)) {
@@ -281,6 +296,198 @@ tidy_best_roc_coords <- function(x, best_weights = c(1, 0.5)) {
     ) |>
     tibble::as_tibble() |>
     dplyr::rename(tidyselect::all_of(rename_plan))
+}
+
+
+#' Compute sensitivity and specificity scores from (weighted) data
+#'
+#' `pROC::roc()` does not support observation-weights when computing ROC curves.
+#' This function is meant to fill that gap.
+#'
+#' @inheritParams compute_empirical_roc
+#' @param weights a bare column name for the observation weights. If `weights`
+#'   is set to `NULL` or not provided, all values receive equal weight and
+#'   conventional sensitivity and specificity scores are returned.
+#' @return A dataframe of stepwise empirical ROC coordinates computed from
+#'   (optionally weighted) data. The output includes columns for the predictor
+#'   variable, `.sensitivities`, `.specificities`, `.direction`, `.controls`,
+#'   `.cases`, `.n_controls`, `.n_cases`, `.w_controls`, `.w_cases`,
+#'   `.comparison`, and `.response`. `n_` columns contain the number of
+#'   observations for that predictor value and `w_` contain the total weight
+#'   of the observations for that predictor value.
+#'
+#' @details
+#' The `.sensitivities` and `.specificities` columns are calculated directly
+#' from the weighted empirical cumulative distribution functions of the positive
+#' and negative classes, so no call to `pROC::roc()` is made.
+#' @concept roc
+compute_sens_spec_from_ecdf <- function(
+    data,
+    response,
+    predictor,
+    weights = NULL,
+    direction = NULL,
+    levels = NULL
+) {
+  q_response <- enquo(response)
+  q_predictor <- enquo(predictor)
+  q_weights <- enquo(weights)
+  x <- dplyr::select(data, !! q_predictor)
+  y <- dplyr::select(data, !! q_response)
+  direction <- validate_roc_direction(direction, auto_allowed = FALSE)
+  levels <- validate_roc_levels(y, levels)
+  d <- data |> filter(is.element(!! q_response, levels))
+
+  x1 <- d |>
+    dplyr::filter(is.element(!! q_response, levels[1])) |>
+    dplyr::pull(!! q_predictor)
+  x2 <- d |>
+    dplyr::filter(is.element(!! q_response, levels[2])) |>
+    dplyr::pull(!! q_predictor)
+
+  if (!rlang::quo_is_null(q_weights)) {
+    w1 <- d |>
+      dplyr::filter(is.element(!! q_response, levels[1])) |>
+      dplyr::pull(!! q_weights)
+    w2 <- d |>
+      dplyr::filter(is.element(!! q_response, levels[2])) |>
+      dplyr::pull(!! q_weights)
+  } else {
+    w1 <- rep(1, length(x1))
+    w2 <- rep(1, length(x2))
+  }
+
+  d2 <- .compute_ecdf_sens_spec(x1, w1, x2, w2, direction)
+  names(d2)[names(d2) == "x"] <- colnames(x)[1]
+  d2$.direction <- direction
+  d2$.response <- colnames(y)[1]
+  d2$.controls <- levels[1]
+  d2$.cases <- levels[2]
+
+  d2$.comparison <- sprintf(
+    "ctrl (%s %s) %s case (%s %s)",
+    colnames(y)[1], levels[1],
+    direction,
+    colnames(y)[1], levels[2]
+  )
+
+  col_order <- c(
+    colnames(x)[1],
+    ".sensitivities",
+    ".specificities",
+    ".auc",
+    ".comparison",
+    ".n_controls",
+    ".n_cases",
+    ".w_controls",
+    ".w_cases",
+    ".direction",
+    ".response",
+    ".controls",
+    ".cases",
+    ".is_best_youden",
+    ".is_best_closest_topleft"
+  )
+
+  d2[intersect(col_order, names(d2))]
+}
+
+
+.compute_ecdf_sens_spec <- function(x1, w1, x2, w2, direction) {
+  d <- data.frame(
+    x = c(x1, x2, -Inf, Inf),
+    w = c(w1, w2, 0, 0),
+    in_x1 = c(rep(1, length(x1)), rep(0, length(x2)), 0, 0),
+    in_x2 = c(rep(0, length(x1)), rep(1, length(x2)), 0, 0)
+  )
+  d1 <- d |>
+    dplyr::arrange(.data$x) |>
+    dplyr::group_by(.data$x) |>
+    dplyr::summarise(
+      .n_controls = sum(.data$in_x1),
+      .n_cases = sum(.data$in_x2),
+      .w_controls = sum(.data$in_x1 * .data$w),
+      .w_cases = sum(.data$in_x2 * .data$w),
+    ) |>
+    dplyr::arrange(.data$x) |>
+    dplyr::mutate(
+      .sensitivities = cumsum(.data$.w_cases) / sum(.data$.w_cases),
+      .specificities = 1 - (cumsum(.data$.w_controls) / sum(.data$.w_controls))
+    )
+
+  if (direction == "<") {
+    d1$.sensitivities <- 1 - d1$.sensitivities
+    d1$.specificities <- 1 - d1$.specificities
+  }
+
+  d1
+}
+
+
+validate_roc_levels <- function(data_y, levels = NULL) {
+  y_name <- colnames(data_y)[1]
+  y_vals <- data_y[, 1, drop = TRUE]
+
+  if (is.null(levels)) {
+    obs <- y_vals |> as.factor() |> levels()
+    levels <- obs[1:2]
+    plevels <- levels |> encodeString(quote = "\"")
+    clevels <- plevels |> paste0(collapse = ", ")
+    cli::cli_inform(c(
+      "i" = "No {.arg levels} provided. Using {.code levels = c({clevels})}.",
+      "*" = "Setting {.emph control} to {.field {y_name}} == {plevels[1]}.",
+      "*" = "Setting {.emph case} to {.field {y_name}} == {plevels[2]}."
+    ))
+  }
+
+  if (length(unique(levels)) != 2) {
+    plevels <- levels |> base::encodeString(quote = '"')
+    clevels <- plevels |> paste0(collapse = ", ")
+    cli::cli_abort(c("Provided {.arg levels} {.code c({clevels})} must have 2 unique values."))
+  }
+
+  are_levels_in_y <- all(levels %in% y_vals)
+  if (!are_levels_in_y) {
+    plevels <- levels |> base::encodeString(quote = '"')
+    clevels <- plevels |> paste0(collapse = ", ")
+    cli::cli_abort(c("Provided {.arg levels} {.code c({clevels})} must be values of {.arg response} ({.field {y_name}})"))
+  }
+
+  levels
+}
+
+validate_roc_direction <- function(direction, auto_allowed) {
+  case_low <- c(">", "case-low", "control-high")
+  case_high <- c("<", "case-high", "control-low")
+  auto <- if (auto_allowed) c("auto") else character(0)
+  valid_directions <- c(case_low, case_high, auto)
+  bad_direction <- !is.element(direction, valid_directions)
+
+  if (is.null(direction) || isTRUE(bad_direction)) {
+    style_or <- list("vec-last" = ", or ", "vec-sep2" = " or ")
+    ch <- cli::cli_vec(case_high, style = style_or)
+    cl <- cli::cli_vec(case_low, style = style_or)
+    au <- cli::cli_vec(auto, style = style_or)
+    bullet3 <- if (auto_allowed) {
+      c("*" = "To guess the direction, use {.val {auto}}")
+    } else {
+      character(0)
+    }
+    cli::cli_abort(c(
+      "Provide a valid {.arg direction}",
+      "*" = "For control < case, use {.val {ch}}",
+      "*" = "For control > case, use {.val {cl}}",
+      bullet3
+    ))
+  }
+
+  if (direction %in% case_low) {
+    direction <- case_low[1]
+  } else if (direction %in% case_high) {
+    direction <- case_high[1]
+  }
+
+  direction
 }
 
 

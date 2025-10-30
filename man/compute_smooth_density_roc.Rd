@@ -10,24 +10,29 @@ compute_smooth_density_roc(
   cases,
   along = NULL,
   best_weights = c(1, 0.5),
-  direction = "auto",
-  ...
+  direction = "auto"
 )
 }
 \arguments{
 \item{data}{a dataframe containing densities}
 
-\item{controls, cases}{bare column name for the densities of the control group}
+\item{controls, cases}{bare column names for the densities of the control
+group and case group}
 
 \item{along}{optional bare column name for the response values}
 
 \item{best_weights}{weights for computing the best ROC curve points. Defaults
 to \code{c(1, .5)}, which are the defaults used by \code{pROC::coords()}.}
 
-\item{direction}{\code{direction} to set for the for \code{pROC::roc()}. Defaults to
-\code{"auto"}.}
-
-\item{...}{additional arguments. Not used currently.}
+\item{direction}{\code{direction} for computing case status. \code{pROC::roc()}'s
+\code{direction} conventions are supported: \code{"<"} (i.e., \code{control < case}) and
+\code{">"} (\code{control > case}), or \code{"auto"} to have pROC guess the direction (if
+applicable). Alternatively, more verbose directions are supported:
+\code{"case-low"} or \code{"control-high"} if a low score predicts case status
+(\verb{case <= threshold < control}, analogous to pROC's \code{">"}) and \code{"case-high"}
+or \code{"control-low"} if a high score predicts case status
+(\verb{control < threshold <= case}, analogous to pROC's \code{"<"}). These
+directions are translated into the pROC conventions.}
 }
 \value{
 the dataframe is updated with new columns for the \code{.sensitivities},

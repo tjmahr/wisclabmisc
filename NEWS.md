@@ -4,6 +4,12 @@
 * Suppress warnings from `sessioninfo::session_info()` in `mem_gamlss()`
 * Update regex for `tocs_item()` 
 * Add `compute_overlap_rate()`
+* `compute_empirical_roc()` works with multilevel data (like a rating scale) if
+  the two levels to be compared are provided in `levels`.
+* `compute_empirical_roc()` updated to support aliases for `direction`: 
+  `"case-low"`/`"control-high"` and `"case-high"`/`"control-low"`. These forms
+  help if you think about the direction or comparison as "which group gets a 
+  low/high score?" 
 
 # wisclabmisc 0.1.1
 

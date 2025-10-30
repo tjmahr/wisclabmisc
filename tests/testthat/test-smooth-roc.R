@@ -161,14 +161,4 @@ test_that("we understand how roc direction works", {
   expect_equal(emp_gt$direction, ">")
 
 
-  # library(tidyverse)
-  # ggplot(dens) +
-  #   aes(x = x) +
-  #   geom_line(aes(y = d_a), color = "blue") +
-  #   geom_line(aes(y = d_b))
-
-
-
-
-
 })
