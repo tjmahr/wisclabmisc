@@ -143,10 +143,10 @@ ggplot(roc_coordinates) +
 
 It took me about 5 tries to get this plot correct. I am able to convince
 myself by noting that all of the `Good` outcomes are less than .51 so
-the threshold should not catch a single `Good` outcome and hence have
-specificity of 1. Conversely, there is just `Poor` outcome above 1, so a
-threshold of 1 is going to detect 1 `Poor` outcome and hence have a very
-low sensitivity.
+the threshold should not catch a single `Good` outcome above it and
+hence have specificity of 1. Conversely, there is just one `Poor`
+outcome above 1, so a threshold of 1 is going to detect one `Poor`
+outcome and hence have a very low sensitivity.
 
 We can also compute the empirical sensitivity and specificity directly
 from the data instead of traversing a grid of thresholds by using the
@@ -183,6 +183,9 @@ ggplot(data) +
     subtitle = "threshold direction: control < clinical"
   )
 ```
+
+
+
 
 If we ignore the threshold values for our visualization, we can (finally) plot a
 canonical ROC curve. It shows specificity in reversing order so that the
@@ -225,7 +228,7 @@ p +
     data = proc_coordinates, 
     color = "blue",
     alpha = .5,
-    size = 2
+    linewidth = 2
   )
 ```
 
@@ -381,6 +384,64 @@ p_best <- ggplot(data_roc) +
   coord_fixed() +
   theme_grey(base_size = 12)
 p_best
+```
+
+
+### Empirical ROC curves on weighted data
+
+`pROC::roc()` does not support observation weights, so this package
+provides `compute_sens_spec_from_ecdf()` to compute sensitivity and
+specificity using (weighted) ECDFs. If not weights are provided, the
+normal unweighted results are used. This function does not use
+`pROC::roc()` at all.
+
+To simulate weighting, we will round the existing predictor and count the 
+number of observations in each bin (rounded value). That count is the weight.
+
+```{r}
+data_bin <- data |> 
+  mutate(s100b_bin = round(s100b, 1)) |> 
+  group_by(outcome, s100b_bin) |> 
+  summarise(
+    n = n(),
+    .groups = "drop"
+  )
+
+data_sens_spec <- compute_sens_spec_from_ecdf(
+  data_bin, 
+  response = outcome, 
+  predictor = s100b_bin, 
+  weights = n,
+  direction = "case-high", 
+  levels = c("Good", "Poor")
+)
+```
+
+For comparison, use the pROC-based approach on the rounded data. Here we
+have the manually computed ROC-curve on weighted data in black and the
+pROC-computed ROC data on unweighted data.
+
+```{r}
+data_sens_spec2 <- data |> 
+  mutate(s100b_bin = round(s100b, 1)) |> 
+  compute_empirical_roc(
+    response = outcome, 
+    predictor = s100b_bin, 
+    direction = "case-high", 
+    levels = c("Good", "Poor")
+  )
+
+ggplot(data_sens_spec) + 
+  aes(x = .specificities, y = .sensitivities) + 
+  geom_step(
+    direction = "vh", 
+    data = data_sens_spec2, 
+    color= "orange", 
+    alpha = .5, 
+    linewidth = 2
+  ) +
+  geom_step(direction = "vh") +
+  scale_x_reverse()
 ```
 
 

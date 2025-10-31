@@ -23,23 +23,21 @@ the area under the curve computed using the trapezoid method. For
 Compute AUCs using the trapezoid method
 }
 \examples{
-if (requireNamespace("rstanarm", quietly = TRUE)) {
-  wells <- rstanarm::wells
-  r <- pROC::roc(switch ~ arsenic, wells)
-  pROC::auc(r)
-  trapezoid_auc(r$specificities, r$sensitivities)
+# Predict whether a car has automatic vs. manual transmission from mpg
+r <- pROC::roc(am ~ mpg, mtcars)
+pROC::auc(r)
+trapezoid_auc(r$specificities, r$sensitivities)
 
-  pROC::auc(r, partial.auc = c(.9, 1), partial.auc.focus = "sp")
-  partial_trapezoid_auc(r$specificities, r$sensitivities, c(.9, 1))
+pROC::auc(r, partial.auc = c(.9, 1), partial.auc.focus = "sp")
+partial_trapezoid_auc(r$specificities, r$sensitivities, c(.9, 1))
 
-  pROC::auc(r, partial.auc = c(.9, 1), partial.auc.focus = "se")
-  partial_trapezoid_auc(r$sensitivities, r$specificities, c(.9, 1))
+pROC::auc(r, partial.auc = c(.9, 1), partial.auc.focus = "se")
+partial_trapezoid_auc(r$sensitivities, r$specificities, c(.9, 1))
 
-  pROC::auc(r, partial.auc = c(.1, .9), partial.auc.focus = "sp")
-  partial_trapezoid_auc(r$specificities, r$sensitivities, c(.1, .9))
+pROC::auc(r, partial.auc = c(.1, .9), partial.auc.focus = "sp")
+partial_trapezoid_auc(r$specificities, r$sensitivities, c(.1, .9))
 
-  pROC::auc(r, partial.auc = c(.1, .9), partial.auc.focus = "se")
-  partial_trapezoid_auc(r$sensitivities, r$specificities, c(.1, .9))
-}
+pROC::auc(r, partial.auc = c(.1, .9), partial.auc.focus = "se")
+partial_trapezoid_auc(r$sensitivities, r$specificities, c(.1, .9))
 }
 \concept{roc}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/roc.R
 \name{compute_sens_spec_from_ecdf}
 \alias{compute_sens_spec_from_ecdf}
-\title{Compute sensitivity and specificity scores from (weighted) data}
+\title{Compute sensitivity and specificity scores from (weighted) observed data}
 \usage{
 compute_sens_spec_from_ecdf(
   data,
@@ -46,19 +46,56 @@ the vector names the control group.}
 \value{
 A dataframe of stepwise empirical ROC coordinates computed from
 (optionally weighted) data. The output includes columns for the predictor
-variable, \code{.sensitivities}, \code{.specificities}, \code{.direction}, \code{.controls},
-\code{.cases}, \code{.n_controls}, \code{.n_cases}, \code{.w_controls}, \code{.w_cases},
-\code{.comparison}, and \code{.response}. \code{n_} columns contain the number of
-observations for that predictor value and \code{w_} contain the total weight
-of the observations for that predictor value.
+variable, \code{.sensitivities}, \code{.specificities}, \code{.auc}, \code{.comparison},
+\code{.n_controls}, \code{.n_cases}, \code{.w_controls}, \code{.w_cases}, \code{.comparison},
+\code{.direction}, \code{.response}, \code{.controls}, and \code{.cases}. \code{n_} columns contain
+the number of observations for that predictor value and \code{w_} contain the
+total weight of the observations for that predictor value.
 }
 \description{
 \code{pROC::roc()} does not support observation-weights when computing ROC curves.
-This function is meant to fill that gap.
+This function fills that gap.
 }
 \details{
 The \code{.sensitivities} and \code{.specificities} columns are calculated directly
-from the weighted empirical cumulative distribution functions of the positive
-and negative classes, so no call to \code{pROC::roc()} is made.
+from the (weighted) ECDFs of the controls and cases, so no call to
+\code{pROC::roc()} is made.
+
+\code{.auc} is calculated using \code{trapezoid_auc()}.
+
+\code{c(-Inf, Inf)} are added to the \code{predictor} vector so that sensitivities and
+specificities range from 0 to 1.
+}
+\examples{
+# Simulate 3-class dataset
+set.seed(100)
+n <- 50
+means <- c("A" = 0, "B" = 1, "C" = 2)
+y <- sample(c("A", "B", "C"), n, replace = TRUE)
+x <- rnorm(n, mean = means[y], sd = 1)
+w <- runif(n, 0.5, 2)
+df <- data.frame(y, x, w)
+
+# Compare "A" (controls) to "C" (cases)
+roc_tbl <- compute_sens_spec_from_ecdf(
+  data = df,
+  response = y,
+  predictor = x,
+  weights = w,
+  direction = "control-low",
+  levels = c("A", "C")
+)
+dplyr::glimpse(roc_tbl)
+
+# Compare "B" (controls) to "C" (cases)
+roc_tbl2 <- compute_sens_spec_from_ecdf(
+  data = df,
+  response = y,
+  predictor = x,
+  weights = w,
+  direction = "control-low",
+  levels = c("B", "C")
+)
+dplyr::glimpse(roc_tbl2)
 }
 \concept{roc}

@@ -192,14 +192,13 @@ compute_empirical_roc <- function(
     levels = NULL,
     ...
 ) {
-  direction <- validate_roc_direction(direction, TRUE)
-
   q_response <- enquo(response)
   q_predictor <- enquo(predictor)
-
   x <- select(data, !! q_predictor)
   y <- select(data, !! q_response)
-  levels <- validate_roc_levels(y, levels)
+  level_info <- validate_roc_levels(y, levels)
+  levels <- level_info$levels
+  direction <- validate_roc_direction(direction, TRUE)
 
   roc <- pROC::roc_(
     data,
@@ -299,10 +298,10 @@ tidy_best_roc_coords <- function(x, best_weights = c(1, 0.5)) {
 }
 
 
-#' Compute sensitivity and specificity scores from (weighted) data
+#' Compute sensitivity and specificity scores from (weighted) observed data
 #'
 #' `pROC::roc()` does not support observation-weights when computing ROC curves.
-#' This function is meant to fill that gap.
+#' This function fills that gap.
 #'
 #' @inheritParams compute_empirical_roc
 #' @param weights a bare column name for the observation weights. If `weights`
@@ -310,17 +309,55 @@ tidy_best_roc_coords <- function(x, best_weights = c(1, 0.5)) {
 #'   conventional sensitivity and specificity scores are returned.
 #' @return A dataframe of stepwise empirical ROC coordinates computed from
 #'   (optionally weighted) data. The output includes columns for the predictor
-#'   variable, `.sensitivities`, `.specificities`, `.direction`, `.controls`,
-#'   `.cases`, `.n_controls`, `.n_cases`, `.w_controls`, `.w_cases`,
-#'   `.comparison`, and `.response`. `n_` columns contain the number of
-#'   observations for that predictor value and `w_` contain the total weight
-#'   of the observations for that predictor value.
+#'   variable, `.sensitivities`, `.specificities`, `.auc`, `.comparison`,
+#'   `.n_controls`, `.n_cases`, `.w_controls`, `.w_cases`, `.comparison`,
+#'   `.direction`, `.response`, `.controls`, and `.cases`. `n_` columns contain
+#'   the number of observations for that predictor value and `w_` contain the
+#'   total weight of the observations for that predictor value.
 #'
 #' @details
 #' The `.sensitivities` and `.specificities` columns are calculated directly
-#' from the weighted empirical cumulative distribution functions of the positive
-#' and negative classes, so no call to `pROC::roc()` is made.
+#' from the (weighted) ECDFs of the controls and cases, so no call to
+#' `pROC::roc()` is made.
+#'
+#' `.auc` is calculated using `trapezoid_auc()`.
+#'
+#' `c(-Inf, Inf)` are added to the `predictor` vector so that sensitivities and
+#' specificities range from 0 to 1.
+#'
 #' @concept roc
+#' @export
+#' @examples
+#' # Simulate 3-class dataset
+#' set.seed(100)
+#' n <- 50
+#' means <- c("A" = 0, "B" = 1, "C" = 2)
+#' y <- sample(c("A", "B", "C"), n, replace = TRUE)
+#' x <- rnorm(n, mean = means[y], sd = 1)
+#' w <- runif(n, 0.5, 2)
+#' df <- data.frame(y, x, w)
+#'
+#' # Compare "A" (controls) to "C" (cases)
+#' roc_tbl <- compute_sens_spec_from_ecdf(
+#'   data = df,
+#'   response = y,
+#'   predictor = x,
+#'   weights = w,
+#'   direction = "control-low",
+#'   levels = c("A", "C")
+#' )
+#' dplyr::glimpse(roc_tbl)
+#'
+#' # Compare "B" (controls) to "C" (cases)
+#' roc_tbl2 <- compute_sens_spec_from_ecdf(
+#'   data = df,
+#'   response = y,
+#'   predictor = x,
+#'   weights = w,
+#'   direction = "control-low",
+#'   levels = c("B", "C")
+#' )
+#' dplyr::glimpse(roc_tbl2)
 compute_sens_spec_from_ecdf <- function(
     data,
     response,
@@ -335,36 +372,35 @@ compute_sens_spec_from_ecdf <- function(
   x <- dplyr::select(data, !! q_predictor)
   y <- dplyr::select(data, !! q_response)
   direction <- validate_roc_direction(direction, auto_allowed = FALSE)
-  levels <- validate_roc_levels(y, levels)
-  d <- data |> filter(is.element(!! q_response, levels))
+  level_info <- validate_roc_levels(y, levels)
+  levels <- level_info$levels
 
-  x1 <- d |>
-    dplyr::filter(is.element(!! q_response, levels[1])) |>
-    dplyr::pull(!! q_predictor)
-  x2 <- d |>
-    dplyr::filter(is.element(!! q_response, levels[2])) |>
-    dplyr::pull(!! q_predictor)
+  d1 <- data[level_info$l1_rows, ]
+  d2 <- data[level_info$l2_rows, ]
+
+  x1 <- d1 |> dplyr::pull(!! q_predictor)
+  x2 <- d2 |> dplyr::pull(!! q_predictor)
 
   if (!rlang::quo_is_null(q_weights)) {
-    w1 <- d |>
-      dplyr::filter(is.element(!! q_response, levels[1])) |>
-      dplyr::pull(!! q_weights)
-    w2 <- d |>
-      dplyr::filter(is.element(!! q_response, levels[2])) |>
-      dplyr::pull(!! q_weights)
+    w1 <- d1 |> dplyr::pull(!! q_weights)
+    w2 <- d2 |> dplyr::pull(!! q_weights)
   } else {
     w1 <- rep(1, length(x1))
     w2 <- rep(1, length(x2))
   }
 
-  d2 <- .compute_ecdf_sens_spec(x1, w1, x2, w2, direction)
-  names(d2)[names(d2) == "x"] <- colnames(x)[1]
-  d2$.direction <- direction
-  d2$.response <- colnames(y)[1]
-  d2$.controls <- levels[1]
-  d2$.cases <- levels[2]
+  data_out <- .compute_ecdf_sens_spec(x1, w1, x2, w2, direction)
+  names(data_out)[names(data_out) == "x"] <- colnames(x)[1]
+  data_out$.direction <- direction
+  data_out$.response <- colnames(y)[1]
+  data_out$.controls <- levels[1]
+  data_out$.cases <- levels[2]
+  data_out$.auc <- trapezoid_auc(
+    data_out$.specificities,
+    data_out$.sensitivities
+  )
 
-  d2$.comparison <- sprintf(
+  data_out$.comparison <- sprintf(
     "ctrl (%s %s) %s case (%s %s)",
     colnames(y)[1], levels[1],
     direction,
@@ -389,7 +425,7 @@ compute_sens_spec_from_ecdf <- function(
     ".is_best_closest_topleft"
   )
 
-  d2[intersect(col_order, names(d2))]
+  data_out[intersect(col_order, names(data_out))]
 }
 
 
@@ -453,7 +489,11 @@ validate_roc_levels <- function(data_y, levels = NULL) {
     cli::cli_abort(c("Provided {.arg levels} {.code c({clevels})} must be values of {.arg response} ({.field {y_name}})"))
   }
 
-  levels
+  list(
+    levels = levels,
+    l1_rows = which(y_vals == levels[1]),
+    l2_rows = which(y_vals == levels[2])
+  )
 }
 
 validate_roc_direction <- function(direction, auto_allowed) {
@@ -498,24 +538,22 @@ validate_roc_direction <- function(direction, auto_allowed) {
 #'   `partial_trapezoid_auc()`, the partial area under the curve is computed.
 #' @export
 #' @examples
-#' if (requireNamespace("rstanarm", quietly = TRUE)) {
-#'   wells <- rstanarm::wells
-#'   r <- pROC::roc(switch ~ arsenic, wells)
-#'   pROC::auc(r)
-#'   trapezoid_auc(r$specificities, r$sensitivities)
+#' # Predict whether a car has automatic vs. manual transmission from mpg
+#' r <- pROC::roc(am ~ mpg, mtcars)
+#' pROC::auc(r)
+#' trapezoid_auc(r$specificities, r$sensitivities)
 #'
-#'   pROC::auc(r, partial.auc = c(.9, 1), partial.auc.focus = "sp")
-#'   partial_trapezoid_auc(r$specificities, r$sensitivities, c(.9, 1))
+#' pROC::auc(r, partial.auc = c(.9, 1), partial.auc.focus = "sp")
+#' partial_trapezoid_auc(r$specificities, r$sensitivities, c(.9, 1))
 #'
-#'   pROC::auc(r, partial.auc = c(.9, 1), partial.auc.focus = "se")
-#'   partial_trapezoid_auc(r$sensitivities, r$specificities, c(.9, 1))
+#' pROC::auc(r, partial.auc = c(.9, 1), partial.auc.focus = "se")
+#' partial_trapezoid_auc(r$sensitivities, r$specificities, c(.9, 1))
 #'
-#'   pROC::auc(r, partial.auc = c(.1, .9), partial.auc.focus = "sp")
-#'   partial_trapezoid_auc(r$specificities, r$sensitivities, c(.1, .9))
+#' pROC::auc(r, partial.auc = c(.1, .9), partial.auc.focus = "sp")
+#' partial_trapezoid_auc(r$specificities, r$sensitivities, c(.1, .9))
 #'
-#'   pROC::auc(r, partial.auc = c(.1, .9), partial.auc.focus = "se")
-#'   partial_trapezoid_auc(r$sensitivities, r$specificities, c(.1, .9))
-#' }
+#' pROC::auc(r, partial.auc = c(.1, .9), partial.auc.focus = "se")
+#' partial_trapezoid_auc(r$sensitivities, r$specificities, c(.1, .9))
 #' @concept roc
 trapezoid_auc <- function(xs, ys) {
   stopifnot(is_sorted(xs))
@@ -607,7 +645,7 @@ is_increasing <- function(xs) {
   signs <- sign(diff(xs))
   is_not_strictly_decreasing <- all(0 <= signs)
   is_increasing_somewhere <- any(signs == 1)
-  is_not_strictly_decreasing && is_increasing_somewhere
+  isTRUE(is_not_strictly_decreasing) && isTRUE(is_increasing_somewhere)
 }
 
 is_decreasing <- function(xs) {
