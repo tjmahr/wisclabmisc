@@ -228,10 +228,10 @@ changes.</p>
 <p>It took me about 5 tries to get this plot correct. I am able to
 convince myself by noting that all of the <code>Good</code> outcomes are
 less than .51 so the threshold should not catch a single
-<code>Good</code> outcome and hence have specificity of 1. Conversely,
-there is just <code>Poor</code> outcome above 1, so a threshold of 1 is
-going to detect 1 <code>Poor</code> outcome and hence have a very low
-sensitivity.</p>
+<code>Good</code> outcome above it and hence have specificity of 1.
+Conversely, there is just one <code>Poor</code> outcome above 1, so a
+threshold of 1 is going to detect one <code>Poor</code> outcome and
+hence have a very low sensitivity.</p>
 <p>We can also compute the empirical sensitivity and specificity
 directly from the data instead of traversing a grid of thresholds by
 using the empirical cumulative distribution function (ECDFs).
@@ -309,13 +309,8 @@ a perfect match in our sensitivity and specificity values.</p>
 <span>    data <span class="op">=</span> <span class="va">proc_coordinates</span>, </span>
 <span>    color <span class="op">=</span> <span class="st">"blue"</span>,</span>
 <span>    alpha <span class="op">=</span> <span class="fl">.5</span>,</span>
-<span>    size <span class="op">=</span> <span class="fl">2</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
+<span>    linewidth <span class="op">=</span> <span class="fl">2</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 <p><img src="roc_files/figure-html/base-roc-2.png" width="450"></p>
 <p>Instead of computing ROC curves by hand, we defer the calculation of
 ROC curves to the pROC package because it is easy to get confused when
@@ -539,6 +534,60 @@ point.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_grey</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="va">p_best</span></span></code></pre></div>
 <p><img src="roc_files/figure-html/roc-annotated-1.png" width="1093.75"></p>
+<div class="section level3">
+<h3 id="empirical-roc-curves-on-weighted-data">Empirical ROC curves on weighted data<a class="anchor" aria-label="anchor" href="#empirical-roc-curves-on-weighted-data"></a>
+</h3>
+<p><code><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">pROC::roc()</a></code> does not support observation weights, so
+this package provides <code><a href="../reference/compute_sens_spec_from_ecdf.html">compute_sens_spec_from_ecdf()</a></code> to
+compute sensitivity and specificity using (weighted) ECDFs. If not
+weights are provided, the normal unweighted results are used. This
+function does not use <code><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">pROC::roc()</a></code> at all.</p>
+<p>To simulate weighting, we will round the existing predictor and count
+the number of observations in each bin (rounded value). That count is
+the weight.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_bin</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>s100b_bin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">s100b</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">outcome</span>, <span class="va">s100b_bin</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
+<span>    n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    .groups <span class="op">=</span> <span class="st">"drop"</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">data_sens_spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compute_sens_spec_from_ecdf.html">compute_sens_spec_from_ecdf</a></span><span class="op">(</span></span>
+<span>  <span class="va">data_bin</span>, </span>
+<span>  response <span class="op">=</span> <span class="va">outcome</span>, </span>
+<span>  predictor <span class="op">=</span> <span class="va">s100b_bin</span>, </span>
+<span>  weights <span class="op">=</span> <span class="va">n</span>,</span>
+<span>  direction <span class="op">=</span> <span class="st">"case-high"</span>, </span>
+<span>  levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Poor"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>For comparison, use the pROC-based approach on the rounded data. Here
+we have the manually computed ROC-curve on weighted data in black and
+the pROC-computed ROC data on unweighted data.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">data_sens_spec2</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>s100b_bin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">s100b</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="../reference/compute_empirical_roc.html">compute_empirical_roc</a></span><span class="op">(</span></span>
+<span>    response <span class="op">=</span> <span class="va">outcome</span>, </span>
+<span>    predictor <span class="op">=</span> <span class="va">s100b_bin</span>, </span>
+<span>    direction <span class="op">=</span> <span class="st">"case-high"</span>, </span>
+<span>    levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Poor"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_sens_spec</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">.specificities</span>, y <span class="op">=</span> <span class="va">.sensitivities</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_step</a></span><span class="op">(</span></span>
+<span>    direction <span class="op">=</span> <span class="st">"vh"</span>, </span>
+<span>    data <span class="op">=</span> <span class="va">data_sens_spec2</span>, </span>
+<span>    color<span class="op">=</span> <span class="st">"orange"</span>, </span>
+<span>    alpha <span class="op">=</span> <span class="fl">.5</span>, </span>
+<span>    linewidth <span class="op">=</span> <span class="fl">2</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_step</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="st">"vh"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_reverse</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="roc_files/figure-html/unnamed-chunk-7-1.png" width="1093.75"></p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="smooth-density-roc-curves">(Smooth) density ROC curves<a class="anchor" aria-label="anchor" href="#smooth-density-roc-curves"></a>
@@ -550,7 +599,7 @@ different for the two groups. We can compute each group’s mean and
 standard deviation and then plot the normal density curves on top of
 each other. Pepe (2003) refers to this approach as the “binormal ROC
 curve”.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_stats</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">outcome</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
@@ -599,7 +648,7 @@ curve”.</p>
 of the normal curves). We can do that by hand too. We take the full
 range of the data, and then within each group, generate a set of points
 along that range and compute that group’s density at each point.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_grid</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    xmin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">s100b</span><span class="op">)</span>,</span>
@@ -637,7 +686,7 @@ along that range and compute that group’s density at each point.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 390 more rows</span></span></span></code></pre></div>
 <p>Next, we pivot to a wide pivot format because we will be comparing
 the two densities at each point.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_dens</span> <span class="op">&lt;-</span> <span class="va">data_grid</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>s100b <span class="op">=</span> <span class="va">x</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">group_mean</span>, <span class="op">-</span><span class="va">group_sd</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -662,7 +711,7 @@ densities. Note that the interface here is different. We do not provide
 a dataframe and names of columns in that data frame. Instead, we provide
 two vectors of densities, and in fact, those densities are lost after
 computing the ROC curve.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_dens</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">data_dens</span>, <span class="va">s100b</span><span class="op">)</span></span>
 <span><span class="va">r_dens</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">roc</a></span><span class="op">(</span></span>
 <span>  density.controls <span class="op">=</span> <span class="va">data_dens</span><span class="op">$</span><span class="va">Good</span>, </span>
@@ -695,7 +744,7 @@ densities.</li>
 <p>Fortunately, if we compute the sensitivities by hand, we can figure
 out how the coordinates were ordered. We try both orderings and find the
 one that best matches one provided by <code><a href="https://rdrr.io/pkg/pROC/man/roc.html" class="external-link">pROC::roc()</a></code>.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># direction &gt; : Good &gt; threshold &gt;= Poor</span></span>
 <span><span class="va">sens_gt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">data_dens</span><span class="op">$</span><span class="va">Poor</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">data_dens</span><span class="op">$</span><span class="va">Poor</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># direction &lt; : Good &lt; threshold &lt;= Poor</span></span>
@@ -715,7 +764,7 @@ determine the order of the ROC coordinates with respect to the original
 densities. As a result, we can map the original threshold values to
 sensitivity and specificity values. The function also lets us use column
 names directly.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_smooth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compute_smooth_density_roc.html">compute_smooth_density_roc</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">data_dens</span>, </span>
 <span>  controls <span class="op">=</span> <span class="va">Good</span>, </span>
@@ -743,12 +792,12 @@ for the “best” thresholds by the Youden or topleft criteria. Because of
 the consistency between the two functions, we can just replace the data
 used to make annotated ROC curve with the smoothed ROC coordinates. In
 this case, the Youden and topleft points are different.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p_best</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">data_smooth</span><span class="op">)</span></span></code></pre></div>
 <p><img src="roc_files/figure-html/roc-annotated-smooth-1.png" width="1093.75"></p>
 <p>As a final demonstration, let’s compare the smooth and empirical ROC
 sensitivity and specificity values along the threshold values.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">data_smooth</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">s100b</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
