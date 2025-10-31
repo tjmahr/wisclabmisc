@@ -97,5 +97,14 @@ roc_tbl2 <- compute_sens_spec_from_ecdf(
   levels = c("B", "C")
 )
 dplyr::glimpse(roc_tbl2)
+
+library(ggplot2)
+# Plotting can be tricky bc sens and spec values repeat. geom_path() does the
+# right thing and walks along threshold values to plot the sens-spec pairs
+ggplot(roc_tbl) +
+  aes(x = .specificities, y = .sensitivities) +
+  geom_path() +
+  scale_x_reverse() +
+  coord_fixed(ratio = 1)
 }
 \concept{roc}
