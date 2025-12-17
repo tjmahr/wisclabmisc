@@ -12,6 +12,7 @@
   `"case-low"`/`"control-high"` and `"case-high"`/`"control-low"`. These forms
   help if you think about the direction or comparison as "which group gets a 
   low/high score?"
+* Add `skip_block()`.
 
 # wisclabmisc 0.1.1
 

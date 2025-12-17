@@ -217,3 +217,21 @@ test_that("Overlap rate is computed correctly", {
   # negatives not supported
   expect_error(compute_overlap_rate(x1, x2, -y1, y2))
 })
+
+test_that("skip_block() ignores code", {
+  expect_error(skip_block())
+  expect_error(skip_block(1, 2, 3))
+
+  # Default message
+  expect_null(skip_block(stop()))
+  expect_message(skip_block(stop()), regexp = "Skipping code block")
+
+  # Custom message
+  expect_null(skip_block("testing a message", stop()))
+  expect_message(skip_block("testing a message", stop()), regexp = "message")
+
+  # Message in a variable gets evaluated
+  msg <- "howdy"
+  expect_null(skip_block(msg, stop()))
+  expect_message(skip_block(msg, stop()), regexp = "howdy")
+})

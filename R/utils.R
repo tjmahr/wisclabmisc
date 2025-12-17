@@ -427,3 +427,61 @@ compute_overlap_rate <- function(x1, x2, y1, y2) {
   dur_u[dur_u == 0] <- NA_real_  # use explicit NA for division by 0
   dur_i / dur_u
 }
+
+
+
+#' Skip a block of code without executing it
+#'
+#' `skip_block()` is a lightweight control-flow helper to deliberately
+#' skip execution of a block of code while still documenting that the block
+#' exists. It is intended as an alternative to commenting out code
+#' or wrapping code in `if (FALSE) { ... }`.
+#'
+#' The function captures the unevaluated code block, reports how many lines
+#' would have run, optionally prints a user-supplied message, and then returns
+#' invisibly without evaluating the code.
+#'
+#' @param ... Either a single braced expression containing the code block to
+#'   skip, or a character string followed by a single braced expression.
+#'   When a message is supplied, it is printed instead of the default message.
+#'
+#' @return `NULL`, invisibly.
+#'
+#' @details
+#' `skip_block()` uses non-standard evaluation to capture the code block via
+#' `substitute()`. The code block is never evaluated.
+#'
+#' Supplying more than two arguments, or supplying no code block, is an error.
+#'
+#' @examples
+#' skip_block({
+#'   Sys.sleep(10)
+#' })
+#'
+#' skip_block("Skipping slow preprocessing step", {
+#'     Sys.sleep(10)
+#'   }
+#' )
+#' @export
+skip_block <- function(...) {
+  dots <- substitute(list(...))[-1]
+  dl <- length(dots)
+
+  if (dl == 0) {
+    stop("skip_block() requires a code block")
+  }
+
+  if (dl == 1) {
+    msg  <- "Skipping code block"
+    expr <- dots[[1]]
+  } else if (dl == 2) {
+    msg  <- ...elt(1)
+    expr <- dots[[2]]
+  } else {
+    stop("skip_block() accepts at most a message and one code block")
+  }
+
+  lines <- deparse(expr, width.cutoff = 500L)
+  cli::cli_inform("{msg} ({length(lines)} line{?s})")
+  invisible(NULL)
+}
