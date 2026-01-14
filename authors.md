@@ -10,13 +10,13 @@
 Source:
 [`DESCRIPTION`](https://github.com/tjmahr/wisclabmisc/blob/main/DESCRIPTION)
 
-Mahr T (2025). *wisclabmisc: Tools to Support the 'WiscLab'*. R package
+Mahr T (2026). *wisclabmisc: Tools to Support the 'WiscLab'*. R package
 version 0.1.1.9000, <https://github.com/tjmahr/wisclabmisc>.
 
     @Manual{,
       title = {wisclabmisc: Tools to Support the 'WiscLab'},
       author = {Tristan Mahr},
-      year = {2025},
+      year = {2026},
       note = {R package version 0.1.1.9000},
       url = {https://github.com/tjmahr/wisclabmisc},
     }

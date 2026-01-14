@@ -52,7 +52,8 @@ centiles.pred(
   xvalues = newdata$age, 
   plot = FALSE
 )
-#> Error in data.frame(data, source = namelist): arguments imply differing number of rows: 4, 5
+#> Error in `data.frame()`:
+#> ! arguments imply differing number of rows: 4, 5
 ```
 
 But including the original dataset works:
