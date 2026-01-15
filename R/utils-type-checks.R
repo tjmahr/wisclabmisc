@@ -7,6 +7,32 @@
 
 
 
+
+# arg and call usage cheatsheet:
+#
+# Top level use of inspect_number() will print f() and yyyyy
+#
+# f <- function(yyyyy) {
+#   inspect_number(yyyyy, min = 0)
+# }
+# f(-1)
+#
+# Pass along arg and call in wrapper function to print outer g() and w
+#
+# assert_nonnegative <- function(z, call = rlang::caller_env(), arg = rlang::caller_arg(z)) {
+#   inspect_number(z, min = 0, arg = arg, call = call)
+# }
+#
+# g <- function(w) {
+#   assert_nonnegative(w)
+# }
+#
+# g(-1)
+
+
+
+
+
 #' Inspect numeric input for type, length, and boundary constraints.
 #'
 #' This helper validates that `x` is a numeric vector satisfying constraints on
@@ -51,8 +77,8 @@ inspect_number <- function(
     min_boundary = c("inclusive", "exclusive", "tolerant"),
     max_boundary = c("inclusive", "exclusive", "tolerant"),
     tolerance = NULL,
-    arg = "x",
-    call = parent.frame()
+    arg = rlang::caller_arg(x),
+    call = rlang::caller_env()
 ) {
   min_boundary <- match.arg(min_boundary)
   max_boundary <- match.arg(max_boundary)
@@ -166,43 +192,72 @@ is_oob_upper <- function(
   )
 }
 
+assert_whole_number_scalar <- function(
+    x,
+    min = NULL,
+    max = NULL,
+    allow_infinite = FALSE,
+    allow_missing = FALSE,
+    allow_null = FALSE,
+    min_boundary = c("inclusive", "exclusive", "tolerant"),
+    max_boundary = c("inclusive", "exclusive", "tolerant"),
+    tolerance = NULL,
+    arg = rlang::caller_arg(x),
+    call = rlang::caller_env()
+) {
+  min_boundary <- match.arg(min_boundary)
+  max_boundary <- match.arg(max_boundary)
 
-#' #' Assert that `x` is a scalar whole number.
-#' #'
-#' #' @param x Object to test.
-#' #' @param min,max Optional bounds (inclusive).
-#' #' @param allow_infinite,allow_na,allow_null Flags.
-#' #' @param arg Name of the argument (for error messages).
-#' #' @param call Call to show in errors.
-#' #' @return `x`, invisibly, on success.
-#' assert_whole_number_scalar <- function(
-#'     x,
-#'     min = NULL,
-#'     max = NULL,
-#'     allow_infinite = FALSE,
-#'     allow_na = FALSE,
-#'     allow_null = FALSE,
-#'     arg = deparse(substitute(x)),
-#'     call = parent.frame()
-#' ) {
-#'   res <- inspect_number(
-#'     x = x,
-#'     min = min,
-#'     max = max,
-#'     allow_infinite = allow_infinite,
-#'     allow_na = allow_na,
-#'     allow_null = allow_null,
-#'     allow_decimals = FALSE,
-#'     allow_vector = FALSE,
-#'     arg = arg
-#'   )
-#'
-#'   if (!isTRUE(res$ok)) {
-#'     cli::cli_abort(
-#'       res$message,
-#'       call = call
-#'     )
-#'   }
-#'
-#'   invisible(x)
-#' }
+  inspect_number(
+    x = x,
+    min = min,
+    max = max,
+    allow_infinite = allow_infinite,
+    allow_missing = allow_missing,
+    allow_null = allow_null,
+    allow_decimals = FALSE,
+    allow_vector = FALSE,
+    min_boundary = min_boundary,
+    max_boundary = max_boundary,
+    tolerance = tolerance,
+    arg = arg,
+    call = call
+  )
+
+  invisible(x)
+}
+
+assert_whole_number_vector <- function(
+    x,
+    min = NULL,
+    max = NULL,
+    allow_infinite = FALSE,
+    allow_missing = FALSE,
+    allow_null = FALSE,
+    min_boundary = c("inclusive", "exclusive", "tolerant"),
+    max_boundary = c("inclusive", "exclusive", "tolerant"),
+    tolerance = NULL,
+    arg = rlang::caller_arg(x),
+    call = rlang::caller_env()
+) {
+  min_boundary <- match.arg(min_boundary)
+  max_boundary <- match.arg(max_boundary)
+
+  inspect_number(
+    x = x,
+    min = min,
+    max = max,
+    allow_infinite = allow_infinite,
+    allow_missing = allow_missing,
+    allow_null = allow_null,
+    allow_decimals = FALSE,
+    allow_vector = TRUE,
+    min_boundary = min_boundary,
+    max_boundary = max_boundary,
+    tolerance = tolerance,
+    arg = arg,
+    call = call
+  )
+
+  invisible(x)
+}

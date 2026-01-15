@@ -2,27 +2,47 @@
 % Please edit documentation in R/utils.R
 \name{format_year_month_age}
 \alias{format_year_month_age}
-\title{Convert age in months to years;months}
+\alias{parse_year_month_age}
+\title{Convert between ages in months and years;months format}
 \usage{
-format_year_month_age(x)
+format_year_month_age(x, sep = ";")
+
+parse_year_month_age(x, sep = ";")
 }
 \arguments{
-\item{x}{a vector ages in months}
+\item{x}{\itemize{
+\item \code{format_year_month_age()}: a numeric vector of (non-negative) ages in
+months.
+\item \code{parse_year_month_age()}: a character vector of ages in \code{"years;months"}
+format (or \verb{years\{sep\}months} format more generally).
+}}
+
+\item{sep}{Separator to use. Defaults to \verb{;}.}
 }
 \value{
-ages in the years;months format
+\itemize{
+\item \code{format_year_month_age()} returns a character vector in \code{"years;months"}
+format (or \verb{years\{sep\}months} format more generally).
+\item \code{parse_year_month_age()} returns an integer vector of ages in months.
+}
 }
 \description{
-Convert age in months to years;months
+Convert between ages in months and years;months format
 }
 \details{
-Ages of \code{NA} return \code{"NA;NA"}.
+For \code{format_year_month_age()}, ages of \code{NA} return \code{"NA;NA"}.
+
+For \code{parse_year_month_age()}, values that cannot be parsed
+return \code{NA}.
 
 This format by default is not numerically ordered. This means that \code{c("2;0", "10;10", "10;9")} would sort as \code{c("10;10", "10;9", "2;0")}. The function
 \code{stringr::str_sort(..., numeric = TRUE)} will sort this vector correctly.
 }
 \examples{
-ages <- c(26, 58, 25, 67, 21, 59, 36, 43, 27, 49)
-format_year_month_age(ages)
+ages <- c(26, 58, 25, 67, 21, 59, 36, 43, 27, 49, NA)
+ym_ages <- format_year_month_age(ages)
+ym_ages
+
+parse_year_month_age(ym_ages)
 }
 \concept{data-utils}

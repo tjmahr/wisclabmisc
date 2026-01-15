@@ -1,11 +1,22 @@
 
-
-#' Convert age in months to years;months
-#' @param x a vector ages in months
-#' @return ages in the years;months format
+#' Convert between ages in months and years;months format
+#' @param x
+#' * `format_year_month_age()`: a numeric vector of (non-negative) ages in
+#'   months.
+#' * `parse_year_month_age()`: a character vector of ages in `"years;months"`
+#'   format (or `years{sep}months` format more generally).
+#' @param sep Separator to use. Defaults to `;`.
+#' @return
+#' * `format_year_month_age()` returns a character vector in `"years;months"`
+#'   format (or `years{sep}months` format more generally).
+#' * `parse_year_month_age()` returns an integer vector of ages in months.
+#'
 #'
 #' @details
-#' Ages of `NA` return `"NA;NA"`.
+#' For `format_year_month_age()`, ages of `NA` return `"NA;NA"`.
+#'
+#' For `parse_year_month_age()`, values that cannot be parsed
+#' return `NA`.
 #'
 #' This format by default is not numerically ordered. This means that `c("2;0",
 #' "10;10", "10;9")` would sort as `c("10;10", "10;9", "2;0")`. The function
@@ -13,16 +24,47 @@
 #' @export
 #' @rdname ages
 #' @examples
-#' ages <- c(26, 58, 25, 67, 21, 59, 36, 43, 27, 49)
-#' format_year_month_age(ages)
+#' ages <- c(26, 58, 25, 67, 21, 59, 36, 43, 27, 49, NA)
+#' ym_ages <- format_year_month_age(ages)
+#' ym_ages
+#'
+#' parse_year_month_age(ym_ages)
 #' @concept data-utils
-format_year_month_age <- function(x) {
+format_year_month_age <- function(x, sep = ";") {
+  stopifnot(length(sep) == 1L)
+  assert_whole_number_vector(x, min = 0, allow_missing = TRUE)
   years <- x %/% 12L
   months <- x %% 12L
-  paste0(years, ";", months)
+  paste0(years, sep, months)
 }
 
 
+#' @rdname ages
+#' @export
+parse_year_month_age <- function(x, sep = ";") {
+  stopifnot(length(sep) == 1L)
+  # set the context for the error message
+  curr_call <- rlang::current_call()
+
+  convert_one <- function(p) {
+    # Convert any junk to c(NA, NA)
+    if (length(p) != 2L || any(is.na(p))) p <- c(NA_integer_, NA_integer_)
+    assert_whole_number_scalar(
+      p[1], min = 0, allow_missing = TRUE,
+      call = curr_call, arg = "x (years part)"
+    )
+    assert_whole_number_scalar(
+      p[2], min = 0, max = 11, allow_missing = TRUE,
+      call = curr_call, arg = "x (months part)"
+    )
+    12L * p[1] + p[2]
+  }
+
+  x |>
+    strsplit(sep, fixed = TRUE) |>
+    lapply(function(x) suppressWarnings(as.numeric(x))) |>
+    vapply(convert_one, numeric(1))
+}
 
 
 #' Compute chronological age in months

@@ -5,6 +5,39 @@ test_that("Age formatting works", {
 })
 
 
+test_that("format_year_month_age() and parse_year_month_age() round-trip", {
+  ages <- c(0L, 1L, 11L, 12L, 13L, 26L, 58L, 131L, NA_integer_)
+
+  expect_equal(
+    parse_year_month_age(format_year_month_age(ages)),
+    ages
+  )
+
+  expect_equal(
+    parse_year_month_age(format_year_month_age(ages, sep = ":"), sep = ":"),
+    ages
+  )
+})
+
+
+test_that("parse_year_month_age() works", {
+
+  "0;6" |> parse_year_month_age() |> expect_equal(6)
+  "1:6" |> parse_year_month_age(sep = ":") |> expect_equal(18)
+  "0.0;6.0" |> parse_year_month_age() |> expect_equal(6)
+
+  "-1;6"  |> parse_year_month_age() |> expect_error("years part")
+  "1.5;6" |> parse_year_month_age() |> expect_error("years part")
+
+  "1;-6"  |> parse_year_month_age() |> expect_error("months part")
+  "1;1.5" |> parse_year_month_age() |> expect_error("months part")
+  "1;12"  |> parse_year_month_age() |> expect_error("months part")
+
+  "1;1.5;a" |> parse_year_month_age() |> expect_equal(NA_real_)
+  "NA;1.5"  |> parse_year_month_age() |> expect_equal(NA_real_)
+})
+
+
 test_that("Chronological age in months", {
   # Two years exactly
   expect_equal(chrono_age("2014-01-20", "2012-01-20"), 24)
