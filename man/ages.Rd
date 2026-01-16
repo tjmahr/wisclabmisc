@@ -3,11 +3,14 @@
 \name{format_year_month_age}
 \alias{format_year_month_age}
 \alias{parse_year_month_age}
-\title{Convert between ages in months and years;months format}
+\alias{parse_yymm_age}
+\title{Convert between age in months, years;months, and yymm age formats}
 \usage{
 format_year_month_age(x, sep = ";")
 
 parse_year_month_age(x, sep = ";")
+
+parse_yymm_age(x, start = 1L)
 }
 \arguments{
 \item{x}{\itemize{
@@ -15,19 +18,24 @@ parse_year_month_age(x, sep = ";")
 months.
 \item \code{parse_year_month_age()}: a character vector of ages in \code{"years;months"}
 format (or \verb{years\{sep\}months} format more generally).
+\item \code{parse_yymm_age()}: a character vector of ages in \code{"yymm"} format.
 }}
 
-\item{sep}{Separator to use. Defaults to \verb{;}.}
+\item{sep}{Separator to use for \code{year_month} functions. Defaults to \verb{;}.}
+
+\item{start}{For \code{parse_yymm_age()}, the location of the starting
+character the \code{yymm} sequence. Defaults to 1.}
 }
 \value{
 \itemize{
 \item \code{format_year_month_age()} returns a character vector in \code{"years;months"}
 format (or \verb{years\{sep\}months} format more generally).
-\item \code{parse_year_month_age()} returns an integer vector of ages in months.
+\item \code{parse_year_month_age()} returns a vector of ages in months.
+\item \code{parse_yymm_age()}: returns a vector of ages in months.
 }
 }
 \description{
-Convert between ages in months and years;months format
+Convert between age in months, years;months, and yymm age formats
 }
 \details{
 For \code{format_year_month_age()}, ages of \code{NA} return \code{"NA;NA"}.
@@ -44,5 +52,9 @@ ym_ages <- format_year_month_age(ages)
 ym_ages
 
 parse_year_month_age(ym_ages)
+
+parse_yymm_age(c("0204", "0310"))
+
+parse_yymm_age(c("ab_0204", "ab_0310"), start = 4)
 }
 \concept{data-utils}

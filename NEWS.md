@@ -13,6 +13,8 @@
   help if you think about the direction or comparison as "which group gets a 
   low/high score?"
 * Add `skip_block()`.
+* Add `parse_year_month_age()` and `parse_yymm_age()` to convert formatted ages
+  into age in months.
 
 # wisclabmisc 0.1.1
 

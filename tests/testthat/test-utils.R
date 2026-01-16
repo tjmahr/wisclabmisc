@@ -1,27 +1,10 @@
-test_that("Age formatting works", {
+test_that("format_year_month_age() converts to years;month format", {
   c(1, 13, 23, 24, NA) |>
     format_year_month_age() |>
     expect_equal(c("0;1", "1;1", "1;11", "2;0", "NA;NA"))
 })
 
-
-test_that("format_year_month_age() and parse_year_month_age() round-trip", {
-  ages <- c(0L, 1L, 11L, 12L, 13L, 26L, 58L, 131L, NA_integer_)
-
-  expect_equal(
-    parse_year_month_age(format_year_month_age(ages)),
-    ages
-  )
-
-  expect_equal(
-    parse_year_month_age(format_year_month_age(ages, sep = ":"), sep = ":"),
-    ages
-  )
-})
-
-
-test_that("parse_year_month_age() works", {
-
+test_that("parse_year_month_age() converts years;months to months", {
   "0;6" |> parse_year_month_age() |> expect_equal(6)
   "1:6" |> parse_year_month_age(sep = ":") |> expect_equal(18)
   "0.0;6.0" |> parse_year_month_age() |> expect_equal(6)
@@ -37,6 +20,40 @@ test_that("parse_year_month_age() works", {
   "NA;1.5"  |> parse_year_month_age() |> expect_equal(NA_real_)
 })
 
+test_that("format_year_month_age() and parse_year_month_age() round-trip", {
+  ages <- c(0L, 1L, 11L, 12L, 13L, 26L, 58L, 131L, NA_integer_)
+
+  expect_equal(
+    parse_year_month_age(format_year_month_age(ages)),
+    ages
+  )
+
+  expect_equal(
+    parse_year_month_age(format_year_month_age(ages, sep = ":"), sep = ":"),
+    ages
+  )
+})
+
+test_that("parse_yymm_age() converts YYMM into age in months", {
+  c("0011", "1900", "0201") |>
+    parse_yymm_age() |>
+    expect_equal(c(11, 228, 25))
+
+  c("_0011", "_1900", "_0201") |>
+    parse_yymm_age(start = 2) |>
+    expect_equal(c(11, 228, 25))
+
+  c("aa01") |> parse_yymm_age() |> expect_warning() |> suppressWarnings()
+  c("01aa") |> parse_yymm_age() |> expect_warning() |> suppressWarnings()
+  c("aaaa") |> parse_yymm_age() |> expect_warning() |> suppressWarnings()
+  c("aa01") |> parse_yymm_age() |> suppressWarnings() |> expect_equal(NA_real_)
+  c("01aa") |> parse_yymm_age() |> suppressWarnings() |> expect_equal(NA_real_)
+  c("aaaa") |> parse_yymm_age() |> suppressWarnings() |> expect_equal(NA_real_)
+
+  c("0112") |> parse_yymm_age() |> expect_error()
+  c("-100") |> parse_yymm_age() |> expect_error()
+  c("01-2") |> parse_yymm_age() |> expect_error()
+})
 
 test_that("Chronological age in months", {
   # Two years exactly

@@ -1,15 +1,19 @@
 
-#' Convert between ages in months and years;months format
+#' Convert between age in months, years;months, and yymm age formats
 #' @param x
 #' * `format_year_month_age()`: a numeric vector of (non-negative) ages in
 #'   months.
 #' * `parse_year_month_age()`: a character vector of ages in `"years;months"`
 #'   format (or `years{sep}months` format more generally).
-#' @param sep Separator to use. Defaults to `;`.
+#' * `parse_yymm_age()`: a character vector of ages in `"yymm"` format.
+#' @param sep Separator to use for `year_month` functions. Defaults to `;`.
+#' @param start For `parse_yymm_age()`, the location of the starting
+#'   character the `yymm` sequence. Defaults to 1.
 #' @return
 #' * `format_year_month_age()` returns a character vector in `"years;months"`
 #'   format (or `years{sep}months` format more generally).
-#' * `parse_year_month_age()` returns an integer vector of ages in months.
+#' * `parse_year_month_age()` returns a vector of ages in months.
+#' * `parse_yymm_age()`: returns a vector of ages in months.
 #'
 #'
 #' @details
@@ -29,6 +33,10 @@
 #' ym_ages
 #'
 #' parse_year_month_age(ym_ages)
+#'
+#' parse_yymm_age(c("0204", "0310"))
+#'
+#' parse_yymm_age(c("ab_0204", "ab_0310"), start = 4)
 #' @concept data-utils
 format_year_month_age <- function(x, sep = ";") {
   stopifnot(length(sep) == 1L)
@@ -64,6 +72,28 @@ parse_year_month_age <- function(x, sep = ";") {
     strsplit(sep, fixed = TRUE) |>
     lapply(function(x) suppressWarnings(as.numeric(x))) |>
     vapply(convert_one, numeric(1))
+}
+
+#' @rdname ages
+#' @export
+parse_yymm_age <- function(x, start = 1L) {
+  years <- x |> substr(start = start, stop = start + 1L) |> as.numeric()
+  months <- x |> substr(start = start + 2L, stop = start + 3L) |> as.numeric()
+
+  assert_whole_number_vector(
+    years, min = 0, allow_missing = TRUE, arg = 'x (years part)'
+  )
+  assert_whole_number_vector(
+    months, min = 0, max = 11, allow_missing = TRUE, arg = 'x (months part)'
+  )
+  years * 12 + months
+}
+
+# database friendly version
+.db_parse_yymm_age <- function(x, start = 1L) {
+  years <- x |> substr(start = start, stop = start + 1L) |> as.numeric()
+  months <- x |> substr(start = start + 2L, stop = start + 3L) |> as.numeric()
+  years * 12 + months
 }
 
 
