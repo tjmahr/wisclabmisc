@@ -59,7 +59,8 @@
 
 - [`format_year_month_age()`](https://www.tjmahr.com/wisclabmisc/reference/ages.md)
   [`parse_year_month_age()`](https://www.tjmahr.com/wisclabmisc/reference/ages.md)
-  : Convert between ages in months and years;months format
+  [`parse_yymm_age()`](https://www.tjmahr.com/wisclabmisc/reference/ages.md)
+  : Convert between age in months, years;months, and yymm age formats
 - [`chrono_age()`](https://www.tjmahr.com/wisclabmisc/reference/chrono_age.md)
   : Compute chronological age in months
 - [`impute_values_by_length()`](https://www.tjmahr.com/wisclabmisc/reference/impute_values_by_length.md)

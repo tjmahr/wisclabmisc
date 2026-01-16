@@ -1,6 +1,6 @@
-# Convert between ages in months and years;months format
+# Convert between age in months, years;months, and yymm age formats
 
-Convert between ages in months and years;months format
+Convert between age in months, years;months, and yymm age formats
 
 ## Usage
 
@@ -8,6 +8,8 @@ Convert between ages in months and years;months format
 format_year_month_age(x, sep = ";")
 
 parse_year_month_age(x, sep = ";")
+
+parse_yymm_age(x, start = 1L)
 ```
 
 ## Arguments
@@ -21,16 +23,25 @@ parse_year_month_age(x, sep = ";")
     `"years;months"` format (or `years{sep}months` format more
     generally).
 
+  - `parse_yymm_age()`: a character vector of ages in `"yymm"` format.
+
 - sep:
 
-  Separator to use. Defaults to `;`.
+  Separator to use for `year_month` functions. Defaults to `;`.
+
+- start:
+
+  For `parse_yymm_age()`, the location of the starting character the
+  `yymm` sequence. Defaults to 1.
 
 ## Value
 
 - `format_year_month_age()` returns a character vector in
   `"years;months"` format (or `years{sep}months` format more generally).
 
-- `parse_year_month_age()` returns an integer vector of ages in months.
+- `parse_year_month_age()` returns a vector of ages in months.
+
+- `parse_yymm_age()`: returns a vector of ages in months.
 
 ## Details
 
@@ -54,4 +65,10 @@ ym_ages
 
 parse_year_month_age(ym_ages)
 #>  [1] 26 58 25 67 21 59 36 43 27 49 NA
+
+parse_yymm_age(c("0204", "0310"))
+#> [1] 28 46
+
+parse_yymm_age(c("ab_0204", "ab_0310"), start = 4)
+#> [1] 28 46
 ```

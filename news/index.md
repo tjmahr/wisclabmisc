@@ -24,6 +24,11 @@
   direction or comparison as “which group gets a low/high score?”
 - Add
   [`skip_block()`](https://www.tjmahr.com/wisclabmisc/reference/skip_block.md).
+- Add
+  [`parse_year_month_age()`](https://www.tjmahr.com/wisclabmisc/reference/ages.md)
+  and
+  [`parse_yymm_age()`](https://www.tjmahr.com/wisclabmisc/reference/ages.md)
+  to convert formatted ages into age in months.
 
 ## wisclabmisc 0.1.1
 
