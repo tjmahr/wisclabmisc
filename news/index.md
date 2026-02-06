@@ -22,13 +22,21 @@
   to support aliases for `direction`: `"case-low"`/`"control-high"` and
   `"case-high"`/`"control-low"`. These forms help if you think about the
   direction or comparison as “which group gets a low/high score?”
-- Add
+- Added
   [`skip_block()`](https://www.tjmahr.com/wisclabmisc/reference/skip_block.md).
-- Add
+- Added
   [`parse_year_month_age()`](https://www.tjmahr.com/wisclabmisc/reference/ages.md)
   and
   [`parse_yymm_age()`](https://www.tjmahr.com/wisclabmisc/reference/ages.md)
   to convert formatted ages into age in months.
+- Add `audit` objects. These wrap some data and log the results of
+  function applications on the underlying data. These are designed for
+  validating vectors (e.g., filenames). Functions consist of
+  [`audit_wrap()`](https://www.tjmahr.com/wisclabmisc/reference/audit.md),
+  [`audit_peek()`](https://www.tjmahr.com/wisclabmisc/reference/audit.md),
+  [`audit_poke()`](https://www.tjmahr.com/wisclabmisc/reference/audit.md)
+  and
+  [`audit_unwrap()`](https://www.tjmahr.com/wisclabmisc/reference/audit.md).
 
 ## wisclabmisc 0.1.1
 

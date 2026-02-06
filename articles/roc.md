@@ -626,34 +626,27 @@ data_grid <- data |>
     xmax = max(s100b)
   ) |> 
   group_by(outcome) |> 
-  summarise(
+  reframe(
     x = seq(xmin[1], xmax[1], length.out = 200),
     group_mean = mean(s100b),
     group_sd = sd(s100b),
     density = dnorm(x, group_mean, group_sd),
     .groups = "drop"
   ) 
-#> Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
-#> dplyr 1.1.0.
-#> ℹ Please use `reframe()` instead.
-#> ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()`
-#>   always returns an ungrouped data frame and adjust accordingly.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
 data_grid
-#> # A tibble: 400 × 5
-#>    outcome      x group_mean group_sd density
-#>    <fct>    <dbl>      <dbl>    <dbl>   <dbl>
-#>  1 Good    0.03        0.162    0.131    1.84
-#>  2 Good    0.0403      0.162    0.131    1.98
-#>  3 Good    0.0505      0.162    0.131    2.13
-#>  4 Good    0.0608      0.162    0.131    2.27
-#>  5 Good    0.0710      0.162    0.131    2.40
-#>  6 Good    0.0813      0.162    0.131    2.53
-#>  7 Good    0.0915      0.162    0.131    2.64
-#>  8 Good    0.102       0.162    0.131    2.75
-#>  9 Good    0.112       0.162    0.131    2.84
-#> 10 Good    0.122       0.162    0.131    2.91
+#> # A tibble: 400 × 6
+#>    outcome      x group_mean group_sd density .groups
+#>    <fct>    <dbl>      <dbl>    <dbl>   <dbl> <chr>  
+#>  1 Good    0.03        0.162    0.131    1.84 drop   
+#>  2 Good    0.0403      0.162    0.131    1.98 drop   
+#>  3 Good    0.0505      0.162    0.131    2.13 drop   
+#>  4 Good    0.0608      0.162    0.131    2.27 drop   
+#>  5 Good    0.0710      0.162    0.131    2.40 drop   
+#>  6 Good    0.0813      0.162    0.131    2.53 drop   
+#>  7 Good    0.0915      0.162    0.131    2.64 drop   
+#>  8 Good    0.102       0.162    0.131    2.75 drop   
+#>  9 Good    0.112       0.162    0.131    2.84 drop   
+#> 10 Good    0.122       0.162    0.131    2.91 drop   
 #> # ℹ 390 more rows
 ```
 
@@ -666,19 +659,19 @@ data_dens <- data_grid |>
   select(-group_mean, -group_sd) |> 
   pivot_wider(names_from = outcome, values_from = density)
 data_dens
-#> # A tibble: 200 × 3
-#>     s100b  Good  Poor
-#>     <dbl> <dbl> <dbl>
-#>  1 0.03    1.84 0.659
-#>  2 0.0403  1.98 0.676
-#>  3 0.0505  2.13 0.694
-#>  4 0.0608  2.27 0.711
-#>  5 0.0710  2.40 0.729
-#>  6 0.0813  2.53 0.746
-#>  7 0.0915  2.64 0.763
-#>  8 0.102   2.75 0.780
-#>  9 0.112   2.84 0.797
-#> 10 0.122   2.91 0.813
+#> # A tibble: 200 × 4
+#>     s100b .groups  Good  Poor
+#>     <dbl> <chr>   <dbl> <dbl>
+#>  1 0.03   drop     1.84 0.659
+#>  2 0.0403 drop     1.98 0.676
+#>  3 0.0505 drop     2.13 0.694
+#>  4 0.0608 drop     2.27 0.711
+#>  5 0.0710 drop     2.40 0.729
+#>  6 0.0813 drop     2.53 0.746
+#>  7 0.0915 drop     2.64 0.763
+#>  8 0.102  drop     2.75 0.780
+#>  9 0.112  drop     2.84 0.797
+#> 10 0.122  drop     2.91 0.813
 #> # ℹ 190 more rows
 ```
 
@@ -757,21 +750,22 @@ data_smooth <- compute_smooth_density_roc(
   along = s100b
 )
 data_smooth
-#> # A tibble: 202 × 10
-#>     s100b  Good  Poor .sensitivities .specificities  .auc .roc_row .direction
-#>     <dbl> <dbl> <dbl>          <dbl>          <dbl> <dbl>    <int> <chr>     
-#>  1 0.03    1.84 0.659          1             0      0.830        2 <         
-#>  2 0.0403  1.98 0.676          0.992         0.0221 0.830        3 <         
-#>  3 0.0505  2.13 0.694          0.984         0.0460 0.830        4 <         
-#>  4 0.0608  2.27 0.711          0.975         0.0716 0.830        5 <         
-#>  5 0.0710  2.40 0.729          0.967         0.0989 0.830        6 <         
-#>  6 0.0813  2.53 0.746          0.958         0.128  0.830        7 <         
-#>  7 0.0915  2.64 0.763          0.949         0.158  0.830        8 <         
-#>  8 0.102   2.75 0.780          0.939         0.190  0.830        9 <         
-#>  9 0.112   2.84 0.797          0.930         0.223  0.830       10 <         
-#> 10 0.122   2.91 0.813          0.920         0.257  0.830       11 <         
+#> # A tibble: 202 × 11
+#>     s100b .groups  Good  Poor .sensitivities .specificities  .auc .roc_row
+#>     <dbl> <chr>   <dbl> <dbl>          <dbl>          <dbl> <dbl>    <int>
+#>  1 0.03   drop     1.84 0.659          1             0      0.830        2
+#>  2 0.0403 drop     1.98 0.676          0.992         0.0221 0.830        3
+#>  3 0.0505 drop     2.13 0.694          0.984         0.0460 0.830        4
+#>  4 0.0608 drop     2.27 0.711          0.975         0.0716 0.830        5
+#>  5 0.0710 drop     2.40 0.729          0.967         0.0989 0.830        6
+#>  6 0.0813 drop     2.53 0.746          0.958         0.128  0.830        7
+#>  7 0.0915 drop     2.64 0.763          0.949         0.158  0.830        8
+#>  8 0.102  drop     2.75 0.780          0.939         0.190  0.830        9
+#>  9 0.112  drop     2.84 0.797          0.930         0.223  0.830       10
+#> 10 0.122  drop     2.91 0.813          0.920         0.257  0.830       11
 #> # ℹ 192 more rows
-#> # ℹ 2 more variables: .is_best_youden <lgl>, .is_best_closest_topleft <lgl>
+#> # ℹ 3 more variables: .direction <chr>, .is_best_youden <lgl>,
+#> #   .is_best_closest_topleft <lgl>
 ```
 
 [`compute_smooth_density_roc()`](https://www.tjmahr.com/wisclabmisc/reference/compute_smooth_density_roc.md)

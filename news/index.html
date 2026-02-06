@@ -49,8 +49,9 @@
 <li>Added <code><a href="../reference/compute_sens_spec_from_ecdf.html">compute_sens_spec_from_ecdf()</a></code> to compute sensitivity, specificity and AUC on weighted data.</li>
 <li>Updated <code><a href="../reference/compute_empirical_roc.html">compute_empirical_roc()</a></code> to handle multilevel data (like a rating scale) if the two levels to be compared are provided in <code>levels</code>.</li>
 <li>Updated <code><a href="../reference/compute_empirical_roc.html">compute_empirical_roc()</a></code> to support aliases for <code>direction</code>: <code>"case-low"</code>/<code>"control-high"</code> and <code>"case-high"</code>/<code>"control-low"</code>. These forms help if you think about the direction or comparison as “which group gets a low/high score?”</li>
-<li>Add <code><a href="../reference/skip_block.html">skip_block()</a></code>.</li>
-<li>Add <code><a href="../reference/ages.html">parse_year_month_age()</a></code> and <code><a href="../reference/ages.html">parse_yymm_age()</a></code> to convert formatted ages into age in months.</li>
+<li>Added <code><a href="../reference/skip_block.html">skip_block()</a></code>.</li>
+<li>Added <code><a href="../reference/ages.html">parse_year_month_age()</a></code> and <code><a href="../reference/ages.html">parse_yymm_age()</a></code> to convert formatted ages into age in months.</li>
+<li>Add <code>audit</code> objects. These wrap some data and log the results of function applications on the underlying data. These are designed for validating vectors (e.g., filenames). Functions consist of <code><a href="../reference/audit.html">audit_wrap()</a></code>, <code><a href="../reference/audit.html">audit_peek()</a></code>, <code><a href="../reference/audit.html">audit_poke()</a></code> and <code><a href="../reference/audit.html">audit_unwrap()</a></code>.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.1" id="wisclabmisc-011">wisclabmisc 0.1.1<a class="anchor" aria-label="anchor" href="#wisclabmisc-011"></a></h2>

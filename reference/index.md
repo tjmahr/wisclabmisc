@@ -74,6 +74,11 @@
 
 ## Other functions 📌
 
+- [`audit_wrap()`](https://www.tjmahr.com/wisclabmisc/reference/audit.md)
+  [`audit_peek()`](https://www.tjmahr.com/wisclabmisc/reference/audit.md)
+  [`audit_poke()`](https://www.tjmahr.com/wisclabmisc/reference/audit.md)
+  [`audit_unwrap()`](https://www.tjmahr.com/wisclabmisc/reference/audit.md)
+  : A lightweight container for auditing or logging
 - [`brms_args_create()`](https://www.tjmahr.com/wisclabmisc/reference/brms_args_create.md)
   : Set default arguments for brms model fitting
 - [`compute_overlap_rate()`](https://www.tjmahr.com/wisclabmisc/reference/compute_overlap_rate.md)
