@@ -516,7 +516,7 @@ data_grid <- data |>
     xmax = max(s100b)
   ) |> 
   group_by(outcome) |> 
-  summarise(
+  reframe(
     x = seq(xmin[1], xmax[1], length.out = 200),
     group_mean = mean(s100b),
     group_sd = sd(s100b),
