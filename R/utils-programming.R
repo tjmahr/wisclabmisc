@@ -101,11 +101,22 @@ print.audit <- function(x, ...) {
   names(copy$notes) <- lapply(x$notes, create_note_name)
 
   b <- copy["data"] |>
-    utils::str(comp.str = "", no.list = TRUE, nest.lev = 0, indent.str = "") |>
+    utils::str(
+      comp.str = "",
+      no.list = TRUE,
+      nest.lev = 0,
+      indent.str = "",
+      strict.width = "wrap"
+    ) |>
     utils::capture.output()
 
   c <- copy$notes |>
-    utils::str(comp.str = "> ", max.level = 1, no.list = TRUE) |>
+    utils::str(
+      comp.str = "> ",
+      max.level = 1,
+      no.list = TRUE,
+      strict.width = "wrap"
+    ) |>
     utils::capture.output()
 
   lines <- c("<audit> object", b, "notes:", c)
