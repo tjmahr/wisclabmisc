@@ -110,3 +110,4 @@ test_that("print.audit prints a header and notes section and returns the object"
   expect_true(any(grepl("\\[peek\\]", out)))
   expect_true(any(grepl("\\[poke\\]", out)))
 })
+

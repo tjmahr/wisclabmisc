@@ -12,9 +12,13 @@
   `"case-low"`/`"control-high"` and `"case-high"`/`"control-low"`. These forms
   help if you think about the direction or comparison as "which group gets a 
   low/high score?"
-* Add `skip_block()`.
-* Add `parse_year_month_age()` and `parse_yymm_age()` to convert formatted ages
-  into age in months.
+* Added `skip_block()`.
+* Added `parse_year_month_age()` and `parse_yymm_age()` to convert formatted 
+  ages into age in months.
+* Add `audit` objects. These wrap some data and log the results of function 
+  applications on the underlying data. These are designed for validating vectors 
+  (e.g., filenames). Functions consist of `audit_wrap()`, `audit_peek()`, 
+  `audit_poke()` and `audit_unwrap()`.
 
 # wisclabmisc 0.1.1
 
