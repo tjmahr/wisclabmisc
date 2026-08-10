@@ -13,6 +13,134 @@ A data frame with 103 rows and 4 variables:
 \item{tocs_prompt}{the actual prompt presented to the child}
 \item{tocs_item_note}{any notes about an item's usage in experiments or analyses}
 }
+
+These are the items:\tabular{lrll}{
+   tocs_type \tab tocs_level \tab tocs_item \tab tocs_prompt \cr
+   multiword \tab 2 \tab S2T01 \tab Bird house \cr
+   multiword \tab 2 \tab S2T02 \tab Cowboy boots \cr
+   multiword \tab 2 \tab S2T03 \tab Hug daddy \cr
+   multiword \tab 2 \tab S2T04 \tab Get off \cr
+   multiword \tab 2 \tab S2T05 \tab Animal crackers \cr
+   multiword \tab 2 \tab S2T06 \tab Living room \cr
+   multiword \tab 2 \tab S2T07 \tab Doctor bag \cr
+   multiword \tab 2 \tab S2T08 \tab Baby sock \cr
+   multiword \tab 2 \tab S2T09 \tab Big potato \cr
+   multiword \tab 2 \tab S2T10 \tab Say goodbye \cr
+   multiword \tab 3 \tab S3T01 \tab Gather the toys \cr
+   multiword \tab 3 \tab S3T02 \tab Five more cookies \cr
+   multiword \tab 3 \tab S3T03 \tab Make a birdhouse \cr
+   multiword \tab 3 \tab S3T04 \tab Tie those shoes \cr
+   multiword \tab 3 \tab S3T05 \tab Put these together \cr
+   multiword \tab 3 \tab S3T06 \tab That's not white \cr
+   multiword \tab 3 \tab S3T07 \tab Open the house \cr
+   multiword \tab 3 \tab S3T08 \tab Take his turn \cr
+   multiword \tab 3 \tab S3T09 \tab Pull his tooth \cr
+   multiword \tab 3 \tab S3T10 \tab Point to Teddy \cr
+   multiword \tab 3 \tab S3T11 \tab Cook big hotdogs \cr
+   multiword \tab 4 \tab S4T01 \tab She could hide here \cr
+   multiword \tab 4 \tab S4T02 \tab Wear a cowboy hat \cr
+   multiword \tab 4 \tab S4T03 \tab Find the brown lid \cr
+   multiword \tab 4 \tab S4T04 \tab Both faces are happy \cr
+   multiword \tab 4 \tab S4T05 \tab That is her dog \cr
+   multiword \tab 4 \tab S4T06 \tab He likes potato chips \cr
+   multiword \tab 4 \tab S4T07 \tab Jump over the box \cr
+   multiword \tab 4 \tab S4T08 \tab She chewed her fingers \cr
+   multiword \tab 4 \tab S4T09 \tab Cut two small pieces \cr
+   multiword \tab 4 \tab S4T10 \tab Get them some coffee \cr
+   multiword \tab 5 \tab S5T01 \tab Baby likes his new toy \cr
+   multiword \tab 5 \tab S5T02 \tab They'll eat those hotdogs soon \cr
+   multiword \tab 5 \tab S5T03 \tab His fingers are in wrong \cr
+   multiword \tab 5 \tab S5T04 \tab They are singing Happy Birthday \cr
+   multiword \tab 5 \tab S5T05 \tab Water shoots from that gun \cr
+   multiword \tab 5 \tab S5T06 \tab This cheese doesn't smell good \cr
+   multiword \tab 5 \tab S5T07 \tab The sign says keep out \cr
+   multiword \tab 5 \tab S5T08 \tab Tie up the garbage bag \cr
+   multiword \tab 5 \tab S5T09 \tab Give the flowers some water \cr
+   multiword \tab 5 \tab S5T10 \tab Put all the toys away \cr
+   multiword \tab 6 \tab S6T01 \tab He wants somebody to push him \cr
+   multiword \tab 6 \tab S6T02 \tab He gave Mommy a birthday card \cr
+   multiword \tab 6 \tab S6T03 \tab That baby is learning to talk \cr
+   multiword \tab 6 \tab S6T04 \tab She laughed at his funny jokes \cr
+   multiword \tab 6 \tab S6T05 \tab There's a playground near the school \cr
+   multiword \tab 6 \tab S6T06 \tab He winds up the toy ghost \cr
+   multiword \tab 6 \tab S6T07 \tab Make a check beside the two \cr
+   multiword \tab 6 \tab S6T08 \tab The cowboy hat has a feather \cr
+   multiword \tab 6 \tab S6T09 \tab Taste the cookies that she baked \cr
+   multiword \tab 6 \tab S6T10 \tab Take the lid off the pot \cr
+   multiword \tab 7 \tab S7T01 \tab Pour some tea for both of us \cr
+   multiword \tab 7 \tab S7T02 \tab The loud noise scared the cat away \cr
+   multiword \tab 7 \tab S7T03 \tab Don't let go or it will fall \cr
+   multiword \tab 7 \tab S7T04 \tab She is showing him how to jump \cr
+   multiword \tab 7 \tab S7T05 \tab Baby reached to get another chocolate cookie \cr
+   multiword \tab 7 \tab S7T06 \tab The bird landed beside the shaggy dog \cr
+   multiword \tab 7 \tab S7T07 \tab She got mad and pushed the boy \cr
+   multiword \tab 7 \tab S7T08 \tab They ate birthday cake and drank pop \cr
+   multiword \tab 7 \tab S7T09 \tab Be very quiet when Baby is sleeping \cr
+   multiword \tab 7 \tab S7T10 \tab Fill the fridge with things to eat \cr
+   single-word \tab 1 \tab WT01 \tab Pizza \cr
+   single-word \tab 1 \tab WT02 \tab Hug \cr
+   single-word \tab 1 \tab WT03 \tab Boot \cr
+   single-word \tab 1 \tab WT04 \tab Ball \cr
+   single-word \tab 1 \tab WT05 \tab Bee \cr
+   single-word \tab 1 \tab WT06 \tab Buddy \cr
+   single-word \tab 1 \tab WT07 \tab Hoot \cr
+   single-word \tab 1 \tab WT08 \tab Mud \cr
+   single-word \tab 1 \tab WT09 \tab A dress \cr
+   single-word \tab 1 \tab WT10 \tab Snow \cr
+   single-word \tab 1 \tab WT11 \tab Chew \cr
+   single-word \tab 1 \tab WT12 \tab Pan \cr
+   single-word \tab 1 \tab WT13 \tab Come \cr
+   single-word \tab 1 \tab WT14 \tab Boy \cr
+   single-word \tab 1 \tab WT15 \tab Bad \cr
+   single-word \tab 1 \tab WT16 \tab Hot \cr
+   single-word \tab 1 \tab WT17 \tab Gum \cr
+   single-word \tab 1 \tab WT18 \tab Dee \cr
+   single-word \tab 1 \tab WT19 \tab Beanie \cr
+   single-word \tab 1 \tab WT20 \tab Zoo \cr
+   single-word \tab 1 \tab WT21 \tab Hat \cr
+   single-word \tab 1 \tab WT22 \tab Seat \cr
+   single-word \tab 1 \tab WT23 \tab Yawn \cr
+   single-word \tab 1 \tab WT24 \tab No \cr
+   single-word \tab 1 \tab WT25 \tab Full \cr
+   single-word \tab 1 \tab WT26 \tab Bus \cr
+   single-word \tab 1 \tab WT27 \tab Jar \cr
+   single-word \tab 1 \tab WT28 \tab Top \cr
+   single-word \tab 1 \tab WT29 \tab Lock \cr
+   single-word \tab 1 \tab WT30 \tab Walk \cr
+   single-word \tab 1 \tab WT31 \tab Bow \cr
+   single-word \tab 1 \tab WT32 \tab Eat \cr
+   single-word \tab 1 \tab WT33 \tab Sheet \cr
+   single-word \tab 1 \tab WT34 \tab Rock \cr
+   single-word \tab 1 \tab WT35 \tab House \cr
+   single-word \tab 1 \tab WT36 \tab Pipe \cr
+   single-word \tab 1 \tab WT37 \tab Toys \cr
+   single-word \tab 1 \tab WT38 \tab Type \cr
+   single-word \tab 1 \tab WT39 \tab Wait \cr
+   single-word \tab 1 \tab WT40 \tab Whip \cr
+   single-word \tab 1 \tab WT41 \tab mIm \cr
+   single-word \tab 1 \tab WT42 \tab Big \cr
+}
+
+
+These are the items with entries in the \code{"tocs_item_note"} fields:\tabular{lrlll}{
+   tocs_type \tab tocs_level \tab tocs_item \tab tocs_prompt \tab tocs_item_note \cr
+   multiword \tab 3 \tab S3T09 \tab Pull his tooth \tab possibly not an original TOCS item \cr
+   multiword \tab 3 \tab S3T11 \tab Cook big hotdogs \tab practice item for intelligibility studies (usually not found in intelligibility data) \cr
+   multiword \tab 5 \tab S5T10 \tab Put all the toys away \tab practice item for intelligibility studies (usually not found in intelligibility data) \cr
+   single-word \tab 1 \tab WT01 \tab Pizza \tab practice item for intelligibility studies (usually not found in intelligibility data) \cr
+   single-word \tab 1 \tab WT02 \tab Hug \tab practice item for intelligibility studies (usually not found in intelligibility data) \cr
+   single-word \tab 1 \tab WT09 \tab A dress \tab exclude from intelligibility analyses for being two words and ambiguous with 'address'; possibly not an original TOCS item \cr
+   single-word \tab 1 \tab WT18 \tab Dee \tab sometimes exclude from intelligibility analyses for naming a letter (listeners are not inclined to treat a letter as a word); possibly not an original TOCS item \cr
+   single-word \tab 1 \tab WT31 \tab Bow \tab rhymes with 'snow' \cr
+   single-word \tab 1 \tab WT35 \tab House \tab noun; possibly not an original TOCS item \cr
+   single-word \tab 1 \tab WT36 \tab Pipe \tab possibly not an original TOCS item \cr
+   single-word \tab 1 \tab WT37 \tab Toys \tab possibly not an original TOCS item \cr
+   single-word \tab 1 \tab WT38 \tab Type \tab possibly not an original TOCS item \cr
+   single-word \tab 1 \tab WT39 \tab Wait \tab possibly not an original TOCS item \cr
+   single-word \tab 1 \tab WT40 \tab Whip \tab possibly not an original TOCS item \cr
+   single-word \tab 1 \tab WT41 \tab mIm \tab exclude from intelligibility analyses for being a nonword item; possibly not an original TOCS item \cr
+   single-word \tab 1 \tab WT42 \tab Big \tab possibly not an original TOCS item \cr
+}
 }
 \usage{
 data_tocs_items

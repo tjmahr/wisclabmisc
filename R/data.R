@@ -692,6 +692,19 @@ NULL
 #'   \item{tocs_prompt}{the actual prompt presented to the child}
 #'   \item{tocs_item_note}{any notes about an item's usage in experiments or analyses}
 #' }
+#'
+#' These are the items:
+#'
+#' ```{r, echo = FALSE}
+#' knitr::kable(data_tocs_items[-5])
+#' ````
+#'
+#' These are the items with entries in the `"tocs_item_note"` fields:
+#'
+#' ```{r, echo = FALSE}
+#' data_tocs_items |> subset(!is.na(tocs_item_note)) |> knitr::kable()
+#' ```
+#'
 #' @concept datasets
 #' @details Most of these items are subset from a larger pool of items on the TOCS+.
 #' Hustad and colleagues (2021) is a supplemental material for a larger study

@@ -53,14 +53,16 @@ export(uniroot_beta_gamlss)
 export(weight_lengths_with_ordinal_model)
 import(dplyr)
 importFrom(magrittr,"%>%")
-importFrom(rlang,":=")
-importFrom(rlang,.data)
-importFrom(rlang,.env)
-importFrom(rlang,as_label)
-importFrom(rlang,as_name)
-importFrom(rlang,enexpr)
-importFrom(rlang,enquo)
-importFrom(rlang,enquos)
-importFrom(rlang,expr)
-importFrom(rlang,sym)
-importFrom(rlang,syms)
+importFrom(rlang,
+  ":=",
+  .data,
+  .env,
+  as_label,
+  as_name,
+  enexpr,
+  enquo,
+  enquos,
+  expr,
+  sym,
+  syms
+)

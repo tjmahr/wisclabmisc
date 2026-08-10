@@ -10,7 +10,7 @@
 #' ```
 #' setMethod("show", "duckdb_connection", wisclabmisc::print_duckdb)
 #' ```
-print_duckdb <- function(object) {
+print_duckdb <- function(object, table_limit = 50) {
   rlang::check_installed(c("DBI", "duckdb"))
   is_installed <- rlang::is_installed(c("DBI", "duckdb"))
 
@@ -22,8 +22,17 @@ print_duckdb <- function(object) {
   version <- DBI::dbGetInfo(object)[["db.version"]]
   tables <- DBI::dbListTables(object)
 
+  t <- cli::cli_vec(
+    tables,
+    style = list(
+      "vec-trunc" = table_limit,
+      "vec-sep" = ", ",
+      "vec-last" = ", ",
+      color = "green"
+    )
+  )
   cli_tables <- if (length(tables)) {
-    "{.emph tables}: {.field {tables}}"
+     "{.emph tables}: {t}"
   } else {
     "{.emph tables}: [none]"
   }

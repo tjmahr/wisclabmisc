@@ -4,7 +4,7 @@
 \alias{print_duckdb}
 \title{Custom function for printing duckdb database connections}
 \usage{
-print_duckdb(object)
+print_duckdb(object, table_limit = 50)
 }
 \arguments{
 \item{object}{a database connection to a duckdb database}
