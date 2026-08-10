@@ -48,8 +48,16 @@ To manually combine two tbls `x` and `y`, use
 library(dplyr)
 db <- duckdb::duckdb() |>
   DBI::dbConnect()
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpteTTx3/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 db
-#> <duckdb_connection cd520 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
+#> <duckdb_connection 76820 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
 
 DBI::dbWriteTable(db, "mtcars_g1", mtcars[mtcars$cyl == 4, ])
 DBI::dbWriteTable(db, "mtcars_g2", mtcars[mtcars$cyl == 6, ])
@@ -63,12 +71,12 @@ r <- db |>
   tbl_bind(starts_with("mtcars")) |>
   count(.source)
 r
-#> # Source:   SQL [?? x 2]
-#> # Database: DuckDB 1.5.2 [unknown@Linux 6.17.0-1015-azure:R 4.6.0/:memory:]
+#> # A query:  ?? x 2
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>   .source       n
 #>   <chr>     <dbl>
-#> 1 mtcars_g3    14
-#> 2 mtcars_g1    11
+#> 1 mtcars_g1    11
+#> 2 mtcars_g3    14
 #> 3 mtcars_g2     7
 
 # the query is several UNIONs
@@ -76,19 +84,19 @@ show_query(r)
 #> <SQL>
 #> SELECT ".source", COUNT(*) AS n
 #> FROM (
-#>   SELECT mtcars_g1.*, 'mtcars_g1' AS ".source"
+#>   SELECT *, 'mtcars_g1' AS ".source"
 #>   FROM mtcars_g1
 #> 
 #>   UNION ALL
 #> 
-#>   SELECT mtcars_g2.*, 'mtcars_g2' AS ".source"
+#>   SELECT *, 'mtcars_g2' AS ".source"
 #>   FROM mtcars_g2
 #> 
 #>   UNION ALL
 #> 
-#>   SELECT mtcars_g3.*, 'mtcars_g3' AS ".source"
+#>   SELECT *, 'mtcars_g3' AS ".source"
 #>   FROM mtcars_g3
-#> ) q01
+#> ) AS q01
 #> GROUP BY ".source"
 
 DBI::dbDisconnect(db, shutdown = TRUE)

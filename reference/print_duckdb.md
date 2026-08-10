@@ -5,7 +5,7 @@ Custom function for printing duckdb database connections
 ## Usage
 
 ``` r
-print_duckdb(object)
+print_duckdb(object, table_limit = 50)
 ```
 
 ## Arguments
